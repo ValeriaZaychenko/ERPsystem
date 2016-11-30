@@ -1,6 +1,7 @@
 <%--@elvariable id="users" type="java.util.List<erp.domain.User>"--%>
 
-<template:main htmlTitle="Users">
+<spring:message code="title.users" var="title" />
+<template:main htmlTitle="${title}" >
 
     <jsp:body>
 

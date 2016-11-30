@@ -10,15 +10,20 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <title><c:out value="${htmlTitle}" /></title>
+
         <link rel="stylesheet" href="<c:url value="/resources/css/external/bootstrap.css" />" />
         <link rel="stylesheet" href="<c:url value="/resources/css/external/bootstrapValidator.css" />" />
         <link rel="stylesheet" href="<c:url value="/resources/css/style.css" />" />
         <link rel="stylesheet" href="<c:url value="/resources/fonts/font-awesome/css/font-awesome.css" />" />
+        <link rel="stylesheet" href="<c:url value="/resources/css/external/languages.min.css" />" />
 
         <script src="<c:url value="/resources/js/external/jquery-3.1.1.js" />"></script>
         <script src="<c:url value="/resources/js/external/bootstrap.min.js" />"></script>
         <script src="<c:url value="/resources/js/external/ztoast.min.js" />"></script>
         <script src="<c:url value="/resources/js/external/bootstrapValidator.min.js" />"></script>
+
+        <script src="<c:url value="/resources/js/set_locale.js" />"></script>
 
         <jsp:invoke fragment="headContent" />
 
@@ -49,7 +54,20 @@
 
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#">Eng</a></li>
+                        <li class="dropdown">
+                            <c:set var="languageCode" value="${pageContext.response.locale.language}" />
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                                <span class="lang-sm lang-lbl-full" lang="${languageCode}"></span>
+                                <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><button type="button" class="btn btn-link" onclick="setLocale('en');">
+                                    <span class="lang-sm lang-lbl-full" lang="en"></span></button>
+                                </li>
+                                <li><button type="button" class="btn btn-link" onclick="setLocale('ru');">
+                                    <span class="lang-sm lang-lbl-full" lang="ru"></span></button>
+                                </li>
+                            </ul>
+                        </li>
                         <li>
                             <a href="#">
                                 <i class="fa fa-bell-o" aria-hidden="true"></i>
@@ -72,7 +90,6 @@
         </nav>
 
         <jsp:doBody />
-
 
     </body>
 </html>

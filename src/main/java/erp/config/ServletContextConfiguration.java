@@ -8,16 +8,21 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.RequestToViewNameTranslator;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Locale;
 
 @Configuration
 @EnableWebMvc
@@ -28,16 +33,6 @@ import java.util.List;
 )
 public class ServletContextConfiguration extends WebMvcConfigurerAdapter
 {
-    /*@Inject
-    SpringValidatorAdapter validator;
-
-    @Override
-    public Validator getValidator()
-    {
-        return this.validator;
-    }
-    */
-
     @Override
     public void configureMessageConverters(
             List<HttpMessageConverter<?>> converters
@@ -53,6 +48,25 @@ public class ServletContextConfiguration extends WebMvcConfigurerAdapter
         resolver.setViewClass(JstlView.class);
         resolver.setPrefix("/WEB-INF/jsp/view/");
         resolver.setSuffix(".jsp");
+        return resolver;
+    }
+
+    @Override
+    public void addInterceptors( InterceptorRegistry registry )
+    {
+        super.addInterceptors( registry );
+
+        LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
+        interceptor.setParamName( "language" );
+
+        registry.addInterceptor( interceptor );
+    }
+
+    @Bean
+    public LocaleResolver localeResolver ()
+    {
+        SessionLocaleResolver resolver = new SessionLocaleResolver();
+        resolver.setDefaultLocale( Locale.ENGLISH );
         return resolver;
     }
 

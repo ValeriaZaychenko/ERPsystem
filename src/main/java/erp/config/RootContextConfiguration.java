@@ -1,10 +1,12 @@
 package erp.config;
 
 
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
 import javax.sql.DataSource;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.Executor;
 
@@ -52,16 +55,22 @@ public class RootContextConfiguration
     }
 
     @Bean
+    public MessageSource messageSource()
+    {
+        ReloadableResourceBundleMessageSource messageSource =
+                new ReloadableResourceBundleMessageSource();
+        messageSource.setCacheSeconds(-1);
+        messageSource.setFallbackToSystemLocale( false );
+        messageSource.setDefaultEncoding( StandardCharsets.UTF_8.name());
+        messageSource.setBasenames(
+                 "/WEB-INF/i18n/messages"
+        );
+        return messageSource;
+    }
+
+    @Bean
     public DataSource getDataSource()
     {
-/*
-        DriverManagerDataSource driver = new DriverManagerDataSource();
-        driver.setDriverClassName("org.postgresql.Driver");
-        driver.setUrl("jdbc:postgresql://127.0.0.1:5432/erp_postgresql");
-        driver.setUsername("erp_user");
-        driver.setPassword("erp_user");
-        return driver;
-*/
         JndiDataSourceLookup lookup = new JndiDataSourceLookup();
         return lookup.getDataSource("jdbc/erp_postgresql");
     }

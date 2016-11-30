@@ -20,4 +20,20 @@ public class IndexController {
     public View index () {
         return new RedirectView("/users/", true, false);
     }
+
+    @RequestMapping( path = "/setlocale/", method = RequestMethod.POST )
+    public ResponseEntity setLocale (HttpSession session, @RequestParam String language ) {
+        Locale locale = null;
+        if ( language.equalsIgnoreCase( "ru" ) )
+            locale = new Locale( "ru", "RU" );
+
+        else if ( language.equalsIgnoreCase( "uk" ) )
+            locale = new Locale( "uk", "UA" );
+
+        else
+            locale = new Locale( "en" );
+
+        session.setAttribute( SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale );
+        return new ResponseEntity( HttpStatus.OK );
+    }
 }
