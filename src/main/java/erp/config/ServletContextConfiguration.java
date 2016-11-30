@@ -51,7 +51,7 @@ public class ServletContextConfiguration extends WebMvcConfigurerAdapter
         InternalResourceViewResolver resolver =
                 new InternalResourceViewResolver();
         resolver.setViewClass(JstlView.class);
-        resolver.setPrefix("/WEB-INF/pages/");
+        resolver.setPrefix("/WEB-INF/jsp/view/");
         resolver.setSuffix(".jsp");
         return resolver;
     }

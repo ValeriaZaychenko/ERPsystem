@@ -1,0 +1,17 @@
+.navbar {
+    background-color: #94C7B6;
+}
+
+.navbar-brand {
+    max-width: 30%;
+    padding: 0px;
+}
+
+.navbar-btn {
+    background-color: #D6E1C7;
+    border:0px solid transparent;
+}
+
+body { background: #EDEBE6 !important;}
+
+
