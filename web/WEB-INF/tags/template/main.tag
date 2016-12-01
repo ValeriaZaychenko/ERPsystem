@@ -14,7 +14,10 @@
 
         <link rel="stylesheet" href="<c:url value="/resources/css/external/bootstrap.css" />" />
         <link rel="stylesheet" href="<c:url value="/resources/css/external/bootstrapValidator.css" />" />
+
         <link rel="stylesheet" href="<c:url value="/resources/css/style.css" />" />
+        <link rel="stylesheet" href="<c:url value="/resources/css/login-logout-style.css" />" />
+
         <link rel="stylesheet" href="<c:url value="/resources/fonts/font-awesome/css/font-awesome.css" />" />
         <link rel="stylesheet" href="<c:url value="/resources/css/external/languages.min.css" />" />
 
@@ -24,6 +27,8 @@
         <script src="<c:url value="/resources/js/external/bootstrapValidator.min.js" />"></script>
 
         <script src="<c:url value="/resources/js/set_locale.js" />"></script>
+        <script src="<c:url value="/resources/js/select_checkbox.js" />"></script>
+        <script src="<c:url value="/resources/js/user.js" />"></script>
 
         <jsp:invoke fragment="headContent" />
 
@@ -75,13 +80,13 @@
                         </li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle  " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                Account
+                                <spring:message code="account"/>
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">Settings</a></li>
+                                <li><a href="#"><spring:message code="settings"/></a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a href="#">Log out</a></li>
+                                <li><a href="#"><spring:message code="log.out"/></a></li>
                             </ul>
                         </li>
                     </ul>

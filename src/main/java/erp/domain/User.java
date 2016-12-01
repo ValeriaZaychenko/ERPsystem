@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-@Entity(name = "users")
+@Entity(name = "employees")
 public class User {
 
     @Id
@@ -17,12 +17,12 @@ public class User {
     private String id;
     private String name;
     private String email;
-    private UserRole userRole;
+    //private UserRole userRole;
 
     public User(String name, String email, UserRole userRole) {
         this.name = name;
         this.email = email;
-        this.userRole = userRole;
+        //this.userRole = userRole;
     }
 
     protected User(){}
@@ -47,11 +47,12 @@ public class User {
         this.email = email;
     }
 
-    public UserRole getUserRole() {
+    /*public UserRole getUserRole() {
         return userRole;
     }
 
     private void setUserRole(UserRole userRole) {
         this.userRole = userRole;
     }
+    */
 }

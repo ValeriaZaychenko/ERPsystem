@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+import javax.jws.soap.SOAPBinding;
 
 
 @Service
@@ -45,6 +46,30 @@ public class UserService implements IUserService {
         }
         user.setEmail(email);
         userRepository.save(user);
+    }
+
+    /*
+    CRUD Repository has own delete methods by id and by entity.
+    I've choosed deleting by entity because of adding another ids at frontside in the future.
+    TODO May be discussed
+     */
+    @Transactional
+    @Override
+    public void removeUser(String id) {
+        User user = userRepository.findOne(id);
+        if (user == null) {
+            throw new RuntimeException("Database doesn't have this user");
+        }
+        userRepository.delete(user);
+    }
+
+    @Override
+    public User findUser(String id) {
+        User user = userRepository.findOne(id);
+        if (user == null) {
+            throw new RuntimeException("Database doesn't have this user");
+        }
+        return user;
     }
 
     @Transactional

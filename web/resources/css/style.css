@@ -14,4 +14,36 @@
 
 body { background: #EDEBE6 !important;}
 
+table {
+    border: 1px solid #D6E1C7;
+    border-radius: 20px;
+}
+
+thead {
+    margin-top: -20px;
+    background-color: #D6E1C7;
+}
+
+.btn {
+    border: 0 none;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.btn-primary {
+    background: #94C7B6;
+    color: #ffffff;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
+    background: #D6E1C7;
+    color: #000;
+}
+
+.btn-primary:active, .btn-primary.active {
+    background: #007299;
+    box-shadow: none;
+}
+
 

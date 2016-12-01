@@ -81,6 +81,7 @@ public class RootContextConfiguration
         Map< String, Object> properties = new Hashtable<>();
         properties.put( "javax.persistence.schema-generation.database.action", "drop-and-create" );
         properties.put( "hibernate.show_sql", "true" );
+        properties.put( "javax.persistence.sql-load-script-source" , "data.sql" );
 
         HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
         adapter.setDatabasePlatform( "org.hibernate.dialect.PostgreSQLDialect" );
