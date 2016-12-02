@@ -8,7 +8,7 @@
 
             <c:when test="${fn:length(users) == 0}">
                 <h2><spring:message code="no.users.in.system"/> </h2>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserModal" data-whatever="@mdo">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUser" data-whatever="@mdo">
                     <spring:message code="add.user"/>
                 </button>
             </c:when>
@@ -22,6 +22,7 @@
                                     <th><input type="checkbox" id="checkall" /></th>
                                     <th class="text-center"> <spring:message code="name"/> </th>
                                     <th class="text-center"> <spring:message code="email"/> </th>
+                                    <th class="text-center"> <spring:message code="position"/> </th>
                                     <th class="text-center"> <spring:message code="actions"/> </th>
                                 </tr>
                             </thead>
@@ -31,6 +32,7 @@
                                         <th scope="row"><input type="checkbox" class="checkthis" /></th>
                                         <td>${user.name}</td>
                                         <td>${user.email}</td>
+                                        <td>${user.userRole}</td>
                                         <td class="text-center">
                                             <a class='btn btn-info btn-xs' href="#">
                                                 <i class="fa fa-pencil" aria-hidden="true"></i>
@@ -45,7 +47,7 @@
                                 </c:forEach>
                             </tbody>
                         </table>
-                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserModal" data-whatever="@mdo">
+                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUser" data-whatever="@mdo">
                              <spring:message code="add.user"/>
                          </button>
                      </div>
@@ -54,7 +56,7 @@
 
         </c:choose>
 
-        <!--MODAL---------------------------------------------------------->
+        <!--MODAL FOR ADD EDIT USER---------------------------------------------------------->
         <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">

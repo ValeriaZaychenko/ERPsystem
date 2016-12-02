@@ -2,6 +2,7 @@ package erp.service;
 
 
 import erp.domain.User;
+import erp.dto.UserDto;
 
 import java.util.List;
 
@@ -13,5 +14,5 @@ public interface IUserService {
     void removeUser(String id);
     User findUser(String id);
 
-    Iterable<User> viewUsers();
+    Iterable<UserDto> viewUsers();
 }
