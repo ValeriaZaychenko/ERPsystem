@@ -9,6 +9,7 @@ public class UserDto {
     private String userRole;
 
     public UserDto(String id, String name, String email, String userRole) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.userRole = userRole;

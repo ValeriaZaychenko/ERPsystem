@@ -28,7 +28,6 @@
 
         <script src="<c:url value="/resources/js/set_locale.js" />"></script>
         <script src="<c:url value="/resources/js/select_checkbox.js" />"></script>
-        <script src="<c:url value="/resources/js/user.js" />"></script>
 
         <jsp:invoke fragment="headContent" />
 

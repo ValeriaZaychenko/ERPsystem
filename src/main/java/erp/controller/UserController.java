@@ -24,13 +24,6 @@ public class UserController {
         return "user";
     }
 
-    @RequestMapping(value = "/{userId}/delete", method = RequestMethod.GET)
-    public String delete(@PathVariable String userId, Model model) {
-        User user = userService.findUser(userId);
-        model.addAttribute("user", user);
-        return "user-delete";
-    }
-
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String delete(String id) {

@@ -3,12 +3,16 @@
 <spring:message code="title.users" var="title" />
 <template:main htmlTitle="${title}" >
 
+    <jsp:attribute name="headContent">
+        <script src="<c:url value="/resources/js/user.js" />"></script>
+    </jsp:attribute>
+
     <jsp:body>
         <c:choose>
 
             <c:when test="${fn:length(users) == 0}">
                 <h2><spring:message code="no.users.in.system"/> </h2>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUser" data-whatever="@mdo">
+                <button type="button" class="btn btn-primary" id="addUserBtn">
                     <spring:message code="add.user"/>
                 </button>
             </c:when>
@@ -28,17 +32,17 @@
                             </thead>
                             <tbody>
                                 <c:forEach items="${users}" var="user">
-                                    <tr>
+                                    <tr id="users-row-${user.id}">
                                         <th scope="row"><input type="checkbox" class="checkthis" /></th>
                                         <td>${user.name}</td>
                                         <td>${user.email}</td>
                                         <td>${user.userRole}</td>
                                         <td class="text-center">
-                                            <a class='btn btn-info btn-xs' href="#">
+                                            <a class='editUserBtnClass btn btn-info btn-xs'>
                                                 <i class="fa fa-pencil" aria-hidden="true"></i>
                                                 <spring:message code="edit" />
                                             </a>
-                                            <a href="/users/${user.id}/delete" class="btn btn-danger btn-xs">
+                                            <a class="btn btn-danger btn-xs" onclick="deleteUser('${user.id}')">
                                                 <i class="fa fa-trash" aria-hidden="true"></i>
                                                 <spring:message code="delete" />
                                             </a>
@@ -47,7 +51,7 @@
                                 </c:forEach>
                             </tbody>
                         </table>
-                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUser" data-whatever="@mdo">
+                         <button type="button" class="btn btn-primary" id="addUserBtn2">
                              <spring:message code="add.user"/>
                          </button>
                      </div>
@@ -57,30 +61,29 @@
         </c:choose>
 
         <!--MODAL FOR ADD EDIT USER---------------------------------------------------------->
-        <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel">
+        <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        <h4 class="modal-title" id="addUserModalLabel">
-                            <spring:message code="add.user"/>
+                        <h4 class="modal-title" id="userModal-title">
                         </h4>
                     </div>
                     <div class="modal-body">
                         <form>
                             <div class="form-group">
-                                <label for="recipient-name" class="control-label">
+                                <label for="user-name" class="control-label">
                                     <spring:message code="name"/>
                                 </label>
-                                <input type="text" class="form-control" id="recipient-name">
+                                <input type="text" class="form-control" id="user-name" name="user-name" placeholder="<spring:message code="enter.name"/> ">
                             </div>
                             <div class="form-group">
-                                <label for="message-text" class="control-label">
+                                <label for="user-email" class="control-label">
                                     <spring:message code="email"/>
                                 </label>
-                                <textarea class="form-control" id="message-text"></textarea>
+                                <input type="text" class="form-control" id="user-email" name="user-email" placeholder="<spring:message code="enter.email"/> ">
                             </div>
                         </form>
                     </div>
@@ -89,12 +92,19 @@
                             <spring:message code="close"/>
                         </button>
                         <button type="button" class="btn btn-primary">
-                            <spring:message code="add"/>
+                            <spring:message code="save"/>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <script type="text/javascript">
+            var strings = new Array();
+            strings['title.add']  = "<spring:message code='add.user' />";
+            strings['title.edit'] = "<spring:message code='edit.user' />";
+            strings['confirm.delete'] = "<spring:message code='confirm.user.delete' />";
+        </script>
 
 
     </jsp:body>
