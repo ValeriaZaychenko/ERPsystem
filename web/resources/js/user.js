@@ -2,28 +2,59 @@ $( document ).ready(function() {
 
     $('#addUserBtn').click(function () {
         $('#userModal-title').html( strings['title.add'] );
-        $('#userModal').modal('show');
-    });
 
-    $('#addUserBtn2').click(function () {
-        $('#userModal-title').html( strings['title.add'] );
+        $('#userModal input[name=user-name]').val("");
+        $('#userModal input[name=user-email]').val("");
+        $('#userModal input[name=user-id]').val("").prop("disabled", true);
+
+        $('#userModal input[name=add-or-edit]').val("add");
+
         $('#userModal').modal('show');
     });
 
     $('.editUserBtnClass').click(function () {
         $('#userModal-title').html( strings['title.edit'] );
+
+        name=$(this).find(".user-name").html();
+        email=$(this).find(".user-email").html();
+        id=$(this).find(".user-id").html();
+
+        $('#userModal input[name=user-name]').val(name);
+        $('#userModal input[name=user-email]').val(email);
+        $('#userModal input[name=user-id]').val(id).prop("disabled", false);
+
+        $('#userModal input[name=add-or-edit]').val("edit");
+
         $('#userModal').modal('show');
     });
 
-
-    $('#userModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var recipient = button.data('whatever') // Extract info from data-* attributes
-        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-        var modal = $(this)
-        //modal.find('.modal-title').text('New message to ' + recipient)
-        modal.find('.modal-body input').val(recipient)
+    $('#btnSaveUser').click(function () {
+        add_edit=$(this).find("#add-or-edit").val();
+        if(add_edit == "add") {
+            $.post(
+                "/users/add",
+                {
+                    name: $('#userModal input[name=user-name]').val(),
+                    email: $('#userModal input[name=user-email]').val()
+                },
+                function () {
+                    location.reload();
+                }
+            )
+        }
+        else if (add_edit == "edit") {
+            $.post(
+                "/users/edit",
+                {
+                    id: $('#userModal input[name=user-id]').val(),
+                    name: $('#userModal input[name=user-name]').val(),
+                    email: $('#userModal input[name=user-email]').val()
+                },
+                function () {
+                    location.reload();
+                }
+            )
+        }
     });
 
     $('#userModal').on('shown.bs.modal', function () {
@@ -42,11 +73,11 @@ function deleteUser ( userId ) {
             },
             function () {
 
-                var selector = "#users-row-" + userId;
+                /*var selector = "#users-row-" + userId;
                 $( selector ).remove();
 
                 var tableBody = $( "#users-table tbody" );
-                if ( tableBody.children().length == 0 )
+                if ( tableBody.children().length == 0 )*/
                     location.reload();
             }
         );
@@ -54,4 +85,5 @@ function deleteUser ( userId ) {
     else{
         return false;
     }
+
 }

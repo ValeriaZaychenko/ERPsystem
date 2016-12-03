@@ -8,17 +8,12 @@
     </jsp:attribute>
 
     <jsp:body>
-        <c:choose>
-
-            <c:when test="${fn:length(users) == 0}">
-                <h2><spring:message code="no.users.in.system"/> </h2>
-                <button type="button" class="btn btn-primary" id="addUserBtn">
-                    <spring:message code="add.user"/>
-                </button>
-            </c:when>
-
-            <c:otherwise>
-                <div class="col-md-6">
+        <div class="col-md-6">
+            <c:choose>
+                <c:when test="${fn:length(users) == 0}">
+                    <h2><spring:message code="no.users.in.system"/> </h2>
+                </c:when>
+                <c:otherwise>
                      <div class="table-responsive">
                         <table id="users-table" class="table table-hover">
                             <thead>
@@ -41,6 +36,9 @@
                                             <a class='editUserBtnClass btn btn-info btn-xs'>
                                                 <i class="fa fa-pencil" aria-hidden="true"></i>
                                                 <spring:message code="edit" />
+                                                <div class="hidden user-id">${user.id}</div>
+                                                <div class="hidden user-name">${user.name}</div>
+                                                <div class="hidden user-email">${user.email}</div>
                                             </a>
                                             <a class="btn btn-danger btn-xs" onclick="deleteUser('${user.id}')">
                                                 <i class="fa fa-trash" aria-hidden="true"></i>
@@ -51,14 +49,13 @@
                                 </c:forEach>
                             </tbody>
                         </table>
-                         <button type="button" class="btn btn-primary" id="addUserBtn2">
-                             <spring:message code="add.user"/>
-                         </button>
                      </div>
-                </div>
-            </c:otherwise>
-
-        </c:choose>
+                </c:otherwise>
+            </c:choose>
+            <button type="button" class="btn btn-primary" id="addUserBtn">
+                <spring:message code="add.user"/>
+            </button>
+        </div>
 
         <!--MODAL FOR ADD EDIT USER---------------------------------------------------------->
         <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel">
@@ -73,6 +70,7 @@
                     </div>
                     <div class="modal-body">
                         <form>
+                            <input type="text" name="user-id" class="hidden">
                             <div class="form-group">
                                 <label for="user-name" class="control-label">
                                     <spring:message code="name"/>
@@ -91,8 +89,9 @@
                         <button type="button" class="btn btn-default" data-dismiss="modal">
                             <spring:message code="close"/>
                         </button>
-                        <button type="button" class="btn btn-primary">
+                        <button type="button" class="btn btn-primary" id="btnSaveUser">
                             <spring:message code="save"/>
+                            <input type="text" id="add-or-edit" name="add-or-edit" class="hidden">
                         </button>
                     </div>
                 </div>
