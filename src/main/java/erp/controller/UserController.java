@@ -1,5 +1,6 @@
 package erp.controller;
 
+import erp.controller.constants.AttributeNames;
 import erp.domain.User;
 import erp.domain.UserRole;
 import erp.service.IUserService;
@@ -22,22 +23,23 @@ public class UserController {
     private IUserService userService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    String getEmployeesList(Map<String, Object> model) {
-        model.put("users", this.userService.viewUsers());
-        //model.put("possibleUserRoles", UserRole.values());
+    String getUsersList(Map<String, Object> model) {
+        model.put(AttributeNames.UserView.Users, this.userService.viewUsers());
+        model.put(AttributeNames.UserView.PossibleUserRoles, UserRole.values());
         return "user";
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResponseEntity add(String name, String email) {
-        userService.createUser(name, email, "USER");
+    public ResponseEntity add(String name, String email, String userRole) {
+        userService.createUser(name, email, userRole);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public ResponseEntity add(String id, String name, String email) {
+    public ResponseEntity edit(String id, String name, String email, String userRole) {
         userService.changeUserName(id, name);
         userService.changeUserEmail(id, email);
+        userService.changeUserRole(id, userRole);
         return new ResponseEntity(HttpStatus.OK);
     }
 

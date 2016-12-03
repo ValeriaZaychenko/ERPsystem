@@ -50,7 +50,7 @@ public class User {
         return userRole;
     }
 
-    private void setUserRole(UserRole userRole) {
+    public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
     }
 

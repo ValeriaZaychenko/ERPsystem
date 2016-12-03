@@ -5,6 +5,7 @@ $( document ).ready(function() {
 
         $('#userModal input[name=user-name]').val("");
         $('#userModal input[name=user-email]').val("");
+        $('#userModal option').val("");
         $('#userModal input[name=user-id]').val("").prop("disabled", true);
 
         $('#userModal input[name=add-or-edit]').val("add");
@@ -17,10 +18,13 @@ $( document ).ready(function() {
 
         name=$(this).find(".user-name").html();
         email=$(this).find(".user-email").html();
+        role=$(this).find("#user-role").html();
         id=$(this).find(".user-id").html();
+
 
         $('#userModal input[name=user-name]').val(name);
         $('#userModal input[name=user-email]').val(email);
+        $('#userModal option').val(role).prop("selected", true);
         $('#userModal input[name=user-id]').val(id).prop("disabled", false);
 
         $('#userModal input[name=add-or-edit]').val("edit");
@@ -30,12 +34,15 @@ $( document ).ready(function() {
 
     $('#btnSaveUser').click(function () {
         add_edit=$(this).find("#add-or-edit").val();
+
         if(add_edit == "add") {
+
             $.post(
                 "/users/add",
                 {
                     name: $('#userModal input[name=user-name]').val(),
-                    email: $('#userModal input[name=user-email]').val()
+                    email: $('#userModal input[name=user-email]').val(),
+                    userRole: $('#userModal option:selected').text()
                 },
                 function () {
                     location.reload();
@@ -48,7 +55,8 @@ $( document ).ready(function() {
                 {
                     id: $('#userModal input[name=user-id]').val(),
                     name: $('#userModal input[name=user-name]').val(),
-                    email: $('#userModal input[name=user-email]').val()
+                    email: $('#userModal input[name=user-email]').val(),
+                    userRole: $('#userModal option:selected').text()
                 },
                 function () {
                     location.reload();

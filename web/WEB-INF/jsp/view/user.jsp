@@ -39,6 +39,7 @@
                                                 <div class="hidden user-id">${user.id}</div>
                                                 <div class="hidden user-name">${user.name}</div>
                                                 <div class="hidden user-email">${user.email}</div>
+                                                <div class="hidden user-role">${user.userRole}</div>
                                             </a>
                                             <a class="btn btn-danger btn-xs" onclick="deleteUser('${user.id}')">
                                                 <i class="fa fa-trash" aria-hidden="true"></i>
@@ -82,6 +83,16 @@
                                     <spring:message code="email"/>
                                 </label>
                                 <input type="text" class="form-control" id="user-email" name="user-email" placeholder="<spring:message code="enter.email"/> ">
+                            </div>
+                            <div class="form-group">
+                                <label for="user-role" class="control-label">
+                                    <spring:message code="position"/>
+                                </label>
+                                <select class="form-control" id="user-role">
+                                    <c:forEach items="${possibleUserRoles}" var="possibleUserRole">
+                                        <option>${possibleUserRole}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
                         </form>
                     </div>

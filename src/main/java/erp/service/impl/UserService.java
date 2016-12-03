@@ -45,6 +45,13 @@ public class UserService implements IUserService {
         userRepository.save(user);
     }
 
+    @Override
+    public void changeUserRole(String id, String userRole) {
+        User user = restoreUserFromRepository(id);
+        user.setUserRole(UserRole.valueOf(userRole));
+        userRepository.save(user);
+    }
+
     /*
     CRUD Repository has own delete methods by id and by entity.
     I've choosed deleting by entity because of adding another ids at frontside in the future.
