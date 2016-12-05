@@ -6,8 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Validator;
-import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.RequestToViewNameTranslator;
 import org.springframework.web.servlet.ViewResolver;
@@ -20,7 +18,6 @@ import org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,6 +36,7 @@ public class ServletContextConfiguration extends WebMvcConfigurerAdapter
     ) {
         converters.add(new FormHttpMessageConverter());
     }
+
 
     @Bean
     public ViewResolver viewResolver()

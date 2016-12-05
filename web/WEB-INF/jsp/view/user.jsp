@@ -5,6 +5,8 @@
 
     <jsp:attribute name="headContent">
         <script src="<c:url value="/resources/js/user.js" />"></script>
+        <script src="<c:url value="/resources/js/user_validate.js" />"></script>
+        <jsp:include page="/WEB-INF/jsp/view/user_modal.jsp" />
     </jsp:attribute>
 
     <jsp:body>
@@ -58,64 +60,12 @@
             </button>
         </div>
 
-        <!--MODAL FOR ADD EDIT USER---------------------------------------------------------->
-        <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <h4 class="modal-title" id="userModal-title">
-                        </h4>
-                    </div>
-                    <div class="modal-body">
-                        <form>
-                            <input type="text" name="user-id" class="hidden">
-                            <div class="form-group">
-                                <label for="user-name" class="control-label">
-                                    <spring:message code="name"/>
-                                </label>
-                                <input type="text" class="form-control" id="user-name" name="user-name" placeholder="<spring:message code="enter.name"/> ">
-                            </div>
-                            <div class="form-group">
-                                <label for="user-email" class="control-label">
-                                    <spring:message code="email"/>
-                                </label>
-                                <input type="text" class="form-control" id="user-email" name="user-email" placeholder="<spring:message code="enter.email"/> ">
-                            </div>
-                            <div class="form-group">
-                                <label for="user-role" class="control-label">
-                                    <spring:message code="position"/>
-                                </label>
-                                <select class="form-control" id="user-role">
-                                    <c:forEach items="${possibleUserRoles}" var="possibleUserRole">
-                                        <option>${possibleUserRole}</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">
-                            <spring:message code="close"/>
-                        </button>
-                        <button type="button" class="btn btn-primary" id="btnSaveUser">
-                            <spring:message code="save"/>
-                            <input type="text" id="add-or-edit" name="add-or-edit" class="hidden">
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <script type="text/javascript">
             var strings = new Array();
             strings['title.add']  = "<spring:message code='add.user' />";
             strings['title.edit'] = "<spring:message code='edit.user' />";
             strings['confirm.delete'] = "<spring:message code='confirm.user.delete' />";
         </script>
-
 
     </jsp:body>
 </template:main>

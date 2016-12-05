@@ -7,6 +7,7 @@ $( document ).ready(function() {
         $('#userModal input[name=user-email]').val("");
         $('#userModal option').val("");
         $('#userModal input[name=user-id]').val("").prop("disabled", true);
+        $('#userModal button[id=btnSaveUser]').attr('disabled', 'disabled');;
 
         $('#userModal input[name=add-or-edit]').val("add");
 
@@ -28,6 +29,7 @@ $( document ).ready(function() {
         $('#userModal input[name=user-id]').val(id).prop("disabled", false);
 
         $('#userModal input[name=add-or-edit]').val("edit");
+        $('#userModal button[id=btnSaveUser]').removeAttr('disabled');
 
         $('#userModal').modal('show');
     });
@@ -65,10 +67,10 @@ $( document ).ready(function() {
         }
     });
 
+
     $('#userModal').on('shown.bs.modal', function () {
         $("input[name=user-name]").focus();
     });
-
 });
 
 

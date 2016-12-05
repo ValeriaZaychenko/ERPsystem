@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import javax.jws.soap.SOAPBinding;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +44,7 @@ public class UserService implements IUserService {
         userRepository.save(user);
     }
 
+    @Transactional
     @Override
     public void changeUserRole(String id, String userRole) {
         User user = restoreUserFromRepository(id);
@@ -64,6 +64,7 @@ public class UserService implements IUserService {
         userRepository.delete(user);
     }
 
+    @Transactional
     @Override
     public User findUser(String id) {
         User user = restoreUserFromRepository(id);

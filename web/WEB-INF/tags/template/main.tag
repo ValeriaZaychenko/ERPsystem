@@ -12,7 +12,7 @@
 
         <title><c:out value="${htmlTitle}" /></title>
 
-        <link rel="stylesheet" href="<c:url value="/resources/css/external/bootstrap.css" />" />
+        <link rel="stylesheet" href="<c:url value="/resources/css/external/bootstrap.min.css" />" />
         <link rel="stylesheet" href="<c:url value="/resources/css/external/bootstrapValidator.css" />" />
 
         <link rel="stylesheet" href="<c:url value="/resources/css/style.css" />" />

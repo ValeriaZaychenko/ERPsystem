@@ -1,25 +1,20 @@
 package erp.dto;
 
 
-public class UserDto {
+import java.io.Serializable;
+
+public class UserDto implements Serializable{
 
     private String id;
     private String name;
     private String email;
     private String userRole;
 
-    public UserDto(String id, String name, String email, String userRole) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.userRole = userRole;
-    }
-
     public String getId() {
         return id;
     }
 
-    public void setId() {
+    public void setId(String id) {
         this.id=id;
     }
 
@@ -43,7 +38,7 @@ public class UserDto {
         return userRole;
     }
 
-    private void setUserRole(String userRole) {
+    public void setUserRole(String userRole) {
         this.userRole = userRole;
     }
 }

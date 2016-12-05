@@ -1,14 +1,11 @@
 package erp.controller;
 
 import erp.controller.constants.AttributeNames;
-import erp.domain.User;
 import erp.domain.UserRole;
 import erp.service.IUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
