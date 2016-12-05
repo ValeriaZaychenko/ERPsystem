@@ -5,10 +5,12 @@ import erp.domain.UserRole;
 import erp.dto.UserDto;
 import erp.repository.UserRepository;
 import erp.service.IUserService;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +24,9 @@ public class UserService implements IUserService {
     @Transactional
     @Override
     public String createUser(String name, String email, String userRole) {
-        UserRole role = UserRole.valueOf(userRole);
+        UserRole role = restoreUserRoleFromString(userRole);
+        isEmailUnique(email);
+
         User user = new User(name, email, role);
         userRepository.save(user);
         return user.getId();
@@ -30,26 +34,20 @@ public class UserService implements IUserService {
 
     @Transactional
     @Override
-    public void changeUserName(String id, String name) {
+    public void changeAllFields(String id, String name, String email, String userRole) {
         User user = restoreUserFromRepository(id);
-        user.setName(name);
-        userRepository.save(user);
-    }
 
-    @Transactional
-    @Override
-    public void changeUserEmail(String id, String email) {
-        User user = restoreUserFromRepository(id);
-        user.setEmail(email);
-        userRepository.save(user);
-    }
+        if(!user.getName().equals(name)) {
+            changeUserName(user, name);
+        }
 
-    @Transactional
-    @Override
-    public void changeUserRole(String id, String userRole) {
-        User user = restoreUserFromRepository(id);
-        user.setUserRole(UserRole.valueOf(userRole));
-        userRepository.save(user);
+        if(!user.getEmail().equals(email)) {
+            changeUserEmail(user, email);
+        }
+
+        if(!user.getUserRole().equals(userRole)) {
+            changeUserRole(user, userRole);
+        }
     }
 
     /*
@@ -88,5 +86,42 @@ public class UserService implements IUserService {
             throw new RuntimeException("Database doesn't have this user");
         }
         return user;
+    }
+
+    private void isEmailUnique(String email) {
+        if(!userRepository.findByEmail(email).isEmpty()) {
+            throw new RuntimeException("The database already has the user with this email");
+        }
+    }
+
+    private UserRole restoreUserRoleFromString(String userRole) {
+        UserRole role = null;
+
+        try {
+            role = UserRole.valueOf(userRole);
+        }
+        catch (IllegalArgumentException e) {
+            throw new RuntimeException("Couldn't parse value from string to enum value at user role");
+        }
+        return role;
+    }
+
+    private void changeUserName( User user, String name) {
+        user.setName(name);
+        userRepository.save(user);
+    }
+
+    private void changeUserEmail( User user, String email) {
+        isEmailUnique(email);
+
+        user.setEmail(email);
+        userRepository.save(user);
+    }
+
+    private void changeUserRole( User user, String userRole) {
+        UserRole role = restoreUserRoleFromString(userRole);
+
+        user.setUserRole(role);
+        userRepository.save(user);
     }
 }

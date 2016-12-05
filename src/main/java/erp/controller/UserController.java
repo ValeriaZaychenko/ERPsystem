@@ -34,9 +34,7 @@ public class UserController {
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResponseEntity edit(String id, String name, String email, String userRole) {
-        userService.changeUserName(id, name);
-        userService.changeUserEmail(id, email);
-        userService.changeUserRole(id, userRole);
+        userService.changeAllFields(id, name, email, userRole);
         return new ResponseEntity(HttpStatus.OK);
     }
 

@@ -17,16 +17,10 @@ public interface IUserService {
             @Email String email,
             @NotNull String userRole);
 
-    void changeUserName(
+    void changeAllFields(
             @NotNull String id,
-            @NotBlank String name);
-
-    void changeUserEmail(
-            @NotNull String id,
-            @NotBlank String email);
-
-    void changeUserRole(
-            @NotNull String id,
+            @NotBlank String name,
+            @NotBlank String email,
             @NotNull String userRole);
 
     void removeUser(@NotNull  String id);
