@@ -1,3 +1,4 @@
+<%@ tag import="erp.dto.UserDto" %>
 <%@ tag body-content="scriptless" trimDirectiveWhitespaces="true" %>
 <%@ attribute name="htmlTitle" type="java.lang.String" rtexprvalue="true" required="true" %>
 <%@ attribute name="headContent" fragment="true" required="false" %>
@@ -77,21 +78,25 @@
                                 <i class="fa fa-bell-o" aria-hidden="true"></i>
                             </a>
                         </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle  " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                <spring:message code="account"/>
-                                <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#"><spring:message code="settings"/></a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#"><spring:message code="log.out"/></a></li>
-                            </ul>
-                        </li>
+                        <c:if test="${sessionScope.USER != null}">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle  " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    ${sessionScope.USER.name}
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#"><spring:message code="settings"/></a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a onclick="document.getElementById('logoutForm').submit();"><spring:message code="log.out"/></a></li>
+                                </ul>
+                            </li>
+                        </c:if>
                     </ul>
                 </div>
             </div>
         </nav>
+
+        <form action="/logout/" id="logoutForm" method="post" ></form>
 
         <jsp:doBody />
 

@@ -5,12 +5,10 @@ import erp.domain.UserRole;
 import erp.dto.UserDto;
 import erp.repository.UserRepository;
 import erp.service.IUserService;
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +23,7 @@ public class UserService implements IUserService {
     @Override
     public String createUser(String name, String email, String userRole) {
         UserRole role = restoreUserRoleFromString(userRole);
-        isEmailUnique(email);
+        checkEmailIsUnique(email);
 
         User user = new User(name, email, role);
         userRepository.save(user);
@@ -34,7 +32,7 @@ public class UserService implements IUserService {
 
     @Transactional
     @Override
-    public void changeAllFields(String id, String name, String email, String userRole) {
+    public void editUser(String id, String name, String email, String userRole) {
         User user = restoreUserFromRepository(id);
 
         if(!user.getName().equals(name)) {
@@ -80,6 +78,18 @@ public class UserService implements IUserService {
         return userDtos;
     }
 
+    @Transactional
+    @Override
+    public UserDto authenticate(String userLogin) {
+        User user = userRepository.findFirstByEmail(userLogin);
+
+        if(user == null) {
+            throw new RuntimeException("Db doesn't have user with this login");
+        }
+
+        return DtoBuilder.toDto(user);
+    }
+
     private User restoreUserFromRepository(String id) {
         User user = userRepository.findOne(id);
         if (user == null) {
@@ -88,7 +98,7 @@ public class UserService implements IUserService {
         return user;
     }
 
-    private void isEmailUnique(String email) {
+    private void checkEmailIsUnique(String email) {
         if(!userRepository.findByEmail(email).isEmpty()) {
             throw new RuntimeException("The database already has the user with this email");
         }
@@ -112,7 +122,7 @@ public class UserService implements IUserService {
     }
 
     private void changeUserEmail( User user, String email) {
-        isEmailUnique(email);
+        checkEmailIsUnique(email);
 
         user.setEmail(email);
         userRepository.save(user);

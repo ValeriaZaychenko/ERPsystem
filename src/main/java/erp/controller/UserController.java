@@ -1,6 +1,7 @@
 package erp.controller;
 
 import erp.controller.constants.AttributeNames;
+import erp.controller.constants.ViewNames;
 import erp.domain.UserRole;
 import erp.service.IUserService;
 import org.springframework.http.HttpStatus;
@@ -20,10 +21,10 @@ public class UserController {
     private IUserService userService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    String getUsersList(Map<String, Object> model) {
+    public String getUsersList(Map<String, Object> model) {
         model.put(AttributeNames.UserView.Users, this.userService.viewUsers());
         model.put(AttributeNames.UserView.PossibleUserRoles, UserRole.values());
-        return "user";
+        return ViewNames.USER;
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
@@ -34,7 +35,7 @@ public class UserController {
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResponseEntity edit(String id, String name, String email, String userRole) {
-        userService.changeAllFields(id, name, email, userRole);
+        userService.editUser(id, name, email, userRole);
         return new ResponseEntity(HttpStatus.OK);
     }
 

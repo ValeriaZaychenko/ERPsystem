@@ -1,0 +1,42 @@
+.prettyline {
+    height: 5px;
+    border-top: 0;
+    background: #c4e17f;
+    border-radius: 5px;
+    background-image: -webkit-linear-gradient(left, #D3643B, #D3643B 12.5%, #fecf71 25%, #D6E1C7 37.5%, #D6E1C7 50%, #D6E1C7 50%, #D6E1C7 62.5%, #fecf71 75%,   #D3643B 87.5%, #D3643B);
+    background-image: -moz-linear-gradient(left, #D3643B, #D3643B 12.5%, #fecf71 25%, #D6E1C7 37.5%, #D6E1C7 50%, #D6E1C7 50%, #D6E1C7 62.5%, #fecf71 75%,  #D3643B 87.5%, #D3643B);
+    background-image: -o-linear-gradient(left, #D3643B, #D3643B 12.5%,  #fecf71 25%, #D6E1C7 37.5%, #D6E1C7 50%, #D6E1C7 50%, #D6E1C7 62.5%, #fecf71 75%,    #D3643B 87.5%, #D3643B);
+    background-image: linear-gradient(to right, #D3643B, #D3643B 12.5%,  #fecf71 25%, #D6E1C7 37.5%, #D6E1C7 50%, #D6E1C7 50%, #D6E1C7 62.5%, #fecf71 75%,   #D3643B 87.5%, #D3643B);
+}
+
+@font-face {
+    font-family: 'glyphicons';
+    src: url('https://fonts.googleapis.com/css?family=Montserrat');
+    font-style: normal;
+}
+
+body {
+    font-size: 2em;
+    line-height: 18px;
+    font-family: 'glyphicons', arial, sans-serif;
+    line-height: 23px;
+}
+
+.panel-heading {
+    padding: 5px 15px;
+}
+
+.panel-footer {
+    padding: 1px 15px;
+    color: #A0A0A0;
+}
+
+.profile-img {
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 10px;
+    display: block;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+}
