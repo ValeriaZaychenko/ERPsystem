@@ -5,12 +5,15 @@ import erp.domain.UserRole;
 import erp.dto.UserDto;
 import erp.repository.UserRepository;
 import erp.service.IUserService;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 @Service
@@ -25,7 +28,10 @@ public class UserService implements IUserService {
         UserRole role = restoreUserRoleFromString(userRole);
         checkEmailIsUnique(email);
 
-        User user = new User(name, email, role);
+        Random rand = new Random();
+        Integer password = rand.nextInt(40);
+
+        User user = new User(name, email, role, password.toString());
         userRepository.save(user);
         return user.getId();
     }
@@ -69,6 +75,16 @@ public class UserService implements IUserService {
 
     @Transactional
     @Override
+    public void changePassword(String id, String oldPassword, String newPassword) {
+        User user = restoreUserFromRepository(id);
+
+        if(user.getPassword().equals(oldPassword)) {
+            user.setPassword(newPassword);
+        }
+    }
+
+    @Transactional
+    @Override
     public Iterable<UserDto> viewUsers() {
         Iterable<User> users = userRepository.findAll();
         List<UserDto> userDtos = new ArrayList<>();
@@ -80,11 +96,15 @@ public class UserService implements IUserService {
 
     @Transactional
     @Override
-    public UserDto authenticate(String userLogin) {
+    public UserDto authenticate(String userLogin, String password) {
         User user = userRepository.findFirstByEmail(userLogin);
 
         if(user == null) {
             throw new RuntimeException("Db doesn't have user with this login");
+        }
+
+        if(!user.getPassword().equals(password)) {
+            throw new RuntimeException("Password doesn't match");//TODO
         }
 
         return DtoBuilder.toDto(user);

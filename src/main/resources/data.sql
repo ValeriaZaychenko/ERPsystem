@@ -1,3 +1,3 @@
-INSERT INTO employees ( "id", name, "email", "userrole" ) VALUES ( 'a094f474-b7b2-11e6-80f5-76304dec7eb7', 'Petya Petrov', 'p@mail.ru', 'ADMIN' );
-INSERT INTO employees ( "id", name, "email", "userrole" ) VALUES ( '1756140e-b7b7-11e6-80f5-76304dec7eb7', 'Ivan Ivanov', 'i@mail.ru', 'ADMIN' );
-INSERT INTO employees ( "id", name, "email", "userrole" ) VALUES ( '1ecbbb26-b7b7-11e6-80f5-76304dec7eb7', 'Sem Semyonov', 's@mail.ru', 'ADMIN' );
+INSERT INTO employees ( "id", name, "email", "userrole", password ) VALUES ( 'a094f474-b7b2-11e6-80f5-76304dec7eb7', 'Petya Petrov', 'p@mail.ru', 'ADMIN', '12345' );
+INSERT INTO employees ( "id", name, "email", "userrole", password ) VALUES ( '1756140e-b7b7-11e6-80f5-76304dec7eb7', 'Ivan Ivanov', 'i@mail.ru', 'ADMIN', '67890' );
+INSERT INTO employees ( "id", name, "email", "userrole", password ) VALUES ( '1ecbbb26-b7b7-11e6-80f5-76304dec7eb7', 'Sem Semyonov', 's@mail.ru', 'ADMIN', '12345' );

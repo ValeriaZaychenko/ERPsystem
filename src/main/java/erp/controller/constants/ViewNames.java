@@ -5,6 +5,7 @@ package erp.controller.constants;
  */
 public final class ViewNames {
 
-    public static final String HOME     = "home";
-    public static final String USER     = "user";
+    public static final String HOME     =          "home";
+    public static final String USER     =          "user";
+    public static final String SETTINGS = "user_settings";
 }

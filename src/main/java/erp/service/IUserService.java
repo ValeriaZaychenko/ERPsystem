@@ -28,7 +28,12 @@ public interface IUserService {
 
     User findUser(@NotNull String id);
 
+    void changePassword(
+            @NotNull String id,
+            @NotEmpty String oldPassword,
+            @NotEmpty String newPassword);
+
     Iterable<UserDto> viewUsers();
 
-    UserDto authenticate(@NotEmpty String userLogin);
+    UserDto authenticate(@NotEmpty String userLogin, @NotEmpty String password);
 }

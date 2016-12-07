@@ -4,6 +4,7 @@ import erp.controller.constants.SessionKeys;
 import erp.controller.constants.ViewNames;
 import erp.dto.UserDto;
 import erp.service.IUserService;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -46,19 +47,36 @@ public class IndexController {
     }
 
     @RequestMapping(path = "/login/", method = RequestMethod.POST)
-    public View login(HttpSession session, @RequestParam String userLogin) {
-        UserDto userDto = userService.authenticate(userLogin);
+    public View login(HttpSession session, @RequestParam String userLogin, @RequestParam String password) {
+        UserDto userDto = userService.authenticate(userLogin, password);
 
         if(userDto != null) {
             session.setAttribute(SessionKeys.USER, userDto);
-            return new RedirectView("/users/", true, false);
+            return new RedirectView("/users/");
         }
-        return new RedirectView("/", true, false);
+        return new RedirectView("/");
     }
 
     @RequestMapping(path = "/logout/", method = RequestMethod.POST)
     public View logout(HttpSession session) {
         session.removeAttribute(SessionKeys.USER);
-        return new RedirectView("/", true, false);
+        return new RedirectView("/");
+    }
+
+    @RequestMapping(value = "/changePassword/", method = RequestMethod.GET)
+    public String getSettings() {
+        return ViewNames.SETTINGS;
+    }
+
+    /*
+    Get userId from jsp session attr
+    May be discussed
+     */
+    @RequestMapping(value = "/changePassword/", method = RequestMethod.POST)
+    public View changePassword(
+            @RequestParam String userId, @RequestParam String oldPassword, @RequestParam String newPassword) {
+
+        userService.changePassword(userId, oldPassword, newPassword);
+        return new RedirectView("/");
     }
 }
