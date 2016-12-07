@@ -63,7 +63,7 @@ public class IndexController {
     }
 
     @RequestMapping(value = "/changePassword/", method = RequestMethod.GET)
-    public String getSettings() {
+    public String changePassword() {
         return ViewNames.SETTINGS;
     }
 

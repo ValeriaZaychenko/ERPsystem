@@ -15,7 +15,7 @@
                     <div class="col-sm-6 col-md-4 col-md-offset-4">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <strong><spring:message code="sign.in.to.continue"/></strong>
+                                <strong><spring:message code="change.password"/></strong>
                             </div>
                             <div class="panel-body">
                                 <form role="form" action="/changePassword/" method="POST">
@@ -27,7 +27,7 @@
                                                     <span class="input-group-addon">
                                                         <i class="glyphicon glyphicon-lock"></i>
                                                     </span>
-                                                        <input class="form-control" placeholder="Old password" name="oldPassword" type="password" autofocus>
+                                                        <input class="form-control" placeholder="<spring:message code='old.password'/>" name="oldPassword" type="password" autofocus>
                                                     </div>
                                                 </div>
                                                 <input type="hidden" name="userId" value="${sessionScope.USER.id}">
@@ -36,11 +36,11 @@
                                                     <span class="input-group-addon">
                                                         <i class="glyphicon glyphicon-lock"></i>
                                                     </span>
-                                                        <input class="form-control" placeholder="New password" name="newPassword" type="password" value="">
+                                                        <input class="form-control" placeholder="<spring:message code='new.password'/>" name="newPassword" type="password" value="">
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <input type="submit" class="btn btn-lg btn-primary btn-block" value="Change password">
+                                                    <input type="submit" class="btn btn-lg btn-primary btn-block" value="<spring:message code='change'/>">
                                                 </div>
                                             </div>
                                         </div>
