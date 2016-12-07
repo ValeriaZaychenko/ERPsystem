@@ -1,4 +1,3 @@
-<%@ tag import="erp.dto.UserDto" %>
 <%@ tag body-content="scriptless" trimDirectiveWhitespaces="true" %>
 <%@ attribute name="htmlTitle" type="java.lang.String" rtexprvalue="true" required="true" %>
 <%@ attribute name="headContent" fragment="true" required="false" %>
