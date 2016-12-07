@@ -3,7 +3,6 @@ package erp.domain;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Random;
 
 @Entity(name = "employees")
 public class User {
@@ -15,16 +14,16 @@ public class User {
     private String id;
     private String name;
     private String email;
-    private String password;
+    private byte[] hashedPassword;
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    public User(String name, String email, UserRole userRole, String password) {
+    public User(String name, String email, UserRole userRole, byte[] hashedPassword) {
         this.name = name;
         this.email = email;
         this.userRole = userRole;
-        this.password = password;
+        this.hashedPassword = hashedPassword;
     }
 
     protected User(){}
@@ -57,11 +56,11 @@ public class User {
         this.userRole = userRole;
     }
 
-    public String getPassword() {
-        return password;
+    public byte[] getHashedPassword() {
+        return hashedPassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setHashedPassword(byte[] hashedPassword) {
+        this.hashedPassword = hashedPassword;
     }
 }

@@ -5,12 +5,15 @@ import erp.domain.UserRole;
 import erp.dto.UserDto;
 import erp.repository.UserRepository;
 import erp.service.IUserService;
-import org.hibernate.validator.constraints.NotEmpty;
+import erp.utils.MailServerSimulator;
+import erp.utils.PasswordHashesGenerator;
+import org.springframework.jms.IllegalStateException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -28,10 +31,17 @@ public class UserService implements IUserService {
         UserRole role = restoreUserRoleFromString(userRole);
         checkEmailIsUnique(email);
 
-        Random rand = new Random();
-        Integer password = rand.nextInt(40);
+        String randomPassword = PasswordHashesGenerator.generatePassword();
 
-        User user = new User(name, email, role, password.toString());
+        MailServerSimulator.writeDataToFile(email);
+        MailServerSimulator.writeDataToFile(randomPassword);
+
+        User user = new User(
+                                 name,
+                                 email,
+                                 role,
+                                 PasswordHashesGenerator.getHashFromPassword(randomPassword));
+
         userRepository.save(user);
         return user.getId();
     }
@@ -78,8 +88,8 @@ public class UserService implements IUserService {
     public void changePassword(String id, String oldPassword, String newPassword) {
         User user = restoreUserFromRepository(id);
 
-        if(user.getPassword().equals(oldPassword)) {
-            user.setPassword(newPassword);
+        if(PasswordHashesGenerator.comparePasswords(oldPassword, user.getHashedPassword())) {
+            user.setHashedPassword(PasswordHashesGenerator.getHashFromPassword(newPassword));
         }
     }
 
@@ -103,8 +113,8 @@ public class UserService implements IUserService {
             throw new RuntimeException("Db doesn't have user with this login");
         }
 
-        if(!user.getPassword().equals(password)) {
-            throw new RuntimeException("Password doesn't match");//TODO
+        if(!PasswordHashesGenerator.comparePasswords(password, user.getHashedPassword())) {
+            throw new RuntimeException("Password doesn't match");
         }
 
         return DtoBuilder.toDto(user);
