@@ -14,19 +14,17 @@ import java.util.Hashtable;
 import java.util.Map;
 
 @Configuration
-public class RootContextConfiguration extends BaseRootContextConfiguration
-{
+public class RootContextConfiguration extends BaseRootContextConfiguration {
+
     @Bean
-    public DataSource getDataSource()
-    {
+    public DataSource getDataSource() {
         JndiDataSourceLookup lookup = new JndiDataSourceLookup();
         return lookup.getDataSource("jdbc/erp_postgresql");
     }
 
     @Bean
     @Override
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory ()
-    {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         Map< String, Object> properties = new Hashtable<>();
         properties.put( "javax.persistence.schema-generation.database.action", "drop-and-create" );
         properties.put( "hibernate.show_sql", "true" );

@@ -34,8 +34,8 @@ import java.util.Locale;
         includeFilters = @ComponentScan.Filter(Controller.class)
 )
 @WebListener
-public class ServletContextConfiguration extends WebMvcConfigurerAdapter implements ServletContextListener
-{
+public class ServletContextConfiguration extends WebMvcConfigurerAdapter implements ServletContextListener {
+
     @Override
     public void configureMessageConverters(
             List<HttpMessageConverter<?>> converters
@@ -43,10 +43,8 @@ public class ServletContextConfiguration extends WebMvcConfigurerAdapter impleme
         converters.add(new FormHttpMessageConverter());
     }
 
-
     @Bean
-    public ViewResolver viewResolver()
-    {
+    public ViewResolver viewResolver() {
         InternalResourceViewResolver resolver =
                 new InternalResourceViewResolver();
         resolver.setViewClass(JstlView.class);
@@ -56,19 +54,17 @@ public class ServletContextConfiguration extends WebMvcConfigurerAdapter impleme
     }
 
     @Override
-    public void addInterceptors( InterceptorRegistry registry )
-    {
+    public void addInterceptors(InterceptorRegistry registry) {
         super.addInterceptors( registry );
 
         LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
-        interceptor.setParamName( "language" );
+        interceptor.setParamName("language");
 
-        registry.addInterceptor( interceptor );
+        registry.addInterceptor(interceptor);
     }
 
     @Bean
-    public LocaleResolver localeResolver ()
-    {
+    public LocaleResolver localeResolver() {
         SessionLocaleResolver resolver = new SessionLocaleResolver();
         resolver.setDefaultLocale( Locale.ENGLISH );
         return resolver;

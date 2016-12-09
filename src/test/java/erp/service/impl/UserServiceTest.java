@@ -2,7 +2,9 @@ package erp.service.impl;
 
 import erp.domain.User;
 import erp.dto.UserDto;
+import erp.service.IMailService;
 import erp.service.IUserService;
+import erp.utils.DtoBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,12 +26,16 @@ public class UserServiceTest {
 
     @Inject
     private IUserService userService;
+    @Inject
+    private IMailService mailService;
+    @Inject
+    private PasswordService passwordService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Test
-    public void serviceShouldNotBeNull () {
+    public void serviceShouldNotBeNull() {
         assertNotNull(userService);
     }
 
@@ -215,6 +221,78 @@ public class UserServiceTest {
         assertEquals(dto.getName(), "pet");
         assertEquals(dto.getEmail(), "peter@mail.ru");
         assertEquals(dto.getUserRole(), "ADMIN");
+    }
+
+    @Test(expected = Exception.class)
+    public void changePasswordNullId() {
+        createSimpleUser();
+        userService.changePassword(null, "1234", "111");
+    }
+
+    @Test(expected = Exception.class)
+    public void changeEmptyOldPassword() {
+        String id = createSimpleUser();
+        userService.changePassword(id, "", "111");
+    }
+
+    @Test(expected = Exception.class)
+    public void changeEmptyNewPassword() {
+        String id = createSimpleUser();
+        userService.changePassword(id, "111", "");
+    }
+
+    @Test(expected = Exception.class)
+    public void changePasswordOldNoMatch() {
+        String id = createSimpleUser();
+        userService.changePassword(id, "11111111", "333");
+    }
+
+    @Test
+    public void changePasswordCorrectly() {
+        String id = createSimpleUser();
+        String password = "333";
+        userService.changePassword(id, mailService.getLastContent(), password );
+
+        User user = findUserById(id);
+
+        assertTrue( passwordService.comparePasswords( "333", user.getHashedPassword() ) );
+    }
+
+    @Test(expected = Exception.class)
+    public void authenticateEmptyLogin() {
+        userService.authenticate("", "dddd");
+    }
+
+    @Test(expected = Exception.class)
+    public void authenticateEmptyPassword() {
+        userService.authenticate("ddd", "");
+    }
+
+    @Test(expected = Exception.class)
+    public void authenticateUserIncorrectLogin() {
+        String id = createSimpleUser();
+
+        userService.authenticate("new", "dddd");
+    }
+
+    @Test(expected = Exception.class)
+    public void authenticateUserIncorrectPassword() {
+        String id = createSimpleUser();
+        UserDto dto = userService.findUser(id);
+
+        userService.authenticate(dto.getEmail(), "dddd");
+    }
+
+    @Test
+    public void authenticateUserCorrectly() {
+        String id = createSimpleUser();
+        User user = findUserById(id);
+
+        UserDto dto = userService.authenticate(user.getEmail(), mailService.getLastContent());
+
+        assertEquals(DtoBuilder.toDto(user).getId(), dto.getId());
+        assertEquals(DtoBuilder.toDto(user).getName(), dto.getName());
+        assertEquals(DtoBuilder.toDto(user).getEmail(), dto.getEmail());
     }
 
     private String createSimpleUser() {

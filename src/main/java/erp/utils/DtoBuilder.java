@@ -1,4 +1,4 @@
-package erp.service.impl;
+package erp.utils;
 
 import erp.domain.User;
 import erp.dto.UserDto;

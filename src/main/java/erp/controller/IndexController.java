@@ -25,7 +25,7 @@ public class IndexController {
     private IUserService userService;
 
     @RequestMapping("/")
-    public String index () {
+    public String index() {
         return ViewNames.HOME;
     }
 

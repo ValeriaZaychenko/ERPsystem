@@ -10,8 +10,7 @@ public class JUnitConfiguration extends BaseRootContextConfiguration {
 
     @Bean
     @Override
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory()
-    {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
 
         LocalContainerEntityManagerFactoryBean factory =

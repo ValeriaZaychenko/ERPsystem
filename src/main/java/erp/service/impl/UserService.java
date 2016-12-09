@@ -4,9 +4,10 @@ import erp.domain.User;
 import erp.domain.UserRole;
 import erp.dto.UserDto;
 import erp.repository.UserRepository;
+import erp.service.IMailService;
+import erp.service.IPasswordService;
 import erp.service.IUserService;
-import erp.utils.MailServerSimulator;
-import erp.utils.PasswordHashesGenerator;
+import erp.utils.DtoBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,10 @@ public class UserService implements IUserService {
 
     @Inject
     private UserRepository userRepository;
+    @Inject
+    private IPasswordService passwordService;
+    @Inject
+    private IMailService mailService;
 
     @Transactional
     @Override
@@ -27,16 +32,15 @@ public class UserService implements IUserService {
         UserRole role = restoreUserRoleFromString(userRole);
         checkEmailIsUnique(email);
 
-        String randomPassword = PasswordHashesGenerator.generatePassword();
+        String randomPassword = passwordService.generatePassword();
 
-        MailServerSimulator.writeDataToFile(email);
-        MailServerSimulator.writeDataToFile(randomPassword);
+       mailService.writeDataToFile(randomPassword);
 
         User user = new User(
                                  name,
                                  email,
                                  role,
-                                 PasswordHashesGenerator.getHashFromPassword(randomPassword));
+                                 passwordService.getHashFromPassword(randomPassword));
 
         userRepository.save(user);
         return user.getId();
@@ -107,9 +111,11 @@ public class UserService implements IUserService {
     public void changePassword(String id, String oldPassword, String newPassword) {
         User user = restoreUserFromRepository(id);
 
-        if(PasswordHashesGenerator.comparePasswords(oldPassword, user.getHashedPassword())) {
-            user.setHashedPassword(PasswordHashesGenerator.getHashFromPassword(newPassword));
+        if(passwordService.comparePasswords(oldPassword, user.getHashedPassword())) {
+            user.setHashedPassword(passwordService.getHashFromPassword(newPassword));
         }
+        else
+            throw new RuntimeException("Password doesn't match with old password");
     }
 
     @Transactional
@@ -132,7 +138,7 @@ public class UserService implements IUserService {
             throw new RuntimeException("Db doesn't have user with this login");
         }
 
-        if(!PasswordHashesGenerator.comparePasswords(password, user.getHashedPassword())) {
+        if(!passwordService.comparePasswords(password, user.getHashedPassword())) {
             throw new RuntimeException("Password doesn't match");
         }
 
@@ -148,12 +154,12 @@ public class UserService implements IUserService {
     }
 
     private void checkEmailIsUnique(String email) {
-        if(!IsEmailUnique(email)) {
+        if(!isEmailUnique(email)) {
             throw new RuntimeException("The database already has the user with this email");
         }
     }
 
-    private boolean IsEmailUnique(String email) {
+    private boolean isEmailUnique(String email) {
         return (userRepository.findByEmail(email).isEmpty());
     }
 

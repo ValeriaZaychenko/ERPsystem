@@ -11,6 +11,8 @@ import org.springframework.core.Ordered;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -29,19 +31,22 @@ import java.nio.charset.StandardCharsets;
         order = Ordered.LOWEST_PRECEDENCE
 )
 @EnableJpaRepositories(basePackages="erp.repository")
-public abstract class BaseRootContextConfiguration
-{
+public abstract class BaseRootContextConfiguration {
+
     @Bean
-    public LocalValidatorFactoryBean localValidatorFactoryBean()
-    {
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public LocalValidatorFactoryBean localValidatorFactoryBean() {
         LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
         validator.setProviderClass( HibernateValidator.class );
         return validator;
     }
 
     @Bean
-    public MethodValidationPostProcessor methodValidationPostProcessor()
-    {
+    public MethodValidationPostProcessor methodValidationPostProcessor() {
         MethodValidationPostProcessor processor =
                 new MethodValidationPostProcessor();
         processor.setValidator(this.localValidatorFactoryBean());
@@ -49,8 +54,7 @@ public abstract class BaseRootContextConfiguration
     }
 
     @Bean
-    public MessageSource messageSource()
-    {
+    public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource =
                 new ReloadableResourceBundleMessageSource();
         messageSource.setCacheSeconds(-1);
@@ -62,16 +66,12 @@ public abstract class BaseRootContextConfiguration
         return messageSource;
     }
 
+    @Bean
+    public abstract LocalContainerEntityManagerFactoryBean entityManagerFactory();
 
     @Bean
-    public abstract LocalContainerEntityManagerFactoryBean entityManagerFactory ();
-
-
-    @Bean
-    public PlatformTransactionManager transactionManager ()
-    {
+    public PlatformTransactionManager transactionManager() {
         return new JpaTransactionManager(
-                this.entityManagerFactory().getObject()
-        );
+                this.entityManagerFactory().getObject());
     }
 }
