@@ -7,16 +7,12 @@ import erp.repository.UserRepository;
 import erp.service.IUserService;
 import erp.utils.MailServerSimulator;
 import erp.utils.PasswordHashesGenerator;
-import org.springframework.jms.IllegalStateException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 
 @Service
@@ -51,17 +47,40 @@ public class UserService implements IUserService {
     public void editUser(String id, String name, String email, String userRole) {
         User user = restoreUserFromRepository(id);
 
-        if(!user.getName().equals(name)) {
-            changeUserName(user, name);
-        }
+        boolean nameModified = false;
+        boolean emailModified = false;
+        boolean roleModified = false;
 
-        if(!user.getEmail().equals(email)) {
-            changeUserEmail(user, email);
-        }
+        UserRole role = null;
 
-        if(!user.getUserRole().equals(userRole)) {
-            changeUserRole(user, userRole);
-        }
+        if(!user.getName().equals(name))
+            nameModified = true;
+
+        if(!user.getEmail().equals(email))
+            emailModified = true;
+
+        if(!user.getUserRole().toString().equals(userRole))
+            roleModified = true;
+
+        if (!(nameModified || roleModified || emailModified))
+            return; //No modification detected
+
+
+        if(emailModified)
+            checkEmailIsUnique(email);
+
+        if(roleModified)
+            role = restoreUserRoleFromString(userRole);
+
+
+        if(nameModified)
+            user.setName(name);
+
+        if(emailModified)
+            user.setEmail(email);
+
+        if(roleModified)
+            user.setUserRole(role);
     }
 
     /*
@@ -78,9 +97,9 @@ public class UserService implements IUserService {
 
     @Transactional
     @Override
-    public User findUser(String id) {
+    public UserDto findUser(String id) {
         User user = restoreUserFromRepository(id);
-        return user;
+        return DtoBuilder.toDto(user);
     }
 
     @Transactional
@@ -95,8 +114,8 @@ public class UserService implements IUserService {
 
     @Transactional
     @Override
-    public Iterable<UserDto> viewUsers() {
-        Iterable<User> users = userRepository.findAll();
+    public List<UserDto> viewUsers() {
+        List<User> users = userRepository.findAll();
         List<UserDto> userDtos = new ArrayList<>();
         for(User user : users) {
             userDtos.add(DtoBuilder.toDto(user));
@@ -129,9 +148,13 @@ public class UserService implements IUserService {
     }
 
     private void checkEmailIsUnique(String email) {
-        if(!userRepository.findByEmail(email).isEmpty()) {
+        if(!IsEmailUnique(email)) {
             throw new RuntimeException("The database already has the user with this email");
         }
+    }
+
+    private boolean IsEmailUnique(String email) {
+        return (userRepository.findByEmail(email).isEmpty());
     }
 
     private UserRole restoreUserRoleFromString(String userRole) {
@@ -144,24 +167,5 @@ public class UserService implements IUserService {
             throw new RuntimeException("Couldn't parse value from string to enum value at user role");
         }
         return role;
-    }
-
-    private void changeUserName( User user, String name) {
-        user.setName(name);
-        userRepository.save(user);
-    }
-
-    private void changeUserEmail( User user, String email) {
-        checkEmailIsUnique(email);
-
-        user.setEmail(email);
-        userRepository.save(user);
-    }
-
-    private void changeUserRole( User user, String userRole) {
-        UserRole role = restoreUserRoleFromString(userRole);
-
-        user.setUserRole(role);
-        userRepository.save(user);
     }
 }
