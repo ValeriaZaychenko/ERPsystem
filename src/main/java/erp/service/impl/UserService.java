@@ -34,7 +34,7 @@ public class UserService implements IUserService {
 
         String randomPassword = passwordService.generatePassword();
 
-       mailService.writeDataToFile(randomPassword);
+        mailService.writeDataToFile(randomPassword);
 
         User user = new User(
                                  name,
