@@ -26,7 +26,7 @@ public class IndexController {
 
     @RequestMapping("/")
     public String index() {
-        return ViewNames.HOME;
+        return ViewNames.HOME.home;
     }
 
     @RequestMapping(path = "/setlocale/", method = RequestMethod.POST)
@@ -34,9 +34,6 @@ public class IndexController {
         Locale locale = null;
         if (language.equalsIgnoreCase("ru"))
             locale = new Locale("ru", "RU");
-
-        else if (language.equalsIgnoreCase("uk"))
-            locale = new Locale("uk", "UA");
 
         else
             locale = new Locale("en");
@@ -47,24 +44,27 @@ public class IndexController {
 
     @RequestMapping(path = "/login/", method = RequestMethod.POST)
     public View login(HttpSession session, @RequestParam String userLogin, @RequestParam String password) {
-        UserDto userDto = userService.authenticate(userLogin, password);
+        UserDto userDto;
 
-        if(userDto != null) {
-            session.setAttribute(SessionKeys.USER, userDto);
+        try {
+            userDto = userService.authenticate(userLogin, password);
+            session.setAttribute(SessionKeys.USER.user, userDto);
             return new RedirectView("/users/");
         }
-        return new RedirectView("/");
+        catch (RuntimeException e) {
+            return new RedirectView("/");
+        }
     }
 
     @RequestMapping(path = "/logout/", method = RequestMethod.POST)
     public View logout(HttpSession session) {
-        session.removeAttribute(SessionKeys.USER);
+        session.removeAttribute(SessionKeys.USER.user);
         return new RedirectView("/");
     }
 
     @RequestMapping(value = "/changePassword/", method = RequestMethod.GET)
     public String changePassword() {
-        return ViewNames.SETTINGS;
+        return ViewNames.SETTINGS.settings;
     }
 
     /*

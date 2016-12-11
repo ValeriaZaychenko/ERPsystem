@@ -1,11 +1,16 @@
 package erp.controller.constants;
 
-/**
- * Created by lera on 12/6/2016.
- */
-public final class ViewNames {
 
-    public static final String HOME     =          "home";
-    public static final String USER     =          "user";
-    public static final String SETTINGS = "user_settings";
+public interface ViewNames {
+
+    interface HOME {
+        String home =  "home";
+    }
+
+    interface USER {
+        String user = "user";
+    }
+    interface SETTINGS {
+        String settings = "user_settings";
+    }
 }

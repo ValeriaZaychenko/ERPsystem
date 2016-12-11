@@ -22,9 +22,9 @@ public class UserController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String getUsersList(Map<String, Object> model) {
-        model.put(AttributeNames.UserView.Users, this.userService.viewUsers());
-        model.put(AttributeNames.UserView.PossibleUserRoles, UserRole.values());
-        return ViewNames.USER;
+        model.put(AttributeNames.UserViewUsers.users, this.userService.viewUsers());
+        model.put(AttributeNames.UserViewPossibleUserRoles.possibleUserRoles, UserRole.values());
+        return ViewNames.USER.user;
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)

@@ -17,14 +17,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith( MockitoJUnitRunner.class )
 public class UserControllerTest {
@@ -37,11 +34,10 @@ public class UserControllerTest {
     private MockMvc mockMvc;
     private String userId;
     private UserDto userDto;
-    List<UserDto> dtos;
+    private List<UserDto> dtos;
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         dtos = new ArrayList<>();
 
         userId = UUID.randomUUID().toString();
@@ -63,12 +59,14 @@ public class UserControllerTest {
                 get("/users")
         )
                 .andExpect(status().isOk())
-                .andExpect(view().name(ViewNames.USER))
-                .andExpect(model().attribute(AttributeNames.UserView.Users, dtos))
-                .andExpect(model().attribute(AttributeNames.UserView.PossibleUserRoles, UserRole.values()));
+                .andExpect(view().name(ViewNames.USER.user))
+                .andExpect(model().attribute(AttributeNames.UserViewUsers.users, dtos))
+                .andExpect(model().attribute(AttributeNames.UserViewPossibleUserRoles.possibleUserRoles, UserRole.values()))
+        ;
 
-        verify(mockUserService, times( 1 ))
-                .viewUsers();
+        verify(mockUserService, times(1))
+                .viewUsers()
+        ;
     }
 
     @Test
@@ -79,13 +77,15 @@ public class UserControllerTest {
                         .param( "email", userDto.getEmail())
                         .param( "userRole", userDto.getUserRole())
         )
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+        ;
 
         verify(mockUserService, only())
                 .createUser(
                         userDto.getName(),
                         userDto.getEmail(),
-                        userDto.getUserRole());
+                        userDto.getUserRole()
+                );
     }
 
     @Test
@@ -97,14 +97,16 @@ public class UserControllerTest {
                         .param( "email", userDto.getEmail())
                         .param( "userRole", userDto.getUserRole())
         )
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+        ;
 
         verify(mockUserService, only())
                 .editUser(
                         userId,
                         userDto.getName(),
                         userDto.getEmail(),
-                        userDto.getUserRole());
+                        userDto.getUserRole()
+                );
     }
 
     @Test
@@ -113,7 +115,9 @@ public class UserControllerTest {
                 post("/users/delete")
                         .param( "id", userId)
         )
-                .andExpect(status().isOk());
+                .andExpect(
+                        status().isOk()
+                );
 
         verify(mockUserService, only())
                 .removeUser(userId);
