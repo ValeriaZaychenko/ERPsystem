@@ -10,4 +10,8 @@ public interface AttributeNames {
     interface UserViewPossibleUserRoles {
         String possibleUserRoles = "possibleUserRoles";
     }
+
+    interface UserViewReports {
+        String userReports = "userReports";
+    }
 }

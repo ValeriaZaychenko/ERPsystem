@@ -10,7 +10,12 @@ public interface ViewNames {
     interface USER {
         String user = "user";
     }
+
     interface SETTINGS {
         String settings = "user_settings";
+    }
+
+    interface REPORTS {
+        String reports = "user_reports";
     }
 }
