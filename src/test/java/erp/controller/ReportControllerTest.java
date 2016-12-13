@@ -19,13 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith( MockitoJUnitRunner.class )
 public class ReportControllerTest {
@@ -79,5 +76,61 @@ public class ReportControllerTest {
         verify(mockReportService, times(1))
                 .viewUserReports(userDto.getId())
         ;
+    }
+
+    @Test
+    public void createReport() throws Exception {
+        this.mockMvc.perform(
+                post("/reports/add")
+                        .sessionAttr( SessionKeys.USER.user, userDto )
+                        .param( "date", reportDto.getDate())
+                        .param( "time", Integer.toString(reportDto.getWorkingTime()))
+                        .param( "description", reportDto.getDescription())
+
+        )
+                .andExpect(redirectedUrl("/reports"))
+        ;
+
+        verify(mockReportService, only())
+                .createReport(
+                        reportDto.getDate(),
+                        reportDto.getWorkingTime(),
+                        reportDto.getDescription(),
+                        reportDto.getUserId()
+                );
+    }
+
+    @Test
+    public void editReport() throws Exception {
+        this.mockMvc.perform(
+                post("/reports/edit")
+                        .param( "reportId", reportId)
+                        .param( "date", reportDto.getDate())
+                        .param( "time", Integer.toString(reportDto.getWorkingTime()))
+                        .param( "description", reportDto.getDescription())
+        )
+                .andExpect(redirectedUrl("/reports"))
+        ;
+
+        verify(mockReportService, only())
+                .editReport(
+                        reportId,
+                        reportDto.getDate(),
+                        reportDto.getWorkingTime(),
+                        reportDto.getDescription()
+                );
+    }
+
+    @Test
+    public void deleteReport() throws Exception {
+        this.mockMvc.perform(
+                post("/reports/delete")
+                        .param( "reportId", reportId)
+        )
+                .andExpect(redirectedUrl("/reports")
+                );
+
+        verify(mockReportService, only())
+                .removeReport(reportId);
     }
 }

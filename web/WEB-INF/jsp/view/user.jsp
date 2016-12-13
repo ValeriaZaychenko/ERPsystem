@@ -35,8 +35,8 @@
                                         <td>${user.email}</td>
                                         <td>${user.userRole}</td>
                                         <td class="text-center">
-                                            <a class='editUserBtnClass btn btn-info btn-xs'>
-                                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                        <a class='editUserBtnClass btn btn-info btn-xs'>
+                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
                                                 <spring:message code="edit" />
                                                 <div class="hidden user-id">${user.id}</div>
                                                 <div class="hidden user-name">${user.name}</div>

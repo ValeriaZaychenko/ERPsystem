@@ -27,6 +27,8 @@ public class Report {
         this.user = user;
     }
 
+    public Report(){}
+
     public String getId() {
         return id;
     }

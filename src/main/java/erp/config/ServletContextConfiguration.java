@@ -85,7 +85,7 @@ public class ServletContextConfiguration extends WebMvcConfigurerAdapter impleme
 
         registration.setAsyncSupported(true);
         registration.addMappingForUrlPatterns(
-                null, false, "/users/", "/users", "/changePassword/");
+                null, false, "/users/*", "/users", "/changePassword/*", "/changePassword", "/reports/*", "/reports");
     }
 
     @Override
