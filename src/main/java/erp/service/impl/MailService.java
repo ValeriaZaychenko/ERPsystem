@@ -21,12 +21,12 @@ public class MailService implements IMailService {
         lastContent = content;
 
         try {
-            BufferedWriter bw = new BufferedWriter( new FileWriter(FILENAME, true));
-            bw.write( content );
-            bw.write( '\n' );
+            BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME, true));
+            bw.write(content);
+            bw.write('\n');
             bw.flush();
             bw.close();
-        } catch (IOException e) {
+        } catch(IOException e) {
             throw new RuntimeException(e);
         }
     }

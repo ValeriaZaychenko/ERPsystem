@@ -77,10 +77,10 @@
                                 <i class="fa fa-bell-o" aria-hidden="true"></i>
                             </a>
                         </li>
-                        <c:if test="${sessionScope.USER != null}">
+                        <c:if test="${pageContext.request.userPrincipal != null}">
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle  " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                    ${sessionScope.USER.name}
+                                    ${pageContext.request.userPrincipal.name}
                                     <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
@@ -95,7 +95,7 @@
             </div>
         </nav>
 
-        <form action="/logout/" id="logoutForm" method="post" ></form>
+        <form action="/logout" id="logoutForm" method="post" ></form>
         <form action="/changePassword/" id="changePasswordForm" method="get" ></form>
 
         <jsp:doBody />

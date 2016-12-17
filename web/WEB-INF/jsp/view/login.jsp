@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<spring:message code="title.home" var="title" />
+<spring:message code="title.login" var="title" />
 <template:main htmlTitle="${title}" >
 
     <jsp:body>
@@ -21,7 +21,7 @@
                                 <strong><spring:message code="sign.in.to.continue"/></strong>
                             </div>
                             <div class="panel-body">
-                                <form role="form" action="/login/" method="POST">
+                                <form role="form" method="POST">
                                     <fieldset>
                                         <div class="row">
                                             <div class="center-block">

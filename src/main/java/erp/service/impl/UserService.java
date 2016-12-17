@@ -4,10 +4,14 @@ import erp.domain.User;
 import erp.domain.UserRole;
 import erp.dto.UserDto;
 import erp.repository.UserRepository;
+import erp.service.IAuthenticationService;
 import erp.service.IMailService;
 import erp.service.IPasswordService;
 import erp.service.IUserService;
 import erp.utils.DtoBuilder;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +21,7 @@ import java.util.List;
 
 
 @Service
-public class UserService implements IUserService {
+public class UserService implements IUserService, IAuthenticationService {
 
     @Inject
     private UserRepository userRepository;
@@ -101,7 +105,7 @@ public class UserService implements IUserService {
 
     @Transactional
     @Override
-    public UserDto findUser(String id) {
+    public UserDto findUserById(String id) {
         User user = restoreUserFromRepository(id);
         return DtoBuilder.toDto(user);
     }
@@ -131,18 +135,48 @@ public class UserService implements IUserService {
 
     @Transactional
     @Override
-    public UserDto authenticate(String userLogin, String password) {
-        User user = userRepository.findFirstByEmail(userLogin);
+    public UserDto authenticate(Authentication authentication) {
+        UsernamePasswordAuthenticationToken credentials = (UsernamePasswordAuthenticationToken) authentication;
+        String email = credentials.getPrincipal().toString();
+        String password = credentials.getCredentials().toString();
+        credentials.eraseCredentials();
 
-        if(user == null) {
-            throw new RuntimeException("Db doesn't have user with this login");
+        User user = userRepository.findFirstByEmail(email);
+
+        if (user == null) {
+            return null;
         }
 
-        if(!passwordService.comparePasswords(password, user.getHashedPassword())) {
-            throw new RuntimeException("Password doesn't match");
+        if (!passwordService.comparePasswords(password, user.getHashedPassword())) {
+            return null;
         }
 
-        return DtoBuilder.toDto(user);
+        UserDto dto = DtoBuilder.toDto(user);
+        dto.setAuthenticated(true);
+
+        switch (user.getUserRole())
+        {
+            case USER:
+            case LEADER:
+                dto.addAuthority("AUTH_USER");
+                break;
+
+            case ADMIN:
+                dto.addAuthority("AUTH_USER");
+                dto.addAuthority("AUTH_ADMIN");
+                break;
+
+            default:
+                throw new RuntimeException();
+        }
+
+        return dto;
+    }
+
+    @Override
+    public boolean supports(Class< ? > aClass)
+    {
+        return aClass == UsernamePasswordAuthenticationToken.class;
     }
 
     private User restoreUserFromRepository(String id) {
@@ -160,7 +194,7 @@ public class UserService implements IUserService {
     }
 
     private boolean isEmailUnique(String email) {
-        return (userRepository.findByEmail(email).isEmpty());
+        return (userRepository.findByEmail(email) == null);
     }
 
     private UserRole restoreUserRoleFromString(String userRole) {

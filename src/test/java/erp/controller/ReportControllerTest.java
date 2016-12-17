@@ -1,7 +1,6 @@
 package erp.controller;
 
 import erp.controller.constants.AttributeNames;
-import erp.controller.constants.SessionKeys;
 import erp.controller.constants.ViewNames;
 import erp.dto.ReportDto;
 import erp.dto.UserDto;
@@ -24,7 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith( MockitoJUnitRunner.class )
+@RunWith(MockitoJUnitRunner.class)
 public class ReportControllerTest {
 
     @Mock
@@ -57,7 +56,7 @@ public class ReportControllerTest {
         reportDto.setDescription("Issue 35");
         reportDto.setUserId(userDto.getId());
 
-        this.mockMvc = MockMvcBuilders.standaloneSetup( theController ).build();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(theController).build();
     }
 
     @Test
@@ -66,8 +65,8 @@ public class ReportControllerTest {
 
         this.mockMvc.perform(
                 get("/reports")
-                        .sessionAttr( SessionKeys.USER.user, userDto )
-        )
+                    .principal(userDto)
+       )
                 .andExpect(status().isOk())
                 .andExpect(view().name(ViewNames.REPORTS.reports))
                 .andExpect(model().attribute(AttributeNames.UserViewReports.userReports, dtos))
@@ -82,12 +81,12 @@ public class ReportControllerTest {
     public void createReport() throws Exception {
         this.mockMvc.perform(
                 post("/reports/add")
-                        .sessionAttr( SessionKeys.USER.user, userDto )
-                        .param( "date", reportDto.getDate())
-                        .param( "time", Integer.toString(reportDto.getWorkingTime()))
-                        .param( "description", reportDto.getDescription())
+                        .principal(userDto)
+                        .param("date", reportDto.getDate())
+                        .param("time", Integer.toString(reportDto.getWorkingTime()))
+                        .param("description", reportDto.getDescription())
 
-        )
+       )
                 .andExpect(redirectedUrl("/reports"))
         ;
 
@@ -97,18 +96,18 @@ public class ReportControllerTest {
                         reportDto.getWorkingTime(),
                         reportDto.getDescription(),
                         reportDto.getUserId()
-                );
+               );
     }
 
     @Test
     public void editReport() throws Exception {
         this.mockMvc.perform(
                 post("/reports/edit")
-                        .param( "reportId", reportId)
-                        .param( "date", reportDto.getDate())
-                        .param( "time", Integer.toString(reportDto.getWorkingTime()))
-                        .param( "description", reportDto.getDescription())
-        )
+                        .param("reportId", reportId)
+                        .param("date", reportDto.getDate())
+                        .param("time", Integer.toString(reportDto.getWorkingTime()))
+                        .param("description", reportDto.getDescription())
+       )
                 .andExpect(redirectedUrl("/reports"))
         ;
 
@@ -118,17 +117,17 @@ public class ReportControllerTest {
                         reportDto.getDate(),
                         reportDto.getWorkingTime(),
                         reportDto.getDescription()
-                );
+               );
     }
 
     @Test
     public void deleteReport() throws Exception {
         this.mockMvc.perform(
                 post("/reports/delete")
-                        .param( "reportId", reportId)
-        )
+                        .param("reportId", reportId)
+       )
                 .andExpect(redirectedUrl("/reports")
-                );
+               );
 
         verify(mockReportService, only())
                 .removeReport(reportId);

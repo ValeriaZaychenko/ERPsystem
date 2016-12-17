@@ -7,8 +7,4 @@ public interface SessionKeys {
     interface LOCALE {
         String locale = SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME;
     }
-
-    interface USER {
-        String user = "USER";
-    }
 }

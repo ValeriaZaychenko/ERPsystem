@@ -5,6 +5,8 @@ import erp.domain.User;
 import erp.dto.ReportDto;
 import erp.dto.UserDto;
 
+import java.nio.charset.StandardCharsets;
+
 public final class DtoBuilder {
 
     public static UserDto toDto(User user) {
@@ -13,6 +15,7 @@ public final class DtoBuilder {
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
         dto.setUserRole(user.getUserRole().toString());
+        dto.setHashedPassword(new String(user.getHashedPassword(), StandardCharsets.UTF_8));
         return dto;
     }
 

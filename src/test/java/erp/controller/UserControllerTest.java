@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith( MockitoJUnitRunner.class )
+@RunWith(MockitoJUnitRunner.class)
 public class UserControllerTest {
 
     @Mock
@@ -48,16 +48,16 @@ public class UserControllerTest {
         userDto.setEmail("Olegov");
         userDto.setUserRole("USER");
 
-        this.mockMvc = MockMvcBuilders.standaloneSetup( theController ).build();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(theController).build();
     }
 
     @Test
     public void noUsersInListYet() throws Exception {
-        when( mockUserService.viewUsers()).thenReturn(dtos);
+        when(mockUserService.viewUsers()).thenReturn(dtos);
 
         this.mockMvc.perform(
                 get("/users")
-        )
+       )
                 .andExpect(status().isOk())
                 .andExpect(view().name(ViewNames.USER.user))
                 .andExpect(model().attribute(AttributeNames.UserViewUsers.users, dtos))
@@ -73,10 +73,10 @@ public class UserControllerTest {
     public void createUser() throws Exception {
         this.mockMvc.perform(
                 post("/users/add")
-                        .param( "name", userDto.getName())
-                        .param( "email", userDto.getEmail())
-                        .param( "userRole", userDto.getUserRole())
-        )
+                        .param("name", userDto.getName())
+                        .param("email", userDto.getEmail())
+                        .param("userRole", userDto.getUserRole())
+       )
                 .andExpect(status().isOk())
         ;
 
@@ -85,18 +85,18 @@ public class UserControllerTest {
                         userDto.getName(),
                         userDto.getEmail(),
                         userDto.getUserRole()
-                );
+               );
     }
 
     @Test
     public void editUser() throws Exception {
         this.mockMvc.perform(
                 post("/users/edit")
-                        .param( "id", userId)
-                        .param( "name", userDto.getName())
-                        .param( "email", userDto.getEmail())
-                        .param( "userRole", userDto.getUserRole())
-        )
+                        .param("id", userId)
+                        .param("name", userDto.getName())
+                        .param("email", userDto.getEmail())
+                        .param("userRole", userDto.getUserRole())
+       )
                 .andExpect(status().isOk())
         ;
 
@@ -106,18 +106,18 @@ public class UserControllerTest {
                         userDto.getName(),
                         userDto.getEmail(),
                         userDto.getUserRole()
-                );
+               );
     }
 
     @Test
     public void deleteUser() throws Exception {
         this.mockMvc.perform(
                 post("/users/delete")
-                        .param( "id", userId)
-        )
+                        .param("id", userId)
+       )
                 .andExpect(
                         status().isOk()
-                );
+               );
 
         verify(mockUserService, only())
                 .removeUser(userId);

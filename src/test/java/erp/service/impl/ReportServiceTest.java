@@ -5,33 +5,26 @@ import erp.service.IReportService;
 import erp.service.IUserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-@RunWith( SpringJUnit4ClassRunner.class )
-@ContextConfiguration( classes = erp.config.JUnitConfiguration.class )
-@Transactional( )
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = erp.config.JUnitConfiguration.class)
+@Transactional
+@WithMockUser(username = "ram", authorities={"AUTH_ADMIN"})
 public class ReportServiceTest {
 
     @Inject
     private IReportService reportService;
-
     @Inject
     private IUserService userService;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Test
     public void serviceShouldNotBeNull() {
@@ -78,7 +71,7 @@ public class ReportServiceTest {
 
     @Test(expected = Exception.class)
     public void createReportNullUserId() {
-        String userId = userService.createUser("Petya", "ppp@mail.ru", "ADMIN");
+        userService.createUser("Petya", "ppp@mail.ru", "ADMIN");
 
         reportService.createReport("2015-11-11", 8, "description", null);
     }
@@ -181,7 +174,7 @@ public class ReportServiceTest {
     }
 
     @Test(expected = Exception.class)
-    public void editReportBlankDEscription() {
+    public void editReportBlankDescription() {
         String userId = userService.createUser("Petya", "ppp@mail.ru", "ADMIN");
         String reportId = reportService.createReport("2015-11-11", 8, "description", userId);
 
@@ -227,7 +220,7 @@ public class ReportServiceTest {
     }
 
     @Test
-    public void editReportDEscription() {
+    public void editReportDescription() {
         String userId = userService.createUser("Petya", "ppp@mail.ru", "ADMIN");
         String reportId = reportService.createReport("2015-11-11", 8, "description", userId);
 

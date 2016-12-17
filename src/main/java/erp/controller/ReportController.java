@@ -1,14 +1,10 @@
 package erp.controller;
 
 import erp.controller.constants.AttributeNames;
-import erp.controller.constants.SessionKeys;
 import erp.controller.constants.ViewNames;
-import erp.domain.User;
 import erp.dto.UserDto;
 import erp.service.IReportService;
-import erp.service.IUserService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @Controller
@@ -27,19 +22,20 @@ public class ReportController {
     private IReportService reportService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String getUserReportsList(HttpSession session, Map<String, Object> model) {
-        UserDto userDto = (UserDto) session.getAttribute(SessionKeys.USER.user);
-
-        model.put(AttributeNames.UserViewReports.userReports, this.reportService.viewUserReports(userDto.getId()));
+    public String getUserReportsList(@AuthenticationPrincipal UserDto currentUser,
+                                     Map<String, Object> model) {
+        model.put(
+                AttributeNames.UserViewReports.userReports,
+                this.reportService.viewUserReports(currentUser.getId())
+        );
 
         return ViewNames.REPORTS.reports;
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public RedirectView add(HttpSession session, String date, int time, String description) {
-        UserDto userDto = (UserDto) session.getAttribute(SessionKeys.USER.user);
-
-        reportService.createReport(date, time, description, userDto.getId());
+    public RedirectView add(@AuthenticationPrincipal UserDto currentUser,
+                            String date, int time, String description) {
+        reportService.createReport(date, time, description, currentUser.getId());
         return new RedirectView("/reports");
     }
 

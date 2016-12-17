@@ -4,6 +4,7 @@ package erp.service;
 import erp.dto.ReportDto;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Max;
@@ -29,6 +30,7 @@ public interface IReportService {
 
     ReportDto findReport(@NotNull String id);
 
+    @PreAuthorize("hasAuthority('AUTH_ADMIN')")
     List<ReportDto> viewAllReports();
 
     List<ReportDto> viewUserReports(@NotNull String userId);

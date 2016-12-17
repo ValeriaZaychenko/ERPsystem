@@ -3,6 +3,7 @@ package erp.controller;
 import erp.controller.constants.SessionKeys;
 import erp.controller.constants.ViewNames;
 import erp.dto.UserDto;
+import erp.service.IAuthenticationService;
 import erp.service.IUserService;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,31 +12,40 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
 
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith( MockitoJUnitRunner.class )
+@RunWith(MockitoJUnitRunner.class)
 public class IndexControllerTest {
 
     @Mock
     private IUserService mockUserService;
+
+    @Mock
+    private IAuthenticationService mockAuthService;
+
     @InjectMocks
     private IndexController theController;
 
     private MockMvc mockMvc;
     private String userId;
     private UserDto userDto;
+
+    private UsernamePasswordAuthenticationToken authToken;
 
     @Before
     public void setup() {
@@ -47,16 +57,43 @@ public class IndexControllerTest {
         userDto.setEmail("Olegov");
         userDto.setUserRole("USER");
 
-        this.mockMvc = MockMvcBuilders.standaloneSetup( theController ).build();
+        authToken = new UsernamePasswordAuthenticationToken("myemail@gmail.com", "mypassword");
+
+        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+        resolver.setViewClass(JstlView.class);
+        resolver.setSuffix(".jsp");
+
+        this.mockMvc = MockMvcBuilders.standaloneSetup(theController).setViewResolvers(resolver).build();
     }
 
     @Test
     public void returnHomePage() throws Exception {
         this.mockMvc.perform(
                 get("/")
+       )
+                .andExpect(redirectedUrl("/home"))
+        ;
+    }
+
+    @Test
+    public void returnHomePageForUser() throws Exception {
+        this.mockMvc.perform(
+                get("/home")
+                .principal(userDto)
         )
-                .andExpect(status().isOk())
-                .andExpect(view().name(ViewNames.HOME.home))
+                .andExpect(redirectedUrl("/reports"))
+        ;
+    }
+
+    @Test
+    public void returnHomePageForAdmin() throws Exception {
+        userDto.setUserRole("ADMIN");
+
+        this.mockMvc.perform(
+                get("/home")
+                        .principal(userDto)
+        )
+                .andExpect(redirectedUrl("/users"))
         ;
     }
 
@@ -65,14 +102,14 @@ public class IndexControllerTest {
         this.mockMvc.perform(
                 post("/setlocale/")
                         .param("language", "ru")
-        )
+       )
                 .andExpect(status().isOk())
                 .andExpect(request().sessionAttribute(
                         SessionKeys.LOCALE.locale,
                         is( allOf(
                                 hasProperty("language", is("ru")),
                                 hasProperty("country", is("RU"))
-                        ))));
+                       ))));
     }
 
     @Test
@@ -80,71 +117,32 @@ public class IndexControllerTest {
         this.mockMvc.perform(
                 post("/setlocale/")
                         .param("language", "illegallanguage")
-        )
+       )
                 .andExpect(status().isOk())
                 .andExpect(request().sessionAttribute(
                         SessionKeys.LOCALE.locale,
                         is( allOf(
                                 hasProperty("language", is("en"))
-                        ))));
+                       ))));
     }
 
     @Test
-    public void loginFailed() throws Exception {
-        when( mockUserService.authenticate(userDto.getEmail(), "12345"))
-                .thenThrow(new RuntimeException("Login failed"))
+    public void loginRedirected() throws Exception {
+        this.mockMvc.perform(
+                get("/login")
+        )
+           //     .andExpect(view().name(ViewNames.LOGIN.login))
         ;
-
-        this.mockMvc.perform(
-                post("/login/")
-                .param("userLogin", userDto.getEmail())
-                .param("password", "12345")
-        )
-                .andExpect(redirectedUrl("/"))
-        ;
-
-        verify(mockUserService, only())
-                .authenticate(
-                        userDto.getEmail(),
-                       "12345"
-                );
     }
 
-    @Test
-    public void loginSucceed() throws Exception {
-        when( mockUserService.authenticate(userDto.getEmail(), "12345")).thenReturn(userDto);
-
-        this.mockMvc.perform(
-                post("/login/")
-                        .param("userLogin", userDto.getEmail())
-                        .param("password", "12345")
-        )
-                .andExpect(redirectedUrl("/users/"))
-                .andExpect(request().sessionAttribute(SessionKeys.USER.user, userDto));
-
-        verify(mockUserService, only())
-                .authenticate(
-                        userDto.getEmail(),
-                        "12345"
-                );
-    }
-
-    @Test
-    public void logout() throws Exception {
-        this.mockMvc.perform(
-                post("/logout/")
-        )
-                .andExpect(redirectedUrl("/"))
-                .andExpect(request().sessionAttribute(SessionKeys.USER.user, is(nullValue())));
-    }
 
     @Test
     public void getChangePasswordView() throws Exception {
         this.mockMvc.perform(
                 get("/changePassword/")
-        )
+       )
                 .andExpect(status().isOk())
-                .andExpect(view().name( ViewNames.SETTINGS.settings))
+                .andExpect(view().name(ViewNames.SETTINGS.settings))
         ;
     }
 
@@ -158,14 +156,14 @@ public class IndexControllerTest {
                 .param("userId", userId)
                 .param("oldPassword", "111")
                 .param("newPassword", "12345")
-        );
+       );
 
         verify(mockUserService, only())
                 .changePassword(
                         userId,
                         "111",
                         "12345"
-                );
+               );
     }
 
     @Test
@@ -175,7 +173,7 @@ public class IndexControllerTest {
                         .param("userId", userId)
                         .param("oldPassword", "111")
                         .param("newPassword", "12345")
-        )
+       )
                 .andExpect(redirectedUrl("/"));
 
         verify(mockUserService, only())
@@ -183,7 +181,7 @@ public class IndexControllerTest {
                         userId,
                         "111",
                         "12345"
-                );
+               );
     }
 
 }

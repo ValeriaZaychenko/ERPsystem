@@ -2,11 +2,12 @@ package erp.service.impl;
 
 import erp.domain.User;
 import erp.dto.UserDto;
+import erp.service.IAuthenticationService;
 import erp.service.IMailService;
 import erp.service.IUserService;
-import erp.utils.DtoBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +20,10 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
-@RunWith( SpringJUnit4ClassRunner.class )
-@ContextConfiguration( classes = erp.config.JUnitConfiguration.class )
-@Transactional( )
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = erp.config.JUnitConfiguration.class)
+@Transactional()
+@WithMockUser(username = "ram", authorities={"AUTH_ADMIN"})
 public class UserServiceTest {
 
     @Inject
@@ -80,7 +82,7 @@ public class UserServiceTest {
 
         assertNotNull(id);
 
-        UserDto userdto = (userService.findUser(id));
+        UserDto userdto = (userService.findUserById(id));
 
         assertEquals("pet", userdto.getName());
         assertEquals("peter@mail.ru", userdto.getEmail());
@@ -131,8 +133,8 @@ public class UserServiceTest {
         userService.removeUser(id0);
 
         assertEquals(1, userService.viewUsers().size());
-        assertNotNull(userService.findUser(id1));
-        userService.findUser(id0);
+        assertNotNull(userService.findUserById(id1));
+        userService.findUserById(id0);
     }
 
     @Test(expected = Exception.class)
@@ -216,7 +218,7 @@ public class UserServiceTest {
     public void editAllFieldsToSameValue() {
         String id = createSimpleUser();
         userService.editUser(id, "pet", "peter@mail.ru", "ADMIN");
-        UserDto dto = userService.findUser(id);
+        UserDto dto = userService.findUserById(id);
 
         assertEquals(dto.getName(), "pet");
         assertEquals(dto.getEmail(), "peter@mail.ru");
@@ -251,48 +253,11 @@ public class UserServiceTest {
     public void changePasswordCorrectly() {
         String id = createSimpleUser();
         String password = "333";
-        userService.changePassword(id, mailService.getLastContent(), password );
+        userService.changePassword(id, mailService.getLastContent(), password);
 
         User user = findUserById(id);
 
-        assertTrue( passwordService.comparePasswords( "333", user.getHashedPassword() ) );
-    }
-
-    @Test(expected = Exception.class)
-    public void authenticateEmptyLogin() {
-        userService.authenticate("", "dddd");
-    }
-
-    @Test(expected = Exception.class)
-    public void authenticateEmptyPassword() {
-        userService.authenticate("ddd", "");
-    }
-
-    @Test(expected = Exception.class)
-    public void authenticateUserIncorrectLogin() {
-        String id = createSimpleUser();
-
-        userService.authenticate("new", "dddd");
-    }
-
-    @Test(expected = Exception.class)
-    public void authenticateUserIncorrectPassword() {
-        String id = createSimpleUser();
-        UserDto dto = userService.findUser(id);
-
-        userService.authenticate(dto.getEmail(), "dddd");
-    }
-
-    @Test
-    public void authenticateUserCorrectly() {
-        String id = createSimpleUser();
-        User user = findUserById(id);
-
-        UserDto dto = userService.authenticate(user.getEmail(), mailService.getLastContent());
-
-        assertEquals(DtoBuilder.toDto(user).getId(), dto.getId());
-        assertEquals(DtoBuilder.toDto(user).getName(), dto.getName());
-        assertEquals(DtoBuilder.toDto(user).getEmail(), dto.getEmail());
+        assertTrue(passwordService.comparePasswords("333", user.getHashedPassword()));
     }
 
     private String createSimpleUser() {

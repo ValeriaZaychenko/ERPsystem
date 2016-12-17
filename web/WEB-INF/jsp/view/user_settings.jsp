@@ -30,7 +30,7 @@
                                                         <input class="form-control" placeholder="<spring:message code='old.password'/>" name="oldPassword" type="password" autofocus>
                                                     </div>
                                                 </div>
-                                                <input type="hidden" name="userId" value="${sessionScope.USER.id}">
+                                                <input type="hidden" name="userId" value="${pageContext.request.userPrincipal.id}">
                                                 <div class="form-group">
                                                     <div class="input-group">
                                                     <span class="input-group-addon">

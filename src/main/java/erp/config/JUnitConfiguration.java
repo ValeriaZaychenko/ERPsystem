@@ -15,8 +15,8 @@ public class JUnitConfiguration extends BaseRootContextConfiguration {
 
         LocalContainerEntityManagerFactoryBean factory =
                 new LocalContainerEntityManagerFactoryBean();
-        factory.setJpaVendorAdapter( adapter );
-        factory.setPersistenceUnitName( "ERPJUnit" );
+        factory.setJpaVendorAdapter(adapter);
+        factory.setPersistenceUnitName("ERPJUnit");
         return factory;
     }
 }

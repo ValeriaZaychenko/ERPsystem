@@ -18,10 +18,6 @@ import org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import java.util.List;
 import java.util.Locale;
@@ -34,12 +30,12 @@ import java.util.Locale;
         includeFilters = @ComponentScan.Filter(Controller.class)
 )
 @WebListener
-public class ServletContextConfiguration extends WebMvcConfigurerAdapter implements ServletContextListener {
+public class ServletContextConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void configureMessageConverters(
             List<HttpMessageConverter<?>> converters
-    ) {
+   ) {
         converters.add(new FormHttpMessageConverter());
     }
 
@@ -55,7 +51,7 @@ public class ServletContextConfiguration extends WebMvcConfigurerAdapter impleme
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        super.addInterceptors( registry );
+        super.addInterceptors(registry);
 
         LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
         interceptor.setParamName("language");
@@ -66,7 +62,7 @@ public class ServletContextConfiguration extends WebMvcConfigurerAdapter impleme
     @Bean
     public LocaleResolver localeResolver() {
         SessionLocaleResolver resolver = new SessionLocaleResolver();
-        resolver.setDefaultLocale( Locale.ENGLISH );
+        resolver.setDefaultLocale(Locale.ENGLISH);
         return resolver;
     }
 
@@ -76,18 +72,4 @@ public class ServletContextConfiguration extends WebMvcConfigurerAdapter impleme
         return new DefaultRequestToViewNameTranslator();
     }
 
-    @Override
-    public void contextInitialized(ServletContextEvent event) {
-        ServletContext context = event.getServletContext();
-
-        FilterRegistration.Dynamic registration = context.addFilter(
-                "authenticationFilter", new AuthenticationFilter());
-
-        registration.setAsyncSupported(true);
-        registration.addMappingForUrlPatterns(
-                null, false, "/users/*", "/users", "/changePassword/*", "/changePassword", "/reports/*", "/reports");
-    }
-
-    @Override
-    public void contextDestroyed(ServletContextEvent event){}
 }

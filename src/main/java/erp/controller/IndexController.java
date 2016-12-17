@@ -1,11 +1,11 @@
 package erp.controller;
 
-import erp.controller.constants.SessionKeys;
 import erp.controller.constants.ViewNames;
 import erp.dto.UserDto;
 import erp.service.IUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,12 +25,25 @@ public class IndexController {
     private IUserService userService;
 
     @RequestMapping("/")
-    public String index() {
-        return ViewNames.HOME.home;
+    public View index() {
+        return new RedirectView("/home");
+    }
+
+    @RequestMapping("/home")
+    public View home(@AuthenticationPrincipal UserDto currentUser) {
+        if (currentUser != null && currentUser.getUserRole().equals("ADMIN"))
+            return new RedirectView("/users");
+        else
+            return new RedirectView("/reports");
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String login() {
+        return ViewNames.LOGIN.login;
     }
 
     @RequestMapping(path = "/setlocale/", method = RequestMethod.POST)
-    public ResponseEntity setLocale (HttpSession session, @RequestParam String language) {
+    public ResponseEntity setLocale(HttpSession session, @RequestParam String language) {
         Locale locale = null;
         if (language.equalsIgnoreCase("ru"))
             locale = new Locale("ru", "RU");
@@ -40,26 +53,6 @@ public class IndexController {
 
         session.setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
         return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @RequestMapping(path = "/login/", method = RequestMethod.POST)
-    public View login(HttpSession session, @RequestParam String userLogin, @RequestParam String password) {
-        UserDto userDto;
-
-        try {
-            userDto = userService.authenticate(userLogin, password);
-            session.setAttribute(SessionKeys.USER.user, userDto);
-            return new RedirectView("/users/");
-        }
-        catch (RuntimeException e) {
-            return new RedirectView("/");
-        }
-    }
-
-    @RequestMapping(path = "/logout/", method = RequestMethod.POST)
-    public View logout(HttpSession session) {
-        session.removeAttribute(SessionKeys.USER.user);
-        return new RedirectView("/");
     }
 
     @RequestMapping(value = "/changePassword/", method = RequestMethod.GET)

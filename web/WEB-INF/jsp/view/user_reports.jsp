@@ -121,14 +121,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <!--
-
-                                        <div class="form-group">
-                                            <div class="col-sm-12">
-                                                <input type="submit" id="btnSaveReport2" class="btn btn-lg btn-primary btn-block" value="<spring:message code='add'/>">
-                                            </div>
-                                        </div>
-                                        -->
                                     </div>
                                 </div>
                             </fieldset>

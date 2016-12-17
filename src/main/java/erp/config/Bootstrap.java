@@ -1,5 +1,6 @@
 package erp.config;
 
+import org.springframework.core.annotation.Order;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -10,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 @SuppressWarnings("unused")
+@Order(1)
 public class Bootstrap implements WebApplicationInitializer {
 
     @Override
@@ -26,7 +28,10 @@ public class Bootstrap implements WebApplicationInitializer {
         servletContext.register(ServletContextConfiguration.class);
         ServletRegistration.Dynamic dispatcher = container.addServlet(
                 "springDispatcher", new DispatcherServlet(servletContext)
-        );
+       );
+
+        rootContext.register(SecurityConfig.class);
+
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
     }

@@ -2,10 +2,7 @@ package erp.config;
 
 import org.hibernate.validator.HibernateValidator;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.AdviceMode;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -24,13 +21,14 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 @ComponentScan(
         basePackages = { "erp.service.impl", "erp.repository" },
-        excludeFilters = @ComponentScan.Filter( Controller.class )
+        excludeFilters = @ComponentScan.Filter(Controller.class)
 )
 @EnableTransactionManagement(
         mode = AdviceMode.PROXY, proxyTargetClass = false,
         order = Ordered.LOWEST_PRECEDENCE
 )
 @EnableJpaRepositories(basePackages="erp.repository")
+@Import(SecurityConfig.class)
 public abstract class BaseRootContextConfiguration {
 
     @Bean
@@ -41,7 +39,7 @@ public abstract class BaseRootContextConfiguration {
     @Bean
     public LocalValidatorFactoryBean localValidatorFactoryBean() {
         LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
-        validator.setProviderClass( HibernateValidator.class );
+        validator.setProviderClass(HibernateValidator.class);
         return validator;
     }
 
@@ -58,11 +56,11 @@ public abstract class BaseRootContextConfiguration {
         ReloadableResourceBundleMessageSource messageSource =
                 new ReloadableResourceBundleMessageSource();
         messageSource.setCacheSeconds(-1);
-        messageSource.setFallbackToSystemLocale( false );
-        messageSource.setDefaultEncoding( StandardCharsets.UTF_8.name());
+        messageSource.setFallbackToSystemLocale(false);
+        messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
         messageSource.setBasenames(
                 "/WEB-INF/i18n/messages"
-        );
+       );
         return messageSource;
     }
 

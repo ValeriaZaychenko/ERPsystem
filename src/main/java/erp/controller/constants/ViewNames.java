@@ -3,8 +3,8 @@ package erp.controller.constants;
 
 public interface ViewNames {
 
-    interface HOME {
-        String home =  "home";
+    interface LOGIN {
+        String login =  "login";
     }
 
     interface USER {

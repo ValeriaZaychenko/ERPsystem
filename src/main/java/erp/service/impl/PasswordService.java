@@ -17,7 +17,7 @@ public class PasswordService implements IPasswordService {
 
     @Override
     public byte[]  getHashFromPassword(String password) {
-        String encodedPassword = passwordEncoder.encode( password );
+        String encodedPassword = passwordEncoder.encode(password);
         return encodedPassword.getBytes();
     }
 
