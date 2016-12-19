@@ -6,7 +6,6 @@ import erp.exceptions.DuplicateEmailException;
 import erp.exceptions.EntityNotFoundException;
 import erp.exceptions.MismatchPasswordException;
 import erp.exceptions.UnknownRoleException;
-import erp.service.IAuthenticationService;
 import erp.service.IMailService;
 import erp.service.IUserService;
 import org.junit.Test;

@@ -2,14 +2,10 @@ package erp.controller;
 
 import erp.exceptions.*;
 import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
-
-import java.time.format.DateTimeParseException;
 
 @ControllerAdvice
 public class ExceptionHandlingAdvice {

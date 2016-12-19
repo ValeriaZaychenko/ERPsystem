@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
-import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
 import static org.junit.Assert.*;

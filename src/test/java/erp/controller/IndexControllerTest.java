@@ -3,7 +3,6 @@ package erp.controller;
 import erp.controller.constants.SessionKeys;
 import erp.controller.constants.ViewNames;
 import erp.dto.UserDto;
-import erp.exceptions.DuplicateEmailException;
 import erp.exceptions.MismatchPasswordException;
 import erp.service.IAuthenticationService;
 import erp.service.IUserService;
@@ -66,7 +65,9 @@ public class IndexControllerTest {
         resolver.setViewClass(JstlView.class);
         resolver.setSuffix(".jsp");
 
-        this.mockMvc = MockMvcBuilders.standaloneSetup(theController).setViewResolvers(resolver).build();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(theController)
+                .setControllerAdvice(new ExceptionHandlingAdvice())
+                .setViewResolvers(resolver).build();
     }
 
     @Test
@@ -81,7 +82,7 @@ public class IndexControllerTest {
     @Test
     public void accessDenied() throws Exception {
         this.mockMvc.perform(
-                get("/error")
+                get("/accessDenied")
         )
                 .andExpect(view().name("error"))
         ;
@@ -175,7 +176,7 @@ public class IndexControllerTest {
                );
     }
 
-    @Test(expected = Exception.class)//TODO doesn't call MismatchPasswordException call NestedServletException
+    @Test
     public void changePasswordMismatch() throws Exception {
         doThrow(new MismatchPasswordException())
                 .when(mockUserService).changePassword(userId, "111", "12345");

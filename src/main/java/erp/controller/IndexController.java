@@ -30,7 +30,7 @@ public class IndexController {
         return new RedirectView("/home");
     }
 
-    @RequestMapping("/error")
+    @RequestMapping("/accessDenied")
     public String accessDeniedError(Map<String, Object> model) {
         model.put("errorMessage", "Access denied");
         return "error";

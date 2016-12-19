@@ -1,6 +1,5 @@
 package erp.config;
 
-import erp.controller.ExceptionHandlingAdvice;
 import erp.service.IAuthenticationService;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Configuration;
@@ -76,7 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         })
                 .and()
 
-                    .exceptionHandling().accessDeniedPage( "/error" )
+                    .exceptionHandling().accessDeniedPage( "/accessDenied" )
 
 
                ;

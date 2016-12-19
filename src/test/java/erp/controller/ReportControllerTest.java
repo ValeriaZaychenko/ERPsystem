@@ -4,10 +4,8 @@ import erp.controller.constants.AttributeNames;
 import erp.controller.constants.ViewNames;
 import erp.dto.ReportDto;
 import erp.dto.UserDto;
-import erp.exceptions.DuplicateEmailException;
 import erp.exceptions.EntityNotFoundException;
 import erp.exceptions.InvalidDateException;
-import erp.exceptions.MismatchPasswordException;
 import erp.service.IReportService;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +18,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

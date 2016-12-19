@@ -9,7 +9,6 @@ import erp.repository.ReportRepository;
 import erp.repository.UserRepository;
 import erp.service.IReportService;
 import erp.utils.DtoBuilder;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,12 +34,7 @@ public class ReportService implements IReportService {
     public String createReport(String date, int workingTime, String description, String userId) {
 
         User user = restoreUserFromRepository(userId);
-        LocalDate localDate = null;
-        try {
-            localDate = LocalDate.parse(date, formatter);
-        } catch (DateTimeParseException e) {
-            throw new InvalidDateException(date);
-        }
+        LocalDate localDate = parseDate(date);
 
         Report report = new Report(localDate, workingTime, description, user);
 
@@ -72,11 +66,7 @@ public class ReportService implements IReportService {
             return; //No modification detected
 
         if (dateModified)
-            try {
-                localDate = LocalDate.parse(date, formatter);
-            } catch (DateTimeParseException e) {
-                throw new InvalidDateException(date);
-            }
+            localDate = parseDate(date);
 
 
         if(dateModified)
@@ -153,5 +143,15 @@ public class ReportService implements IReportService {
             throw new EntityNotFoundException(Report.class.getName());
 
         return report;
+    }
+
+    private LocalDate parseDate(String date) {
+        LocalDate localDate = null;
+        try {
+            localDate = LocalDate.parse(date, formatter);
+            return localDate;
+        } catch (DateTimeParseException e) {
+            throw new InvalidDateException(date);
+        }
     }
 }

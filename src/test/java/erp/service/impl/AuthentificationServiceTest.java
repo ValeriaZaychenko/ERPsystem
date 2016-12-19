@@ -5,7 +5,6 @@ import erp.domain.UserRole;
 import erp.dto.UserDto;
 import erp.service.IAuthenticationService;
 import erp.service.IPasswordService;
-import erp.service.IUserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -9,7 +9,6 @@ import erp.exceptions.DuplicateEmailException;
 import erp.exceptions.EntityNotFoundException;
 import erp.exceptions.UnknownRoleException;
 import erp.service.IUserService;
-import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,9 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import javax.validation.ConstraintViolation;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
