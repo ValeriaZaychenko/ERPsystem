@@ -24,11 +24,7 @@ import java.util.Locale;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(
-        basePackages = "erp.controller",
-        useDefaultFilters = false,
-        includeFilters = @ComponentScan.Filter(Controller.class)
-)
+@ComponentScan( basePackages = "erp.controller")
 @WebListener
 public class ServletContextConfiguration extends WebMvcConfigurerAdapter {
 

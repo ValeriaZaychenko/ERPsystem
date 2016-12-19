@@ -2,6 +2,10 @@ package erp.service.impl;
 
 import erp.domain.User;
 import erp.dto.UserDto;
+import erp.exceptions.DuplicateEmailException;
+import erp.exceptions.EntityNotFoundException;
+import erp.exceptions.MismatchPasswordException;
+import erp.exceptions.UnknownRoleException;
 import erp.service.IAuthenticationService;
 import erp.service.IMailService;
 import erp.service.IUserService;
@@ -16,6 +20,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.validation.ConstraintViolationException;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -46,32 +51,32 @@ public class UserServiceTest {
         assertTrue(userService.viewUsers().isEmpty());
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void createUserNullFields() {
         userService.createUser(null, null, null);
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void createUserBlankName() {
         userService.createUser("", "peter", "USER");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void createUserInvalidEmail() {
         userService.createUser("pet", "peter", "USER");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void createUserBlankEmail() {
         userService.createUser("pet", "", "USER");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void createUserNullEmail() {
         userService.createUser("pet", null, "USER");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void createUserNullUserRole() {
         userService.createUser("pet", "peter@mail.ru", null);
     }
@@ -94,7 +99,7 @@ public class UserServiceTest {
         assertNotNull(user.getHashedPassword());
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = DuplicateEmailException.class)
     public void createUserSameEmail() {
         String email = "peter@mail.ru";
 
@@ -102,7 +107,7 @@ public class UserServiceTest {
         userService.createUser("pet", email, "ADMIN");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = UnknownRoleException.class)
     public void createUserInvalidRoleString() {
         userService.createUser("pet", "ddd@dd", "invalid");
     }
@@ -115,17 +120,17 @@ public class UserServiceTest {
         assertEquals(2, userService.viewUsers().size());
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = EntityNotFoundException.class)
     public void deleteUserFromEmptyService() {
         userService.removeUser(UUID.randomUUID().toString());
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void deleteUserNullId() {
         userService.removeUser(null);
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = EntityNotFoundException.class)
     public void deleteUserCorrectly() {
         String id0 = createSimpleUser();
         String id1 = createSecondSimpleUser();
@@ -137,7 +142,7 @@ public class UserServiceTest {
         userService.findUserById(id0);
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = EntityNotFoundException.class)
     public void deleteUserTwice() {
         String id = createSimpleUser();
 
@@ -145,28 +150,28 @@ public class UserServiceTest {
         userService.removeUser(id);
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void editNullIdUser() {
         createSimpleUser();
 
         userService.editUser(null, "name", "email@email", "USER");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void editBlankNameUser() {
         String id = createSimpleUser();
 
         userService.editUser(id, "", "peter@mail.ru", "ADMIN");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void editBlankEmailUser() {
         String id = createSimpleUser();
 
         userService.editUser(id, "newName", "", "ADMIN");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void editInvalidEmailUser() {
         String id = createSimpleUser();
 
@@ -191,7 +196,7 @@ public class UserServiceTest {
         assertEquals(user.getEmail(), "new@mail.ru");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = DuplicateEmailException.class)
     public void editEmailToNonUnique() {
         String id0 = createSimpleUser();
         createSimpleUser();
@@ -208,7 +213,7 @@ public class UserServiceTest {
         assertEquals(user.getUserRole().toString(), "USER");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = UnknownRoleException.class)
     public void editRoleInvalidUserRoleString(){
         String id = createSimpleUser();
         userService.editUser(id, "pet", "peter@mail.ru", "invalid");
@@ -225,25 +230,25 @@ public class UserServiceTest {
         assertEquals(dto.getUserRole(), "ADMIN");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void changePasswordNullId() {
         createSimpleUser();
         userService.changePassword(null, "1234", "111");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void changeEmptyOldPassword() {
         String id = createSimpleUser();
         userService.changePassword(id, "", "111");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void changeEmptyNewPassword() {
         String id = createSimpleUser();
         userService.changePassword(id, "111", "");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = MismatchPasswordException.class)
     public void changePasswordOldNoMatch() {
         String id = createSimpleUser();
         userService.changePassword(id, "11111111", "333");

@@ -54,7 +54,7 @@ public class UserServiceAccessTest {
 
     @Test(expected = AccessDeniedException.class)
     public void viewUsersFromUserRole() {
-        String id = create();
+        create();
         userService.viewUsers();
     }
 

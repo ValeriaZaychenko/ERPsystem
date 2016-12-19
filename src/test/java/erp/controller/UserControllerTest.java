@@ -2,9 +2,14 @@ package erp.controller;
 
 import erp.controller.constants.AttributeNames;
 import erp.controller.constants.ViewNames;
+import erp.domain.User;
 import erp.domain.UserRole;
 import erp.dto.UserDto;
+import erp.exceptions.DuplicateEmailException;
+import erp.exceptions.EntityNotFoundException;
+import erp.exceptions.UnknownRoleException;
 import erp.service.IUserService;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,9 +17,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import javax.validation.ConstraintViolation;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,7 +57,9 @@ public class UserControllerTest {
         userDto.setEmail("Olegov");
         userDto.setUserRole("USER");
 
-        this.mockMvc = MockMvcBuilders.standaloneSetup(theController).build();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(theController)
+                .setControllerAdvice(new ExceptionHandlingAdvice())
+                .build();
     }
 
     @Test
@@ -89,6 +100,50 @@ public class UserControllerTest {
     }
 
     @Test
+    public void createUserDuplicateEmail() throws Exception {
+        doThrow(new DuplicateEmailException(userDto.getEmail()))
+                .when(mockUserService).
+                createUser(userDto.getName(), userDto.getEmail(), userDto.getUserRole());
+
+        this.mockMvc.perform(
+                post("/users/add")
+                        .param("name", userDto.getName())
+                        .param("email", userDto.getEmail())
+                        .param("userRole", userDto.getUserRole())
+        )
+                .andExpect(view().name("error"))
+                .andExpect(new ResultMatcher() {
+
+                    @Override
+                    public void match(MvcResult result) throws Exception {
+                        result.getResponse().getContentAsString().contains("Database already has user with email");
+                    }
+                });
+    }
+
+    @Test
+    public void createUserUnknownRole() throws Exception {
+        doThrow(new UnknownRoleException(userDto.getUserRole()))
+                .when(mockUserService).
+                createUser(userDto.getName(), userDto.getEmail(), userDto.getUserRole());
+
+        this.mockMvc.perform(
+                post("/users/add")
+                        .param("name", userDto.getName())
+                        .param("email", userDto.getEmail())
+                        .param("userRole", userDto.getUserRole())
+        )
+                .andExpect(view().name("error"))
+                .andExpect(new ResultMatcher() {
+
+                    @Override
+                    public void match(MvcResult result) throws Exception {
+                        result.getResponse().getContentAsString().contains("Can't parse role from");
+                    }
+                });
+    }
+
+    @Test
     public void editUser() throws Exception {
         this.mockMvc.perform(
                 post("/users/edit")
@@ -110,6 +165,52 @@ public class UserControllerTest {
     }
 
     @Test
+    public void editUserDuplicateEmail() throws Exception {
+        doThrow(new DuplicateEmailException(userDto.getEmail()))
+                .when(mockUserService).
+                editUser(userId, userDto.getName(), userDto.getEmail(), userDto.getUserRole());
+
+        this.mockMvc.perform(
+                post("/users/edit")
+                        .param("id", userId)
+                        .param("name", userDto.getName())
+                        .param("email", userDto.getEmail())
+                        .param("userRole", userDto.getUserRole())
+        )
+                .andExpect(view().name("error"))
+                .andExpect(new ResultMatcher() {
+
+                    @Override
+                    public void match(MvcResult result) throws Exception {
+                        result.getResponse().getContentAsString().contains("Database already has user with email");
+                    }
+                });
+    }
+
+    @Test
+    public void editUserUnknownRole() throws Exception {
+        doThrow(new UnknownRoleException("BBB"))
+                .when(mockUserService).
+                editUser(userId, userDto.getName(), userDto.getEmail(),"BBB");
+
+        this.mockMvc.perform(
+                post("/users/edit")
+                        .param("id", userId)
+                        .param("name", userDto.getName())
+                        .param("email", userDto.getEmail())
+                        .param("userRole", "BBB")
+        )
+                .andExpect(view().name("error"))
+                .andExpect(new ResultMatcher() {
+
+                    @Override
+                    public void match(MvcResult result) throws Exception {
+                        result.getResponse().getContentAsString().contains("Can't parse role from");
+                    }
+                });
+    }
+
+    @Test
     public void deleteUser() throws Exception {
         this.mockMvc.perform(
                 post("/users/delete")
@@ -121,6 +222,26 @@ public class UserControllerTest {
 
         verify(mockUserService, only())
                 .removeUser(userId);
+    }
+
+    @Test
+    public void deleteUserNotFound() throws Exception {
+        doThrow(new EntityNotFoundException(User.class.getName()))
+                .when(mockUserService).
+                removeUser(userId);
+
+        this.mockMvc.perform(
+                post("/users/delete")
+                        .param("id", userId)
+        )
+                .andExpect(view().name("error"))
+                .andExpect(new ResultMatcher() {
+
+                    @Override
+                    public void match(MvcResult result) throws Exception {
+                        result.getResponse().getContentAsString().contains("Database doesn't have entity with name");
+                    }
+                });
     }
 }
 

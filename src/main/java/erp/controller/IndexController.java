@@ -17,6 +17,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import java.util.Locale;
+import java.util.Map;
 
 @Controller
 public class IndexController {
@@ -27,6 +28,12 @@ public class IndexController {
     @RequestMapping("/")
     public View index() {
         return new RedirectView("/home");
+    }
+
+    @RequestMapping("/error")
+    public String accessDeniedError(Map<String, Object> model) {
+        model.put("errorMessage", "Access denied");
+        return "error";
     }
 
     @RequestMapping("/home")

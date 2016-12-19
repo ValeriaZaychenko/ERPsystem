@@ -1,6 +1,8 @@
 package erp.service.impl;
 
 import erp.dto.ReportDto;
+import erp.exceptions.EntityNotFoundException;
+import erp.exceptions.InvalidDateException;
 import erp.service.IReportService;
 import erp.service.IUserService;
 import org.junit.Test;
@@ -11,6 +13,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+import javax.validation.ConstraintViolationException;
+import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -36,47 +40,47 @@ public class ReportServiceTest {
         assertTrue(reportService.viewAllReports().isEmpty());
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void createReportNullFields() {
         reportService.createReport(null, 0, null, null);
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void createReportBlankDate() {
         String userId = userService.createUser("Petya", "ppp@mail.ru", "ADMIN");
 
         reportService.createReport("", 2, "description", userId);
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = InvalidDateException.class)
     public void createReportInvalidDateFormat() {
         String userId = userService.createUser("Petya", "ppp@mail.ru", "ADMIN");
 
         reportService.createReport("2045-33-12", 2, "description", userId);
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void createReportInvalidTime() {
         String userId = userService.createUser("Petya", "ppp@mail.ru", "ADMIN");
 
         reportService.createReport("2015-11-11", 48, "description", userId);
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void createReportBlankDescription() {
         String userId = userService.createUser("Petya", "ppp@mail.ru", "ADMIN");
 
         reportService.createReport("2015-11-11", 8, "", userId);
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void createReportNullUserId() {
         userService.createUser("Petya", "ppp@mail.ru", "ADMIN");
 
         reportService.createReport("2015-11-11", 8, "description", null);
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = EntityNotFoundException.class)
     public void createReportUserNoExist() {
         reportService.createReport("2015-11-11", 8, "description", UUID.randomUUID().toString());
     }
@@ -117,19 +121,19 @@ public class ReportServiceTest {
         assertEquals(reportService.viewAllReports().size(), 3);
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = EntityNotFoundException.class)
     public void removeReportNoExist() {
         userService.createUser("Petya", "ppp@mail.ru", "ADMIN");
 
         reportService.removeReport(UUID.randomUUID().toString());
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void removeReportNullId() {
         reportService.removeReport(null);
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = EntityNotFoundException.class)
     public void removeReportCorrectly() {
         String userId = userService.createUser("Petya", "ppp@mail.ru", "ADMIN");
         String reportId = reportService.createReport("2015-11-11", 8, "description", userId);
@@ -139,17 +143,17 @@ public class ReportServiceTest {
         reportService.findReport(reportId);
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void editReportNullId() {
         reportService.editReport(null, "2015-11-11", 8, "description");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = EntityNotFoundException.class)
     public void editReportNotExist() {
         reportService.editReport(UUID.randomUUID().toString(), "2015-11-11", 8, "description");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void editReportBlankDate() {
         String userId = userService.createUser("Petya", "ppp@mail.ru", "ADMIN");
         String reportId = reportService.createReport("2015-11-11", 8, "description", userId);
@@ -157,15 +161,15 @@ public class ReportServiceTest {
         reportService.editReport(reportId, "", 8, "description");
     }
 
-    @Test(expected = Exception.class)
-    public void editReportIcorrectDate() {
+    @Test(expected = InvalidDateException.class)
+    public void editReportIncorrectDate() {
         String userId = userService.createUser("Petya", "ppp@mail.ru", "ADMIN");
         String reportId = reportService.createReport("2015-11-11", 8, "description", userId);
 
         reportService.editReport(reportId, "2016/12/13", 8, "description");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void editReportInvalidWorkingTime() {
         String userId = userService.createUser("Petya", "ppp@mail.ru", "ADMIN");
         String reportId = reportService.createReport("2015-11-11", 8, "description", userId);
@@ -173,7 +177,7 @@ public class ReportServiceTest {
         reportService.editReport(reportId, "2015-11-11", 40, "description");
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = ConstraintViolationException.class)
     public void editReportBlankDescription() {
         String userId = userService.createUser("Petya", "ppp@mail.ru", "ADMIN");
         String reportId = reportService.createReport("2015-11-11", 8, "description", userId);

@@ -1,5 +1,6 @@
 package erp.config;
 
+import erp.controller.ExceptionHandlingAdvice;
 import erp.service.IAuthenticationService;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Inject
     private IAuthenticationService authenticationService;
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder builder) {
@@ -71,7 +73,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .csrf()
                         .requireCsrfProtectionMatcher((r) -> {
                             return false;
-                        }
-               );
+                        })
+                .and()
+
+                    .exceptionHandling().accessDeniedPage( "/error" )
+
+
+               ;
     }
 }

@@ -3,6 +3,8 @@ package erp.service.impl;
 import erp.domain.Report;
 import erp.domain.User;
 import erp.dto.ReportDto;
+import erp.exceptions.EntityNotFoundException;
+import erp.exceptions.InvalidDateException;
 import erp.repository.ReportRepository;
 import erp.repository.UserRepository;
 import erp.service.IReportService;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +35,12 @@ public class ReportService implements IReportService {
     public String createReport(String date, int workingTime, String description, String userId) {
 
         User user = restoreUserFromRepository(userId);
-        LocalDate localDate = LocalDate.parse(date, formatter);//TODO exceptions
+        LocalDate localDate = null;
+        try {
+            localDate = LocalDate.parse(date, formatter);
+        } catch (DateTimeParseException e) {
+            throw new InvalidDateException(date);
+        }
 
         Report report = new Report(localDate, workingTime, description, user);
 
@@ -64,7 +72,12 @@ public class ReportService implements IReportService {
             return; //No modification detected
 
         if (dateModified)
-             localDate = LocalDate.parse(date, formatter);//TODO exceptions
+            try {
+                localDate = LocalDate.parse(date, formatter);
+            } catch (DateTimeParseException e) {
+                throw new InvalidDateException(date);
+            }
+
 
         if(dateModified)
             report.setDate(localDate);
@@ -129,7 +142,7 @@ public class ReportService implements IReportService {
     private User restoreUserFromRepository(String userId) {
         User user = userRepository.findOne(userId);
         if (user == null)
-            throw new RuntimeException("Database doesn't have this user");
+            throw new EntityNotFoundException(User.class.getName());
 
         return user;
     }
@@ -137,7 +150,7 @@ public class ReportService implements IReportService {
     private Report restoreReportFromRepository(String id) {
         Report report = reportRepository.findOne(id);
         if (report == null)
-            throw new RuntimeException("Database doesn't have this report");
+            throw new EntityNotFoundException(Report.class.getName());
 
         return report;
     }

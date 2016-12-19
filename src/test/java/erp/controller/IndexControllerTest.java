@@ -3,6 +3,8 @@ package erp.controller;
 import erp.controller.constants.SessionKeys;
 import erp.controller.constants.ViewNames;
 import erp.dto.UserDto;
+import erp.exceptions.DuplicateEmailException;
+import erp.exceptions.MismatchPasswordException;
 import erp.service.IAuthenticationService;
 import erp.service.IUserService;
 import org.junit.Before;
@@ -14,6 +16,8 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
@@ -23,8 +27,7 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -72,6 +75,15 @@ public class IndexControllerTest {
                 get("/")
        )
                 .andExpect(redirectedUrl("/home"))
+        ;
+    }
+
+    @Test
+    public void accessDenied() throws Exception {
+        this.mockMvc.perform(
+                get("/error")
+        )
+                .andExpect(view().name("error"))
         ;
     }
 
@@ -130,11 +142,8 @@ public class IndexControllerTest {
     public void loginRedirected() throws Exception {
         this.mockMvc.perform(
                 get("/login")
-        )
-           //     .andExpect(view().name(ViewNames.LOGIN.login))
-        ;
+        );
     }
-
 
     @Test
     public void getChangePasswordView() throws Exception {
@@ -164,6 +173,27 @@ public class IndexControllerTest {
                         "111",
                         "12345"
                );
+    }
+
+    @Test(expected = Exception.class)//TODO doesn't call MismatchPasswordException call NestedServletException
+    public void changePasswordMismatch() throws Exception {
+        doThrow(new MismatchPasswordException())
+                .when(mockUserService).changePassword(userId, "111", "12345");
+
+        this.mockMvc.perform(
+                post("/changePassword/")
+                        .param("userId", userId)
+                        .param("oldPassword", "111")
+                        .param("newPassword", "12345")
+        )
+        .andExpect(view().name("error"))
+                .andExpect(new ResultMatcher() {
+
+                    @Override
+                    public void match(MvcResult result) throws Exception {
+                        result.getResponse().getContentAsString().contains("Password doesn't match with old password");
+                    }
+                });
     }
 
     @Test

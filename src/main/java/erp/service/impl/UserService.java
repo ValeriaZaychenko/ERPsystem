@@ -3,6 +3,10 @@ package erp.service.impl;
 import erp.domain.User;
 import erp.domain.UserRole;
 import erp.dto.UserDto;
+import erp.exceptions.DuplicateEmailException;
+import erp.exceptions.EntityNotFoundException;
+import erp.exceptions.MismatchPasswordException;
+import erp.exceptions.UnknownRoleException;
 import erp.repository.UserRepository;
 import erp.service.IAuthenticationService;
 import erp.service.IMailService;
@@ -119,7 +123,7 @@ public class UserService implements IUserService, IAuthenticationService {
             user.setHashedPassword(passwordService.getHashFromPassword(newPassword));
         }
         else
-            throw new RuntimeException("Password doesn't match with old password");
+            throw new MismatchPasswordException();
     }
 
     @Transactional
@@ -182,14 +186,14 @@ public class UserService implements IUserService, IAuthenticationService {
     private User restoreUserFromRepository(String id) {
         User user = userRepository.findOne(id);
         if (user == null) {
-            throw new RuntimeException("Database doesn't have this user");
+            throw new EntityNotFoundException(User.class.getName());
         }
         return user;
     }
 
     private void checkEmailIsUnique(String email) {
         if(!isEmailUnique(email)) {
-            throw new RuntimeException("The database already has the user with this email");
+            throw new DuplicateEmailException(email);
         }
     }
 
@@ -204,7 +208,7 @@ public class UserService implements IUserService, IAuthenticationService {
             role = UserRole.valueOf(userRole);
         }
         catch (IllegalArgumentException e) {
-            throw new RuntimeException("Couldn't parse value from string to enum value at user role");
+            throw new UnknownRoleException(userRole);
         }
         return role;
     }

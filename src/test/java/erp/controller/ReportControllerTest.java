@@ -4,6 +4,10 @@ import erp.controller.constants.AttributeNames;
 import erp.controller.constants.ViewNames;
 import erp.dto.ReportDto;
 import erp.dto.UserDto;
+import erp.exceptions.DuplicateEmailException;
+import erp.exceptions.EntityNotFoundException;
+import erp.exceptions.InvalidDateException;
+import erp.exceptions.MismatchPasswordException;
 import erp.service.IReportService;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,8 +16,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -56,7 +63,9 @@ public class ReportControllerTest {
         reportDto.setDescription("Issue 35");
         reportDto.setUserId(userDto.getId());
 
-        this.mockMvc = MockMvcBuilders.standaloneSetup(theController).build();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(theController)
+                .setControllerAdvice(new ExceptionHandlingAdvice())
+                .build();
     }
 
     @Test
@@ -100,6 +109,30 @@ public class ReportControllerTest {
     }
 
     @Test
+    public void createReportInvalidDate() throws Exception {
+        doThrow(new InvalidDateException("1-66666"))
+                .when(mockReportService).
+                createReport("1-66666", reportDto.getWorkingTime(), reportDto.getDescription(), userDto.getId());
+
+        this.mockMvc.perform(
+                post("/reports/add")
+                        .principal(userDto)
+                        .param("date", "1-66666")
+                        .param("time", Integer.toString(reportDto.getWorkingTime()))
+                        .param("description", reportDto.getDescription())
+
+        )
+                .andExpect(view().name("error"))
+                .andExpect(new ResultMatcher() {
+
+                    @Override
+                    public void match(MvcResult result) throws Exception {
+                        result.getResponse().getContentAsString().contains("Invalid date");
+                    }
+                });
+    }
+
+    @Test
     public void editReport() throws Exception {
         this.mockMvc.perform(
                 post("/reports/edit")
@@ -131,5 +164,25 @@ public class ReportControllerTest {
 
         verify(mockReportService, only())
                 .removeReport(reportId);
+    }
+
+    @Test
+    public void deleteReportNotFound() throws Exception {
+        doThrow(new EntityNotFoundException(reportId))
+                .when(mockReportService).
+                removeReport(reportId);
+
+        this.mockMvc.perform(
+                post("/reports/delete")
+                        .param("reportId", reportId)
+        )
+                .andExpect(view().name("error"))
+                .andExpect(new ResultMatcher() {
+
+                    @Override
+                    public void match(MvcResult result) throws Exception {
+                        result.getResponse().getContentAsString().contains("Database doesn't have entity with name");
+                    }
+                });
     }
 }
