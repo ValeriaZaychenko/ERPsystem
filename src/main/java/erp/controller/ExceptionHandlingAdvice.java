@@ -53,7 +53,14 @@ public class ExceptionHandlingAdvice {
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
-    public ModelAndView handle ( NoHandlerFoundException e )  {
+    public ModelAndView handle(NoHandlerFoundException e)  {
+        ModelAndView mav = new ModelAndView("error");
+        mav.addObject("errorMessage", e.getMessage());
+        return mav;
+    }
+
+    @ExceptionHandler(BooleanParseException.class)
+    public ModelAndView handle(BooleanParseException e)  {
         ModelAndView mav = new ModelAndView("error");
         mav.addObject("errorMessage", e.getMessage());
         return mav;

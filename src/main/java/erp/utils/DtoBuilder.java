@@ -26,6 +26,7 @@ public final class DtoBuilder {
         dto.setWorkingTime(report.getWorkingTime());
         dto.setDescription(report.getDescription());
         dto.setUserId(report.getUser().getId());
+        dto.setRemote(report.isRemote());
         return dto;
     }
 }

@@ -10,6 +10,7 @@ public class ReportDto implements Serializable {
     private int workingTime;
     private String description;
     private String userId;
+    private boolean remote;
 
     public String getId() {
         return id;
@@ -49,5 +50,13 @@ public class ReportDto implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public boolean isRemote() {
+        return remote;
+    }
+
+    public void setRemote(boolean remote) {
+        this.remote = remote;
     }
 }

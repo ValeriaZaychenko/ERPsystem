@@ -5,7 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@Entity
+@Entity(name = "reports")
 public class Report {
 
     @Id
@@ -16,15 +16,17 @@ public class Report {
     private LocalDate date;
     private int workingTime;
     private String description;
+    private boolean remote;
 
     @ManyToOne
     private User user;
 
-    public Report(LocalDate date, int workingTime, String description, User user) {
+    public Report(LocalDate date, int workingTime, String description, User user, boolean remote) {
         this.date = date;
         this.workingTime = workingTime;
         this.description = description;
         this.user = user;
+        this.remote = remote;
     }
 
     public Report(){}
@@ -63,5 +65,13 @@ public class Report {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public boolean isRemote() {
+        return remote;
+    }
+
+    public void setRemote(boolean remote) {
+        this.remote = remote;
     }
 }

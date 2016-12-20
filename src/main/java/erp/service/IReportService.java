@@ -1,6 +1,7 @@
 package erp.service;
 
 
+import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,13 +19,15 @@ public interface IReportService {
             @NotBlank @DateTimeFormat(pattern = "yyyy-MM-dd") String date,
             @Max(value = 24) int workingTime,
             @NotBlank String description,
-            @NotNull String userId);
+            @NotNull String userId,
+            @NotNull String remote);
 
     void editReport(
             @NotNull String id,
             @NotBlank @DateTimeFormat(pattern = "yyyy-MM-dd") String date,
             @Max(value = 24) int workingTime,
-            @NotBlank String description);
+            @NotBlank String description,
+            @NotNull String remote);
 
     void removeReport(@NotNull String id);
 
@@ -34,4 +37,11 @@ public interface IReportService {
     List<ReportDto> viewAllReports();
 
     List<ReportDto> viewUserReports(@NotNull String userId);
+
+    double getCurrentMonthFullTime();
+
+    ProgressDto getUserCurrentMonthWorkingTime(@NotNull String userId);
+
+    @PreAuthorize("hasAuthority('AUTH_ADMIN')")
+    List<ProgressDto> getAllUsersCurrentMonthWorkingTime();
 }

@@ -18,4 +18,8 @@ public interface ViewNames {
     interface REPORTS {
         String reports = "user_reports";
     }
+
+    interface PROGRESS {
+        String progress = "progress";
+    }
 }

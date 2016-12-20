@@ -5,6 +5,7 @@ public interface AttributeNames {
 
     interface UserViewUsers {
         String users = "users";
+        String progress = "progress";
     }
 
     interface UserViewPossibleUserRoles {

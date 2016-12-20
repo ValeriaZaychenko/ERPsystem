@@ -59,6 +59,7 @@ public class ReportControllerTest {
         reportDto.setWorkingTime(8);
         reportDto.setDescription("Issue 35");
         reportDto.setUserId(userDto.getId());
+        reportDto.setRemote(true);
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(theController)
                 .setControllerAdvice(new ExceptionHandlingAdvice())
@@ -91,6 +92,7 @@ public class ReportControllerTest {
                         .param("date", reportDto.getDate())
                         .param("time", Integer.toString(reportDto.getWorkingTime()))
                         .param("description", reportDto.getDescription())
+                        .param("remote", Boolean.toString(reportDto.isRemote()))
 
        )
                 .andExpect(redirectedUrl("/reports"))
@@ -101,7 +103,8 @@ public class ReportControllerTest {
                         reportDto.getDate(),
                         reportDto.getWorkingTime(),
                         reportDto.getDescription(),
-                        reportDto.getUserId()
+                        reportDto.getUserId(),
+                        Boolean.toString(reportDto.isRemote())
                );
     }
 
@@ -109,7 +112,8 @@ public class ReportControllerTest {
     public void createReportInvalidDate() throws Exception {
         doThrow(new InvalidDateException("1-66666"))
                 .when(mockReportService).
-                createReport("1-66666", reportDto.getWorkingTime(), reportDto.getDescription(), userDto.getId());
+                createReport("1-66666", reportDto.getWorkingTime(),
+                        reportDto.getDescription(), userDto.getId(), Boolean.toString(reportDto.isRemote()));
 
         this.mockMvc.perform(
                 post("/reports/add")
@@ -117,6 +121,7 @@ public class ReportControllerTest {
                         .param("date", "1-66666")
                         .param("time", Integer.toString(reportDto.getWorkingTime()))
                         .param("description", reportDto.getDescription())
+                        .param("remote", Boolean.toString(reportDto.isRemote()))
 
         )
                 .andExpect(view().name("error"))
@@ -137,6 +142,7 @@ public class ReportControllerTest {
                         .param("date", reportDto.getDate())
                         .param("time", Integer.toString(reportDto.getWorkingTime()))
                         .param("description", reportDto.getDescription())
+                        .param("remote", Boolean.toString(reportDto.isRemote()))
        )
                 .andExpect(redirectedUrl("/reports"))
         ;
@@ -146,7 +152,8 @@ public class ReportControllerTest {
                         reportId,
                         reportDto.getDate(),
                         reportDto.getWorkingTime(),
-                        reportDto.getDescription()
+                        reportDto.getDescription(),
+                        Boolean.toString(reportDto.isRemote())
                );
     }
 

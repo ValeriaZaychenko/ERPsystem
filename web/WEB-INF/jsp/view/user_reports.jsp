@@ -25,6 +25,7 @@
                                 <th><spring:message code="date"/></th>
                                 <th><spring:message code="time"/></th>
                                 <th><spring:message code="description"/></th>
+                                <th><spring:message code="remote"/></th>
                                 <th><spring:message code="actions"/></th>
                             </tr>
                             </thead>
@@ -35,6 +36,14 @@
                                             <td><span class="date">${report.date}</span></td>
                                             <td><span class="time">${report.workingTime}</span></td>
                                             <td><span class="description">${report.description}</span></td>
+                                            <td>
+                                                <label><input type="checkbox" class="remote" disabled
+                                                        <c:if test="${report.remote}">
+                                                            checked
+                                                        </c:if>
+                                                    />
+                                                </label>
+                                            </td>
                                             <td>
                                                 <input type="hidden" class="reportId" name="reportId" value="${report.id}">
                                                 <a class='editReportBtnClass btn btn-info btn-xs'>
@@ -105,6 +114,20 @@
                                                         <i class="fa fa-thumb-tack" aria-hidden="true"></i>
                                                     </span>
                                                     <input id="description" class="form-control" placeholder="<spring:message code='description'/>" name="description" type="text" value="">
+                                                </div>
+                                                <span class="help-block"><spring:message code="hint.description"/></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="remote" class="col-sm-2 control-label">
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-thumb-tack" aria-hidden="true"></i>
+                                                    </span>
+                                                    <input id="remote" class="form-control" placeholder="<spring:message code='remote'/>" name="remote" type="checkbox" value="">
                                                 </div>
                                                 <span class="help-block"><spring:message code="hint.description"/></span>
                                             </div>

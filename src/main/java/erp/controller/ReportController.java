@@ -34,15 +34,15 @@ public class ReportController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RedirectView add(@AuthenticationPrincipal UserDto currentUser,
-                            String date, int time, String description) {
-        reportService.createReport(date, time, description, currentUser.getId());
+                            String date, int time, String description, String remote) {
+        reportService.createReport(date, time, description, currentUser.getId(), remote);
         return new RedirectView("/reports");
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public RedirectView edit(@RequestParam String reportId, @RequestParam String date,
-                             @RequestParam int time, @RequestParam String description) {
-        reportService.editReport(reportId, date, time, description);
+                             @RequestParam int time, @RequestParam String description, String remote) {
+        reportService.editReport(reportId, date, time, description, remote);
         return new RedirectView("/reports");
     }
 
