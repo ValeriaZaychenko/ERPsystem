@@ -16,13 +16,7 @@ public interface ReportRepository extends CrudRepository<Report, String> {
     List<Report> findByUser(User user);
     List<Report> findAll();
 
-    /*@Query("SELECT r FROM reports r where r.user = :user AND ( r.date BETWEEN :beginDate AND :endDate )")
-    List<Report> findByUserAndDateBetween(@Param("beginDate")LocalDate beginDate,
-                                        @Param("endDate")LocalDate endDate,
-                                        @Param("user")User user);
-                                        */
-
-    @Query("SELECT r FROM reports r where r.user = :user AND ( r.date > :beginDate AND r.date < :endDate )")
+    @Query("SELECT r FROM reports r where r.user = :user AND ( r.date >= :beginDate AND r.date <= :endDate )")
     List<Report> findByUserAndBetweenQuery(@Param("beginDate")LocalDate beginDate,
                                           @Param("endDate")LocalDate endDate,
                                           @Param("user")User user);

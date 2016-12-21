@@ -2,11 +2,12 @@ package erp.dto;
 
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 public class ReportDto implements Serializable {
 
     private String id;
-    private String date;
+    private LocalDate date;
     private int workingTime;
     private String description;
     private String userId;
@@ -20,11 +21,11 @@ public class ReportDto implements Serializable {
         this.id = id;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

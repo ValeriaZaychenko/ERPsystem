@@ -6,7 +6,6 @@ import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
 import erp.exceptions.BooleanParseException;
 import erp.exceptions.EntityNotFoundException;
-import erp.exceptions.InvalidDateException;
 import erp.repository.ReportRepository;
 import erp.repository.UserRepository;
 import erp.service.IReportService;
@@ -15,10 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,16 +26,12 @@ public class ReportService implements IReportService {
     @Inject
     private UserRepository userRepository;
 
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
     @Transactional
     @Override
-    public String createReport(String date, int workingTime, String description, String userId, String remote) {
-
+    public String createReport(LocalDate date, int workingTime, String description, String userId, String remote) {
         User user = restoreUserFromRepository(userId);
-        LocalDate localDate = parseDate(date);
 
-        Report report = new Report(localDate, workingTime, description, user, parseRemote(remote));
+        Report report = new Report(date, workingTime, description, user, parseRemote(remote));
 
         reportRepository.save(report);
         return report.getId();
@@ -47,7 +39,7 @@ public class ReportService implements IReportService {
 
     @Transactional
     @Override
-    public void editReport(String id, String date, int workingTime, String description, String remote) {
+    public void editReport(String id, LocalDate date, int workingTime, String description, String remote) {
         Report report = restoreReportFromRepository(id);
 
         boolean dateModified = false;
@@ -55,10 +47,9 @@ public class ReportService implements IReportService {
         boolean descriptionModified = false;
         boolean remoteModified = false;
 
-        LocalDate localDate = null;
         boolean r = parseRemote(remote);
 
-        if(!report.getDate().toString().equals(date))
+        if(!report.getDate().equals(date))
             dateModified = true;
 
         if(report.getWorkingTime() != workingTime)
@@ -73,11 +64,8 @@ public class ReportService implements IReportService {
         if (!(dateModified || workingTimeModified || descriptionModified || remoteModified))
             return; //No modification detected
 
-        if (dateModified)
-            localDate = parseDate(date);
-
         if(dateModified)
-            report.setDate(localDate);
+            report.setDate(date);
 
         if(workingTimeModified)
             report.setWorkingTime(workingTime);
@@ -153,17 +141,14 @@ public class ReportService implements IReportService {
         return 160.0;
     }
 
+    /*
+    Count sum of user working time in range of dates include borders and return ProgressDto
+     */
     @Transactional
     @Override
-    public ProgressDto getUserCurrentMonthWorkingTime(@NotNull String userId) {
+    public ProgressDto getUserWorkingTimeBetweenDates(String userId, LocalDate beginDate, LocalDate endDate) {
         User user = restoreUserFromRepository(userId);
         double userWorkingTimeForMonth = 0.0;
-
-        int month = LocalDate.now().getMonthValue();
-        int year = LocalDate.now().getYear();
-        int maxDay = LocalDate.now().lengthOfMonth();
-        LocalDate beginDate = LocalDate.of(year, month, 1);
-        LocalDate endDate = LocalDate.of(year, month, maxDay);
 
         List<Report> userReports = reportRepository.findByUserAndBetweenQuery(beginDate, endDate, user);
 
@@ -180,14 +165,17 @@ public class ReportService implements IReportService {
         return progressDto;
     }
 
+    /*
+    Count sum of all users working time in range of dates include borders and return list of ProgressDto
+     */
     @Transactional
     @Override
-    public List<ProgressDto> getAllUsersCurrentMonthWorkingTime() {
+    public List<ProgressDto> getAllUsersWorkingTimeBetweenDates(LocalDate beginDate, LocalDate endDate) {
         List<User> users = userRepository.findAll();
         List<ProgressDto> progressDtos = new ArrayList<>();
 
         for(User user : users) {
-            progressDtos.add(getUserCurrentMonthWorkingTime(user.getId()));
+            progressDtos.add(getUserWorkingTimeBetweenDates(user.getId(), beginDate, endDate));
         }
         return progressDtos;
     }
@@ -206,15 +194,5 @@ public class ReportService implements IReportService {
             throw new EntityNotFoundException(Report.class.getName());
 
         return report;
-    }
-
-    private LocalDate parseDate(String date) {
-        LocalDate localDate = null;
-        try {
-            localDate = LocalDate.parse(date, formatter);
-            return localDate;
-        } catch (DateTimeParseException e) {
-            throw new InvalidDateException(date);
-        }
     }
 }

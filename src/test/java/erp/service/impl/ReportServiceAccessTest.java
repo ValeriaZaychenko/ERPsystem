@@ -3,6 +3,7 @@ package erp.service.impl;
 import erp.domain.User;
 import erp.domain.UserRole;
 import erp.service.IReportService;
+import erp.utils.DateParser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.security.access.AccessDeniedException;
@@ -32,9 +33,14 @@ public class ReportServiceAccessTest {
     @Test(expected = AccessDeniedException.class)
     public void viewAllUsersReports() {
         String id = create();
-        reportService.createReport("2020-03-12", 2, "description", id, Boolean.toString(false));
+        reportService.createReport(DateParser.parseDate("2020-03-12"), 2, "description", id, Boolean.toString(false));
 
         reportService.viewAllReports();
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void viewAllUsersWorkingTime() {
+        reportService.getAllUsersWorkingTimeBetweenDates(DateParser.parseDate("2020-03-12"), DateParser.parseDate("2020-04-12"));
     }
 
     private String create() {

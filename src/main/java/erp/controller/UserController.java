@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.Map;
 
 @Controller
@@ -50,7 +51,23 @@ public class UserController {
 
     @RequestMapping(value = "/progress", method = RequestMethod.GET)
     public String getUsersProgressList(Map<String, Object> model) {
-        model.put(AttributeNames.UserViewUsers.progress, reportService.getAllUsersCurrentMonthWorkingTime());
+        model.put(
+                AttributeNames.UserViewUsers.progress,
+                reportService.getAllUsersWorkingTimeBetweenDates(getBeginDate(), getEndDate()));
+
         return ViewNames.PROGRESS.progress;
+    }
+
+    private LocalDate getBeginDate() {
+        int month = LocalDate.now().getMonthValue();
+        int year = LocalDate.now().getYear();
+        return LocalDate.of(year, month, 1);
+    }
+
+    private LocalDate getEndDate() {
+        int month = LocalDate.now().getMonthValue();
+        int year = LocalDate.now().getYear();
+        int maxDay = LocalDate.now().lengthOfMonth();
+        return LocalDate.of(year, month, maxDay);
     }
 }

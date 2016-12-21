@@ -143,7 +143,9 @@ public class IndexControllerTest {
     public void loginRedirected() throws Exception {
         this.mockMvc.perform(
                 get("/login")
-        );
+        )
+        .andExpect(view().name(ViewNames.LOGIN.login))
+        ;
     }
 
     @Test

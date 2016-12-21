@@ -5,8 +5,8 @@ import erp.controller.constants.ViewNames;
 import erp.dto.ReportDto;
 import erp.dto.UserDto;
 import erp.exceptions.EntityNotFoundException;
-import erp.exceptions.InvalidDateException;
 import erp.service.IReportService;
+import erp.utils.DateParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,7 +55,7 @@ public class ReportControllerTest {
 
         reportDto = new ReportDto();
         reportDto.setId(reportId);
-        reportDto.setDate("2016-09-09");
+        reportDto.setDate(DateParser.parseDate("2016-09-09"));
         reportDto.setWorkingTime(8);
         reportDto.setDescription("Issue 35");
         reportDto.setUserId(userDto.getId());
@@ -89,7 +89,7 @@ public class ReportControllerTest {
         this.mockMvc.perform(
                 post("/reports/add")
                         .principal(userDto)
-                        .param("date", reportDto.getDate())
+                        .param("date", reportDto.getDate().toString())
                         .param("time", Integer.toString(reportDto.getWorkingTime()))
                         .param("description", reportDto.getDescription())
                         .param("remote", Boolean.toString(reportDto.isRemote()))
@@ -108,38 +108,13 @@ public class ReportControllerTest {
                );
     }
 
-    @Test
-    public void createReportInvalidDate() throws Exception {
-        doThrow(new InvalidDateException("1-66666"))
-                .when(mockReportService).
-                createReport("1-66666", reportDto.getWorkingTime(),
-                        reportDto.getDescription(), userDto.getId(), Boolean.toString(reportDto.isRemote()));
-
-        this.mockMvc.perform(
-                post("/reports/add")
-                        .principal(userDto)
-                        .param("date", "1-66666")
-                        .param("time", Integer.toString(reportDto.getWorkingTime()))
-                        .param("description", reportDto.getDescription())
-                        .param("remote", Boolean.toString(reportDto.isRemote()))
-
-        )
-                .andExpect(view().name("error"))
-                .andExpect(new ResultMatcher() {
-
-                    @Override
-                    public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains("Invalid date");
-                    }
-                });
-    }
 
     @Test
     public void editReport() throws Exception {
         this.mockMvc.perform(
                 post("/reports/edit")
                         .param("reportId", reportId)
-                        .param("date", reportDto.getDate())
+                        .param("date", reportDto.getDate().toString())
                         .param("time", Integer.toString(reportDto.getWorkingTime()))
                         .param("description", reportDto.getDescription())
                         .param("remote", Boolean.toString(reportDto.isRemote()))

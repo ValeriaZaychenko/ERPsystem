@@ -4,10 +4,12 @@ import erp.controller.constants.AttributeNames;
 import erp.controller.constants.ViewNames;
 import erp.domain.User;
 import erp.domain.UserRole;
+import erp.dto.ProgressDto;
 import erp.dto.UserDto;
 import erp.exceptions.DuplicateEmailException;
 import erp.exceptions.EntityNotFoundException;
 import erp.exceptions.UnknownRoleException;
+import erp.service.IReportService;
 import erp.service.IUserService;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +21,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -34,6 +39,9 @@ public class UserControllerTest {
 
     @Mock
     private IUserService mockUserService;
+    @Mock
+    private IReportService mockReportService;
+
     @InjectMocks
     private UserController theController;
 
@@ -41,10 +49,13 @@ public class UserControllerTest {
     private String userId;
     private UserDto userDto;
     private List<UserDto> dtos;
+    private ProgressDto progressDto;
+    private List<ProgressDto> progressDtos;
 
     @Before
     public void setup() {
         dtos = new ArrayList<>();
+        progressDtos = new ArrayList<>();
 
         userId = UUID.randomUUID().toString();
 
@@ -54,8 +65,22 @@ public class UserControllerTest {
         userDto.setEmail("Olegov");
         userDto.setUserRole("USER");
 
+        progressDto = new ProgressDto();
+        progressDto.setUserId(userId);
+        progressDto.setUserName(userDto.getName());
+        progressDto.setUserCurrentMonthWorkingTime(16.0);
+        progressDto.setProgress(30.0);
+
+        progressDtos.add(progressDto);
+
+        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+        resolver.setViewClass(JstlView.class);
+        resolver.setSuffix(".jsp");
+
+
         this.mockMvc = MockMvcBuilders.standaloneSetup(theController)
                 .setControllerAdvice(new ExceptionHandlingAdvice())
+                .setViewResolvers(resolver)
                 .build();
     }
 
@@ -239,6 +264,25 @@ public class UserControllerTest {
                         result.getResponse().getContentAsString().contains("Database doesn't have entity with name");
                     }
                 });
+    }
+
+    @Test
+    public void viewProgress() throws Exception {
+        when(mockReportService.
+                getAllUsersWorkingTimeBetweenDates(LocalDate.of(2016, 12, 1), LocalDate.of(2016, 12, 31)))
+                        .thenReturn(progressDtos);
+
+        this.mockMvc.perform(
+                get("/users/progress")
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name(ViewNames.PROGRESS.progress))
+                .andExpect(model().attribute(AttributeNames.UserViewUsers.progress, progressDtos)
+                );
+
+        verify(mockReportService, times(1))
+                .getAllUsersWorkingTimeBetweenDates(LocalDate.of(2016, 12, 1), LocalDate.of(2016, 12, 31))
+        ;
     }
 }
 

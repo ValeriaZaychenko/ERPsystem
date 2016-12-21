@@ -22,7 +22,7 @@ public final class DtoBuilder {
     public static ReportDto toDto(Report report) {
         ReportDto dto = new ReportDto();
         dto.setId(report.getId());
-        dto.setDate(report.getDate().toString());
+        dto.setDate(report.getDate());
         dto.setWorkingTime(report.getWorkingTime());
         dto.setDescription(report.getDescription());
         dto.setUserId(report.getUser().getId());

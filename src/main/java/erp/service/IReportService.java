@@ -1,22 +1,23 @@
 package erp.service;
 
 
+import erp.config.validation.Past;
 import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.List;
 
 @Validated
 public interface IReportService {
 
     String createReport(
-            @NotBlank @DateTimeFormat(pattern = "yyyy-MM-dd") String date,
+            LocalDate date,
             @Max(value = 24) int workingTime,
             @NotBlank String description,
             @NotNull String userId,
@@ -24,7 +25,7 @@ public interface IReportService {
 
     void editReport(
             @NotNull String id,
-            @NotBlank @DateTimeFormat(pattern = "yyyy-MM-dd") String date,
+            LocalDate date,
             @Max(value = 24) int workingTime,
             @NotBlank String description,
             @NotNull String remote);
@@ -40,8 +41,13 @@ public interface IReportService {
 
     double getCurrentMonthFullTime();
 
-    ProgressDto getUserCurrentMonthWorkingTime(@NotNull String userId);
+    ProgressDto getUserWorkingTimeBetweenDates(
+            @NotNull String userId,
+            @Past LocalDate beginDate,
+            LocalDate endDate);
 
     @PreAuthorize("hasAuthority('AUTH_ADMIN')")
-    List<ProgressDto> getAllUsersCurrentMonthWorkingTime();
+    List<ProgressDto> getAllUsersWorkingTimeBetweenDates(
+            @Past LocalDate beginDate,
+            LocalDate endDate);
 }
