@@ -4,6 +4,7 @@ import erp.controller.constants.AttributeNames;
 import erp.controller.constants.ViewNames;
 import erp.dto.ReportDto;
 import erp.dto.UserDto;
+import erp.exceptions.DuplicateEmailException;
 import erp.exceptions.EntityNotFoundException;
 import erp.service.IReportService;
 import erp.utils.DateParser;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -60,6 +62,8 @@ public class ReportControllerTest {
         reportDto.setDescription("Issue 35");
         reportDto.setUserId(userDto.getId());
         reportDto.setRemote(true);
+
+        dtos.add(reportDto);
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(theController)
                 .setControllerAdvice(new ExceptionHandlingAdvice())
@@ -108,6 +112,31 @@ public class ReportControllerTest {
                );
     }
 
+    @Test
+    public void createReportInvalidDate() throws Exception {
+        doThrow(new DateTimeParseException("Invalid date", reportDto.getDate().toString(), 0))
+                .when(mockReportService).
+                createReport(reportDto.getDate(), reportDto.getWorkingTime(),
+                        reportDto.getDescription(), userDto.getId(), Boolean.toString(reportDto.isRemote()));
+
+        this.mockMvc.perform(
+                post("/reports/add")
+                        .principal(userDto)
+                        .param("date", reportDto.getDate().toString())
+                        .param("time", Integer.toString(reportDto.getWorkingTime()))
+                        .param("description", reportDto.getDescription())
+                        .param("remote", Boolean.toString(reportDto.isRemote()))
+
+        )
+                .andExpect(view().name("error"))
+                .andExpect(new ResultMatcher() {
+
+                    @Override
+                    public void match(MvcResult result) throws Exception {
+                        result.getResponse().getContentAsString().contains("Invalid date");
+                    }
+                });
+    }
 
     @Test
     public void editReport() throws Exception {
@@ -130,6 +159,32 @@ public class ReportControllerTest {
                         reportDto.getDescription(),
                         Boolean.toString(reportDto.isRemote())
                );
+    }
+
+    @Test
+    public void editReportInvalidDate() throws Exception {
+        doThrow(new DateTimeParseException("Invalid date", reportDto.getDate().toString(), 0))
+                .when(mockReportService).
+                editReport(reportDto.getId(), reportDto.getDate(), reportDto.getWorkingTime(),
+                        reportDto.getDescription(), Boolean.toString(reportDto.isRemote()));
+
+        this.mockMvc.perform(
+                post("/reports/edit")
+                        .param("reportId", reportId)
+                        .param("date", reportDto.getDate().toString())
+                        .param("time", Integer.toString(reportDto.getWorkingTime()))
+                        .param("description", reportDto.getDescription())
+                        .param("remote", Boolean.toString(reportDto.isRemote()))
+
+        )
+                .andExpect(view().name("error"))
+                .andExpect(new ResultMatcher() {
+
+                    @Override
+                    public void match(MvcResult result) throws Exception {
+                        result.getResponse().getContentAsString().contains("Invalid date");
+                    }
+                });
     }
 
     @Test

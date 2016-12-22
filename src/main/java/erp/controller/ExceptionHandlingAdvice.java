@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import java.time.format.DateTimeParseException;
+
 @ControllerAdvice
 public class ExceptionHandlingAdvice {
 
@@ -59,8 +61,15 @@ public class ExceptionHandlingAdvice {
         return mav;
     }
 
-    @ExceptionHandler(BooleanParseException.class)
+    @ExceptionHandler(BooleanParseException.class)//TODO remove
     public ModelAndView handle(BooleanParseException e)  {
+        ModelAndView mav = new ModelAndView("error");
+        mav.addObject("errorMessage", e.getMessage());
+        return mav;
+    }
+
+    @ExceptionHandler(DateTimeParseException.class)
+    public ModelAndView handle(DateTimeParseException e)  {
         ModelAndView mav = new ModelAndView("error");
         mav.addObject("errorMessage", e.getMessage());
         return mav;

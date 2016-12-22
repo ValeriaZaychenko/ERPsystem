@@ -5,6 +5,7 @@ import erp.controller.constants.ViewNames;
 import erp.dto.UserDto;
 import erp.service.IReportService;
 import erp.utils.DateParser;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.Map;
 
 @Controller
@@ -35,15 +37,18 @@ public class ReportController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RedirectView add(@AuthenticationPrincipal UserDto currentUser,
-                            String date, int time, String description, String remote) {
-        reportService.createReport(DateParser.parseDate(date), time, description, currentUser.getId(), remote);
+                            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                            int time, String description, String remote) {
+
+        reportService.createReport(date, time, description, currentUser.getId(), remote);
         return new RedirectView("/reports");
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public RedirectView edit(@RequestParam String reportId, @RequestParam String date,
+    public RedirectView edit(@RequestParam String reportId,
+                             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                              @RequestParam int time, @RequestParam String description, String remote) {
-        reportService.editReport(reportId, DateParser.parseDate(date), time, description, remote);
+        reportService.editReport(reportId, date, time, description, remote);
         return new RedirectView("/reports");
     }
 
