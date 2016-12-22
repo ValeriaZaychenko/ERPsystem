@@ -105,7 +105,7 @@ public class ReportServiceTest {
         ReportDto dto = reportService.findReport(reportId);
 
         assertEquals(get2015_11_11(), dto.getDate());
-        assertEquals(8, dto.getWorkingTime());
+        assertEquals(8, dto.getDuration(), 0.1);
         assertEquals("description", dto.getDescription());
         assertEquals(userId, dto.getUserId());
         assertEquals(dto.isRemote(), true);
@@ -224,7 +224,7 @@ public class ReportServiceTest {
         ReportDto dto = reportService.findReport(reportId);
 
         assertEquals(dto.getDate(), get2015_11_11());
-        assertEquals(dto.getWorkingTime(), 8);
+        assertEquals(dto.getDuration(), 8, 0.1);
         assertEquals(dto.getDescription(), "description");
     }
 
@@ -253,7 +253,7 @@ public class ReportServiceTest {
 
         ReportDto dto = reportService.findReport(reportId);
 
-        assertEquals(dto.getWorkingTime(), 10);
+        assertEquals(dto.getDuration(), 10, 0.1);
     }
 
     @Test
@@ -263,11 +263,11 @@ public class ReportServiceTest {
                 8, "description", userId, true);
 
         reportService.editReport(reportId, get2015_11_11(),
-                10, "changed descritpion", true);
+                10, "changed description", true);
 
         ReportDto dto = reportService.findReport(reportId);
 
-        assertEquals(dto.getDescription(), "changed descritpion");
+        assertEquals(dto.getDescription(), "changed description");
     }
 
     @Test

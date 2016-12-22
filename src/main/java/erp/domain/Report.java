@@ -14,16 +14,16 @@ public class Report {
     @Column(name = "id", unique = true)
     private String id;
     private LocalDate date;
-    private int workingTime;
+    private double duration;
     private String description;
     private boolean remote;
 
     @ManyToOne
     private User user;
 
-    public Report(LocalDate date, int workingTime, String description, User user, boolean remote) {
+    public Report(LocalDate date, double duration, String description, User user, boolean remote) {
         this.date = date;
-        this.workingTime = workingTime;
+        this.duration = duration;
         this.description = description;
         this.user = user;
         this.remote = remote;
@@ -43,12 +43,12 @@ public class Report {
         this.date = date;
     }
 
-    public int getWorkingTime() {
-        return workingTime;
+    public double getDuration() {
+        return duration;
     }
 
-    public void setWorkingTime(int workingTime) {
-        this.workingTime = workingTime;
+    public void setDuration(double duration) {
+        this.duration = duration;
     }
 
     public String getDescription() {

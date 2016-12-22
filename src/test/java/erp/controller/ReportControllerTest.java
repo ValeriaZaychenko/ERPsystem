@@ -4,7 +4,6 @@ import erp.controller.constants.AttributeNames;
 import erp.controller.constants.ViewNames;
 import erp.dto.ReportDto;
 import erp.dto.UserDto;
-import erp.exceptions.DuplicateEmailException;
 import erp.exceptions.EntityNotFoundException;
 import erp.service.IReportService;
 import erp.utils.DateParser;
@@ -58,7 +57,7 @@ public class ReportControllerTest {
         reportDto = new ReportDto();
         reportDto.setId(reportId);
         reportDto.setDate(DateParser.parseDate("2016-09-09"));
-        reportDto.setWorkingTime(8);
+        reportDto.setDuration(8);
         reportDto.setDescription("Issue 35");
         reportDto.setUserId(userDto.getId());
         reportDto.setRemote(true);
@@ -94,7 +93,7 @@ public class ReportControllerTest {
                 post("/reports/add")
                         .principal(userDto)
                         .param("date", reportDto.getDate().toString())
-                        .param("time", Integer.toString(reportDto.getWorkingTime()))
+                        .param("duration", Double.toString(reportDto.getDuration()))
                         .param("description", reportDto.getDescription())
                         .param("remote", Boolean.toString(reportDto.isRemote()))
 
@@ -105,7 +104,7 @@ public class ReportControllerTest {
         verify(mockReportService, only())
                 .createReport(
                         reportDto.getDate(),
-                        reportDto.getWorkingTime(),
+                        reportDto.getDuration(),
                         reportDto.getDescription(),
                         reportDto.getUserId(),
                         reportDto.isRemote()
@@ -116,14 +115,14 @@ public class ReportControllerTest {
     public void createReportInvalidDate() throws Exception {
         doThrow(new DateTimeParseException("Invalid date", reportDto.getDate().toString(), 0))
                 .when(mockReportService).
-                createReport(reportDto.getDate(), reportDto.getWorkingTime(),
+                createReport(reportDto.getDate(), reportDto.getDuration(),
                         reportDto.getDescription(), userDto.getId(), reportDto.isRemote());
 
         this.mockMvc.perform(
                 post("/reports/add")
                         .principal(userDto)
                         .param("date", reportDto.getDate().toString())
-                        .param("time", Integer.toString(reportDto.getWorkingTime()))
+                        .param("duration", Double.toString(reportDto.getDuration()))
                         .param("description", reportDto.getDescription())
                         .param("remote", Boolean.toString(reportDto.isRemote()))
 
@@ -144,7 +143,7 @@ public class ReportControllerTest {
                 post("/reports/edit")
                         .param("reportId", reportId)
                         .param("date", reportDto.getDate().toString())
-                        .param("time", Integer.toString(reportDto.getWorkingTime()))
+                        .param("duration", Double.toString(reportDto.getDuration()))
                         .param("description", reportDto.getDescription())
                         .param("remote", Boolean.toString(reportDto.isRemote()))
        )
@@ -155,7 +154,7 @@ public class ReportControllerTest {
                 .editReport(
                         reportId,
                         reportDto.getDate(),
-                        reportDto.getWorkingTime(),
+                        reportDto.getDuration(),
                         reportDto.getDescription(),
                         reportDto.isRemote()
                );
@@ -165,14 +164,14 @@ public class ReportControllerTest {
     public void editReportInvalidDate() throws Exception {
         doThrow(new DateTimeParseException("Invalid date", reportDto.getDate().toString(), 0))
                 .when(mockReportService).
-                editReport(reportDto.getId(), reportDto.getDate(), reportDto.getWorkingTime(),
+                editReport(reportDto.getId(), reportDto.getDate(), reportDto.getDuration(),
                         reportDto.getDescription(), reportDto.isRemote());
 
         this.mockMvc.perform(
                 post("/reports/edit")
                         .param("reportId", reportId)
                         .param("date", reportDto.getDate().toString())
-                        .param("time", Integer.toString(reportDto.getWorkingTime()))
+                        .param("duration", Double.toString(reportDto.getDuration()))
                         .param("description", reportDto.getDescription())
                         .param("remote", Boolean.toString(reportDto.isRemote()))
 

@@ -23,7 +23,7 @@
                             <thead>
                             <tr>
                                 <th><spring:message code="date"/></th>
-                                <th><spring:message code="time"/></th>
+                                <th><spring:message code="duration"/></th>
                                 <th><spring:message code="description"/></th>
                                 <th><spring:message code="remote"/></th>
                                 <th><spring:message code="actions"/></th>
@@ -34,7 +34,7 @@
                                     <form role="form" id="report-form">
                                         <tr id="reports-row-${report.id}">
                                             <td><span class="date">${report.date}</span></td>
-                                            <td><span class="time">${report.workingTime}</span></td>
+                                            <td><span class="duration">${report.duration}</span></td>
                                             <td><span class="description">${report.description}</span></td>
                                             <td>
                                                 <label><input type="checkbox" class="remote" disabled
@@ -92,16 +92,16 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="time" class="col-sm-2 control-label">
+                                            <label for="duration" class="col-sm-2 control-label">
                                             </label>
                                             <div class="col-sm-12">
                                                 <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-clock-o" aria-hidden="true"></i>
                                                     </span>
-                                                    <input id="time" class="form-control" placeholder="<spring:message code='time'/>" name="time" type="number" value="">
+                                                    <input id="duration" class="form-control" placeholder="<spring:message code='duration'/>" name="duration" type="number" step="0.01" value="">
                                                 </div>
-                                                <span class="help-block"><spring:message code="hint.time"/></span>
+                                                <span class="help-block"><spring:message code="hint.duration"/></span>
                                             </div>
                                         </div>
 
@@ -158,8 +158,8 @@
             validateModalStrings['invalid.value.error.message']  = "<spring:message code='invalid.value.error.message' />";
             validateModalStrings['invalid.date.error.message']  = "<spring:message code='invalid.date.error.message' />";
             validateModalStrings['empty.date.error.message'] = "<spring:message code='empty.date.error.message' />";
-            validateModalStrings['empty.time.error.message']  = "<spring:message code='empty.time.error.message' />";
-            validateModalStrings['invalid.time.error.message'] = "<spring:message code='invalid.time.error.message' />";
+            validateModalStrings['empty.duration.error.message']  = "<spring:message code='empty.duration.error.message' />";
+            validateModalStrings['invalid.duration.error.message'] = "<spring:message code='invalid.duration.error.message' />";
             validateModalStrings['empty.description.error.message'] = "<spring:message code='empty.description.error.message' />";
             strings['confirm.delete'] = "<spring:message code='confirm.report.delete' />";
         </script>

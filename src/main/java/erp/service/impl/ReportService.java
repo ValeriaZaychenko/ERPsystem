@@ -28,10 +28,10 @@ public class ReportService implements IReportService {
 
     @Transactional
     @Override
-    public String createReport(LocalDate date, int workingTime, String description, String userId, boolean remote) {
+    public String createReport(LocalDate date, double duration, String description, String userId, boolean remote) {
         User user = restoreUserFromRepository(userId);
 
-        Report report = new Report(date, workingTime, description, user, remote);
+        Report report = new Report(date, duration, description, user, remote);
 
         reportRepository.save(report);
         return report.getId();
@@ -39,19 +39,19 @@ public class ReportService implements IReportService {
 
     @Transactional
     @Override
-    public void editReport(String id, LocalDate date, int workingTime, String description, boolean remote) {
+    public void editReport(String id, LocalDate date, double duration, String description, boolean remote) {
         Report report = restoreReportFromRepository(id);
 
         boolean dateModified = false;
-        boolean workingTimeModified = false;
+        boolean durationModified = false;
         boolean descriptionModified = false;
         boolean remoteModified = false;
 
         if(!report.getDate().equals(date))
             dateModified = true;
 
-        if(report.getWorkingTime() != workingTime)
-            workingTimeModified = true;
+        if(report.getDuration() != duration)
+            durationModified = true;
 
         if(!report.getDescription().equals(description))
             descriptionModified = true;
@@ -59,14 +59,14 @@ public class ReportService implements IReportService {
         if(report.isRemote() != remote)
             remoteModified = true;
 
-        if (!(dateModified || workingTimeModified || descriptionModified || remoteModified))
+        if (!(dateModified || durationModified || descriptionModified || remoteModified))
             return; //No modification detected
 
         if(dateModified)
             report.setDate(date);
 
-        if(workingTimeModified)
-            report.setWorkingTime(workingTime);
+        if(durationModified)
+            report.setDuration(duration);
 
         if(descriptionModified)
             report.setDescription(description);
@@ -139,7 +139,7 @@ public class ReportService implements IReportService {
         List<Report> userReports = reportRepository.findByUserAndBetweenQuery(beginDate, endDate, user);
 
         for(Report r : userReports) {
-            userWorkingTimeForMonth += r.getWorkingTime();
+            userWorkingTimeForMonth += r.getDuration();
         }
 
         ProgressDto progressDto = new ProgressDto();

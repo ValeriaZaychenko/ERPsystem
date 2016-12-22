@@ -21,15 +21,15 @@ $(document).ready(function() {
                     }
                 }
             },
-            "time": {
+            "duration": {
                 validators: {
                     notEmpty: {
-                        message: validateModalStrings['empty.time.error.message']
+                        message: validateModalStrings['empty.duration.error.message']
                     },
                     between: {
                         min: 0,
                         max: 24,
-                        message: validateModalStrings['invalid.time.error.message']
+                        message: validateModalStrings['invalid.duration.error.message']
                     }
                 }
             },

@@ -23,7 +23,7 @@ public final class DtoBuilder {
         ReportDto dto = new ReportDto();
         dto.setId(report.getId());
         dto.setDate(report.getDate());
-        dto.setWorkingTime(report.getWorkingTime());
+        dto.setDuration(report.getDuration());
         dto.setDescription(report.getDescription());
         dto.setUserId(report.getUser().getId());
         dto.setRemote(report.isRemote());

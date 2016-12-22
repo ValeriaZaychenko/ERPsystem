@@ -8,7 +8,7 @@ public class ReportDto implements Serializable {
 
     private String id;
     private LocalDate date;
-    private int workingTime;
+    private double duration;
     private String description;
     private String userId;
     private boolean remote;
@@ -29,12 +29,12 @@ public class ReportDto implements Serializable {
         this.date = date;
     }
 
-    public int getWorkingTime() {
-        return workingTime;
+    public double getDuration() {
+        return duration;
     }
 
-    public void setWorkingTime(int workingTime) {
-        this.workingTime = workingTime;
+    public void setDuration(double duration) {
+        this.duration = duration;
     }
 
     public String getDescription() {

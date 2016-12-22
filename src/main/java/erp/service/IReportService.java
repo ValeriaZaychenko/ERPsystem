@@ -18,7 +18,7 @@ public interface IReportService {
 
     String createReport(
             LocalDate date,
-            @Max(value = 24) int workingTime,
+            @Max(value = 24) double duration,
             @NotBlank String description,
             @NotNull String userId,
             boolean remote);
@@ -26,7 +26,7 @@ public interface IReportService {
     void editReport(
             @NotNull String id,
             LocalDate date,
-            @Max(value = 24) int workingTime,
+            @Max(value = 24) double duration,
             @NotBlank String description,
             boolean remote);
 
