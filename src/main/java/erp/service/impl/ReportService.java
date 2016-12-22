@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReportService implements IReportService {
@@ -122,17 +123,14 @@ public class ReportService implements IReportService {
     @Transactional
     @Override
     public List<ReportDto> viewUserReports(String userId) {
-        //TODO Change this. Query like "FROM reports SELECT reports r WHERE r.user.id = userId
-        //now its looking by entity too damn big complexity
         User user = restoreUserFromRepository(userId);
-        List<Report> userReports = reportRepository.findByUser(user);
+        List<Report> userReports = reportRepository.findByUserOrderByDateDesc(user);
 
         List<ReportDto> reportDtos = new ArrayList<>();
 
         for(Report r : userReports) {
             reportDtos.add(DtoBuilder.toDto(r));
         }
-
         return reportDtos;
     }
 
@@ -166,7 +164,8 @@ public class ReportService implements IReportService {
     }
 
     /*
-    Count sum of all users working time in range of dates include borders and return list of ProgressDto
+    Count sum of all users working time in range of dates include borders
+    return list of ProgressDto sorted by progress reversed
      */
     @Transactional
     @Override
@@ -177,7 +176,11 @@ public class ReportService implements IReportService {
         for(User user : users) {
             progressDtos.add(getUserWorkingTimeBetweenDates(user.getId(), beginDate, endDate));
         }
-        return progressDtos;
+
+        return progressDtos
+                .stream()
+                .sorted((p1, p2) -> Double.compare(p2.getProgress(), p1.getProgress()))
+                .collect(Collectors.toList());
     }
 
     private User restoreUserFromRepository(String userId) {

@@ -19,8 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -128,7 +128,7 @@ public class UserService implements IUserService, IAuthenticationService {
     @Transactional
     @Override
     public List<UserDto> viewUsers() {
-        List<User> users = userRepository.findAll();
+        List<User> users = userRepository.findAllByOrderByNameAsc();
         List<UserDto> userDtos = new ArrayList<>();
         for(User user : users) {
             userDtos.add(DtoBuilder.toDto(user));

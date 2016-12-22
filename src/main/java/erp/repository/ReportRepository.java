@@ -14,6 +14,8 @@ import java.util.List;
 public interface ReportRepository extends CrudRepository<Report, String> {
 
     List<Report> findByUser(User user);
+    List<Report> findByUserOrderByDateDesc(User user);
+
     List<Report> findAll();
 
     @Query("SELECT r FROM reports r where r.user = :user AND ( r.date >= :beginDate AND r.date <= :endDate )")
