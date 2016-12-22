@@ -4,7 +4,6 @@ import erp.domain.Report;
 import erp.domain.User;
 import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
-import erp.exceptions.BooleanParseException;
 import erp.exceptions.EntityNotFoundException;
 import erp.repository.ReportRepository;
 import erp.repository.UserRepository;
@@ -29,10 +28,10 @@ public class ReportService implements IReportService {
 
     @Transactional
     @Override
-    public String createReport(LocalDate date, int workingTime, String description, String userId, String remote) {
+    public String createReport(LocalDate date, int workingTime, String description, String userId, boolean remote) {
         User user = restoreUserFromRepository(userId);
 
-        Report report = new Report(date, workingTime, description, user, parseRemote(remote));
+        Report report = new Report(date, workingTime, description, user, remote);
 
         reportRepository.save(report);
         return report.getId();
@@ -40,15 +39,13 @@ public class ReportService implements IReportService {
 
     @Transactional
     @Override
-    public void editReport(String id, LocalDate date, int workingTime, String description, String remote) {
+    public void editReport(String id, LocalDate date, int workingTime, String description, boolean remote) {
         Report report = restoreReportFromRepository(id);
 
         boolean dateModified = false;
         boolean workingTimeModified = false;
         boolean descriptionModified = false;
         boolean remoteModified = false;
-
-        boolean r = parseRemote(remote);
 
         if(!report.getDate().equals(date))
             dateModified = true;
@@ -59,7 +56,7 @@ public class ReportService implements IReportService {
         if(!report.getDescription().equals(description))
             descriptionModified = true;
 
-        if(report.isRemote() != r)
+        if(report.isRemote() != remote)
             remoteModified = true;
 
         if (!(dateModified || workingTimeModified || descriptionModified || remoteModified))
@@ -75,16 +72,7 @@ public class ReportService implements IReportService {
             report.setDescription(description);
 
         if (remoteModified)
-            report.setRemote(r);
-    }
-
-    private boolean parseRemote(String remote) {
-        try {
-            boolean r = Boolean.valueOf(remote);
-            return r;
-        } catch (IllegalArgumentException e) {
-            throw new BooleanParseException();
-        }
+            report.setRemote(remote);
     }
 
     /*

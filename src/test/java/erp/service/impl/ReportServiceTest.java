@@ -45,7 +45,7 @@ public class ReportServiceTest {
 
     @Test(expected = ConstraintViolationException.class)
     public void createReportNullFields() {
-        reportService.createReport(null, 0, null, null, "false");
+        reportService.createReport(null, 0, null, null, false);
     }
 
     @Test(expected = InvalidDateException.class)
@@ -53,7 +53,7 @@ public class ReportServiceTest {
         String userId = createSimpleUser();
 
         reportService.createReport(DateParser.parseDate(""),
-                2, "description", userId, "true");
+                2, "description", userId, true);
     }
 
     @Test(expected = InvalidDateException.class)
@@ -61,7 +61,7 @@ public class ReportServiceTest {
         String userId = createSimpleUser();
 
         reportService.createReport(DateParser.parseDate("2045-33-12"),
-                2, "description", userId, "true");
+                2, "description", userId, true);
     }
 
     @Test(expected = ConstraintViolationException.class)
@@ -69,7 +69,7 @@ public class ReportServiceTest {
         String userId = createSimpleUser();
 
         reportService.createReport(DateParser.parseDate("2015-11-11"),
-                48, "description", userId, "true");
+                48, "description", userId, true);
     }
 
     @Test(expected = ConstraintViolationException.class)
@@ -77,7 +77,7 @@ public class ReportServiceTest {
         String userId = createSimpleUser();
 
         reportService.createReport(DateParser.parseDate("2015-11-11"),
-                8, "", userId, "true");
+                8, "", userId, true);
     }
 
     @Test(expected = ConstraintViolationException.class)
@@ -85,20 +85,20 @@ public class ReportServiceTest {
         createSimpleUser();
 
         reportService.createReport(DateParser.parseDate("2015-11-11"),
-                8, "description", null, "true");
+                8, "description", null, true);
     }
 
     @Test(expected = EntityNotFoundException.class)
     public void createReportUserNoExist() {
         reportService.createReport(get2015_11_11(),
-                8, "description", UUID.randomUUID().toString(), "true");
+                8, "description", UUID.randomUUID().toString(), true);
     }
 
     @Test
     public void createReportCorrectly() {
         String userId = createSimpleUser();
         String reportId = reportService.createReport(get2015_11_11(),
-                8, "description", userId, "true");
+                8, "description", userId, true);
 
         assertNotNull(reportId);
 
@@ -115,9 +115,9 @@ public class ReportServiceTest {
     public void createTwoReportsOneUserCorrectly() {
         String userId = createSimpleUser();
         reportService.createReport(get2015_11_11(),
-                8, "description", userId, "true");
+                8, "description", userId, true);
         reportService.createReport(DateParser.parseDate("2016-11-11"),
-                5, "Done: issue1", userId, "true");
+                5, "Done: issue1", userId, true);
 
         assertEquals(reportService.viewUserReports(userId).size(), 2);
     }
@@ -128,11 +128,11 @@ public class ReportServiceTest {
         String userId2 = userService.createUser("Ivan", "ivan@mail.ru", "USER");
 
         reportService.createReport(get2015_11_11(),
-                8, "description", userId1, "true");
+                8, "description", userId1, true);
         reportService.createReport(DateParser.parseDate("2016-11-11"),
-                5, "Done: issue1", userId1, "true");
+                5, "Done: issue1", userId1, true);
         reportService.createReport(DateParser.parseDate("2016-11-10"),
-                3, "Done: issue2", userId2, "true");
+                3, "Done: issue2", userId2, true);
 
         assertEquals(reportService.viewAllReports().size(), 3);
     }
@@ -153,7 +153,7 @@ public class ReportServiceTest {
     public void removeReportCorrectly() {
         String userId = createSimpleUser();
         String reportId = reportService.createReport(get2015_11_11(),
-                8, "description", userId, "true");
+                8, "description", userId, true);
 
         reportService.removeReport(reportId);
 
@@ -163,63 +163,63 @@ public class ReportServiceTest {
     @Test(expected = ConstraintViolationException.class)
     public void editReportNullId() {
         reportService.editReport(null, get2015_11_11(),
-                8, "description", "true");
+                8, "description", true);
     }
 
     @Test(expected = EntityNotFoundException.class)
     public void editReportNotExist() {
         reportService.editReport(UUID.randomUUID().toString(),
-                get2015_11_11(), 8, "description", "true");
+                get2015_11_11(), 8, "description", true);
     }
 
     @Test(expected = InvalidDateException.class)
     public void editReportBlankDate() {
         String userId = createSimpleUser();
         String reportId = reportService.createReport(get2015_11_11(),
-                8, "description", userId, "true");
+                8, "description", userId, true);
 
         reportService.editReport(reportId, DateParser.parseDate(""),
-                8, "description", "true");
+                8, "description", true);
     }
 
     @Test(expected = InvalidDateException.class)
     public void editReportIncorrectDate() {
         String userId = createSimpleUser();
         String reportId = reportService.createReport(get2015_11_11(),
-                8, "description", userId, "true");
+                8, "description", userId, true);
 
         reportService.editReport(reportId, DateParser.parseDate("2016/12/13"),
-                8, "description", "true");
+                8, "description", true);
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void editReportInvalidWorkingTime() {
         String userId = createSimpleUser();
         String reportId = reportService.createReport(get2015_11_11(),
-                8, "description", userId, "true");
+                8, "description", userId, true);
 
         reportService.editReport(reportId, get2015_11_11(),
-                40, "description", "true");
+                40, "description", true);
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void editReportBlankDescription() {
         String userId = createSimpleUser();
         String reportId = reportService.createReport(get2015_11_11(),
-                8, "description", userId, "true");
+                8, "description", userId, true);
 
         reportService.editReport(reportId, get2015_11_11(),
-                5, "", "true");
+                5, "", true);
     }
 
     @Test
     public void editReportSameFields() {
         String userId = createSimpleUser();
         String reportId = reportService.createReport(get2015_11_11()
-                , 8, "description", userId, "true");
+                , 8, "description", userId, true);
 
         reportService.editReport(reportId, get2015_11_11(),
-                8, "description", "true");
+                8, "description", true);
 
         ReportDto dto = reportService.findReport(reportId);
 
@@ -232,10 +232,10 @@ public class ReportServiceTest {
     public void editReportDate() {
         String userId = createSimpleUser();
         String reportId = reportService.createReport(get2015_11_11(),
-                8, "description", userId, "true");
+                8, "description", userId, true);
 
         reportService.editReport(reportId, get2020_11_11(),
-                8, "description", "true");
+                8, "description", true);
 
         ReportDto dto = reportService.findReport(reportId);
 
@@ -246,10 +246,10 @@ public class ReportServiceTest {
     public void editReportWorkingTime() {
         String userId = createSimpleUser();
         String reportId = reportService.createReport(get2015_11_11(),
-                8, "description", userId, "true");
+                8, "description", userId, true);
 
         reportService.editReport(reportId, get2015_11_11(),
-                10, "description", "true");
+                10, "description", true);
 
         ReportDto dto = reportService.findReport(reportId);
 
@@ -260,10 +260,10 @@ public class ReportServiceTest {
     public void editReportDescription() {
         String userId = createSimpleUser();
         String reportId = reportService.createReport(get2015_11_11(),
-                8, "description", userId, "true");
+                8, "description", userId, true);
 
         reportService.editReport(reportId, get2015_11_11(),
-                10, "changed descritpion", "true");
+                10, "changed descritpion", true);
 
         ReportDto dto = reportService.findReport(reportId);
 
@@ -274,10 +274,10 @@ public class ReportServiceTest {
     public void editReportRemote() {
         String userId =  createSimpleUser();
         String reportId = reportService.createReport(get2015_11_11(),
-                8, "description", userId, "true");
+                8, "description", userId, true);
 
         reportService.editReport(reportId, get2015_11_11(),
-                10, "description", "false");
+                10, "description", false);
 
         ReportDto dto = reportService.findReport(reportId);
 
@@ -287,7 +287,7 @@ public class ReportServiceTest {
     @Test(expected = ConstraintViolationException.class)
     public void viewUserProgressNullId() {
         String userId = createSimpleUser();
-        reportService.createReport(DateParser.parseDate("2016-12-12"), 8, "description", userId, "true");
+        reportService.createReport(DateParser.parseDate("2016-12-12"), 8, "description", userId, true);
 
         reportService.getUserWorkingTimeBetweenDates(null, null, null);
     }
@@ -296,11 +296,11 @@ public class ReportServiceTest {
     public void viewUserProgressCorrectly() {
         String userId = createSimpleUser();
         reportService.createReport(DateParser.parseDate("2016-11-11"),
-                8, "description", userId, "true");
+                8, "description", userId, true);
         reportService.createReport(DateParser.parseDate("2016-11-11"),
-                7, "description", userId, "true");
+                7, "description", userId, true);
         reportService.createReport(DateParser.parseDate("2017-11-11"),
-                7, "description", userId, "true");
+                7, "description", userId, true);
 
         LocalDate begin = DateParser.parseDate("2016-10-10");
         LocalDate end = DateParser.parseDate("2016-12-12");
@@ -316,9 +316,9 @@ public class ReportServiceTest {
         String userId = createSimpleUser();
 
         reportService.createReport(DateParser.parseDate("2016-11-01"),
-                8, "description", userId, "true");
+                8, "description", userId, true);
         reportService.createReport(DateParser.parseDate("2016-11-11"),
-                7, "description", userId, "true");
+                7, "description", userId, true);
 
         LocalDate begin = DateParser.parseDate("2016-11-01");
         LocalDate end = DateParser.parseDate("2016-12-12");
@@ -334,9 +334,9 @@ public class ReportServiceTest {
         String userId = createSimpleUser();
 
         reportService.createReport(DateParser.parseDate("2016-11-11"),
-                8, "description", userId, "true");
+                8, "description", userId, true);
         reportService.createReport(DateParser.parseDate("2016-11-12"),
-                7, "description", userId, "true");
+                7, "description", userId, true);
 
         LocalDate begin = DateParser.parseDate("2016-11-01");
         LocalDate end = DateParser.parseDate("2016-11-12");
@@ -353,13 +353,13 @@ public class ReportServiceTest {
         String userId2 = userService.createUser("Ivan", "ivanov@mail.ru", "ADMIN");
 
         reportService.createReport(DateParser.parseDate("2016-11-11"),
-                8, "description", userId, "true");
+                8, "description", userId, true);
         reportService.createReport(DateParser.parseDate("2016-10-10"),
-                8, "description", userId, "true");
+                8, "description", userId, true);
         reportService.createReport(DateParser.parseDate("2016-11-12"),
-                7, "description", userId2, "true");
+                7, "description", userId2, true);
         reportService.createReport(DateParser.parseDate("2017-11-12"),
-                7, "description", userId2, "true");
+                7, "description", userId2, true);
 
         LocalDate begin = DateParser.parseDate("2016-09-09");
         LocalDate end = DateParser.parseDate("2016-11-12");

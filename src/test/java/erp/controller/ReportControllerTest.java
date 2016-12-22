@@ -108,7 +108,7 @@ public class ReportControllerTest {
                         reportDto.getWorkingTime(),
                         reportDto.getDescription(),
                         reportDto.getUserId(),
-                        Boolean.toString(reportDto.isRemote())
+                        reportDto.isRemote()
                );
     }
 
@@ -117,7 +117,7 @@ public class ReportControllerTest {
         doThrow(new DateTimeParseException("Invalid date", reportDto.getDate().toString(), 0))
                 .when(mockReportService).
                 createReport(reportDto.getDate(), reportDto.getWorkingTime(),
-                        reportDto.getDescription(), userDto.getId(), Boolean.toString(reportDto.isRemote()));
+                        reportDto.getDescription(), userDto.getId(), reportDto.isRemote());
 
         this.mockMvc.perform(
                 post("/reports/add")
@@ -157,7 +157,7 @@ public class ReportControllerTest {
                         reportDto.getDate(),
                         reportDto.getWorkingTime(),
                         reportDto.getDescription(),
-                        Boolean.toString(reportDto.isRemote())
+                        reportDto.isRemote()
                );
     }
 
@@ -166,7 +166,7 @@ public class ReportControllerTest {
         doThrow(new DateTimeParseException("Invalid date", reportDto.getDate().toString(), 0))
                 .when(mockReportService).
                 editReport(reportDto.getId(), reportDto.getDate(), reportDto.getWorkingTime(),
-                        reportDto.getDescription(), Boolean.toString(reportDto.isRemote()));
+                        reportDto.getDescription(), reportDto.isRemote());
 
         this.mockMvc.perform(
                 post("/reports/edit")

@@ -33,7 +33,7 @@ public class ReportServiceAccessTest {
     @Test(expected = AccessDeniedException.class)
     public void viewAllUsersReports() {
         String id = create();
-        reportService.createReport(DateParser.parseDate("2020-03-12"), 2, "description", id, Boolean.toString(false));
+        reportService.createReport(DateParser.parseDate("2020-03-12"), 2, "description", id, false);
 
         reportService.viewAllReports();
     }

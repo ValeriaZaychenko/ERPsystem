@@ -38,7 +38,7 @@ public class ReportController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RedirectView add(@AuthenticationPrincipal UserDto currentUser,
                             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-                            int time, String description, String remote) {
+                            int time, String description, boolean remote) {
 
         reportService.createReport(date, time, description, currentUser.getId(), remote);
         return new RedirectView("/reports");
@@ -47,7 +47,7 @@ public class ReportController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public RedirectView edit(@RequestParam String reportId,
                              @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-                             @RequestParam int time, @RequestParam String description, String remote) {
+                             @RequestParam int time, @RequestParam String description, boolean remote) {
         reportService.editReport(reportId, date, time, description, remote);
         return new RedirectView("/reports");
     }

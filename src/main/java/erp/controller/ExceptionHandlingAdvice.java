@@ -61,15 +61,15 @@ public class ExceptionHandlingAdvice {
         return mav;
     }
 
-    @ExceptionHandler(BooleanParseException.class)//TODO remove
-    public ModelAndView handle(BooleanParseException e)  {
+    @ExceptionHandler(DateTimeParseException.class)
+    public ModelAndView handle(DateTimeParseException e)  {
         ModelAndView mav = new ModelAndView("error");
         mav.addObject("errorMessage", e.getMessage());
         return mav;
     }
 
-    @ExceptionHandler(DateTimeParseException.class)
-    public ModelAndView handle(DateTimeParseException e)  {
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ModelAndView handle(IllegalArgumentException e)  {
         ModelAndView mav = new ModelAndView("error");
         mav.addObject("errorMessage", e.getMessage());
         return mav;

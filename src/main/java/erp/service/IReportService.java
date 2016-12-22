@@ -21,14 +21,14 @@ public interface IReportService {
             @Max(value = 24) int workingTime,
             @NotBlank String description,
             @NotNull String userId,
-            @NotNull String remote);
+            boolean remote);
 
     void editReport(
             @NotNull String id,
             LocalDate date,
             @Max(value = 24) int workingTime,
             @NotBlank String description,
-            @NotNull String remote);
+            boolean remote);
 
     void removeReport(@NotNull String id);
 
