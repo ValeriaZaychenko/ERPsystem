@@ -59,7 +59,7 @@ public abstract class BaseRootContextConfiguration {
         messageSource.setFallbackToSystemLocale(false);
         messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
         messageSource.setBasenames(
-                "/WEB-INF/i18n/messages"
+                "/WEB-INF/i18n/messages", "/WEB-INF/i18n/errors"
        );
         return messageSource;
     }

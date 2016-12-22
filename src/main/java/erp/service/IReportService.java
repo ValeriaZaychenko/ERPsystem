@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
@@ -18,7 +19,7 @@ public interface IReportService {
 
     String createReport(
             LocalDate date,
-            @Max(value = 24) double duration,
+            @Min(value = 0)@Max(value = 24) double duration,
             @NotBlank String description,
             @NotNull String userId,
             boolean remote);
@@ -26,7 +27,7 @@ public interface IReportService {
     void editReport(
             @NotNull String id,
             LocalDate date,
-            @Max(value = 24) double duration,
+            @Min(value = 0) @Max(value = 24) double duration,
             @NotBlank String description,
             boolean remote);
 

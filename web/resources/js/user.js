@@ -49,7 +49,9 @@ $( document ).ready(function() {
                 function () {
                     location.reload();
                 }
-            )
+            ).fail( function( response ) {
+                document.body.innerHTML = response.responseText;
+            });
         }
         else if (add_edit == "edit") {
             $.post(
@@ -63,7 +65,9 @@ $( document ).ready(function() {
                 function () {
                     location.reload();
                 }
-            )
+            ).fail( function( response ) {
+                document.body.innerHTML = response.responseText;
+            });
         }
     });
 
@@ -90,7 +94,9 @@ function deleteUser ( userId ) {
                 if ( tableBody.children().length == 0 )*/
                     location.reload();
             }
-        );
+        ).fail( function( response ) {
+            document.body.innerHTML = response.responseText;
+        });
     }
     else{
         return false;

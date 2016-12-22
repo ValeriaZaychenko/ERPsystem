@@ -15,4 +15,9 @@ public interface AttributeNames {
     interface UserViewReports {
         String userReports = "userReports";
     }
+
+    interface ErrorView {
+        String message = "errorMessage";
+        String attribute = "errorAttribute";
+    }
 }

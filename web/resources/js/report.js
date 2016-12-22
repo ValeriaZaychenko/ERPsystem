@@ -35,7 +35,9 @@ $( document ).ready(function() {
                 function () {
                     location.reload();
                 }
-            )
+            ).fail( function( response ) {
+                document.body.innerHTML = response.responseText;
+            });
         }
         else {
             $.post(
@@ -49,7 +51,9 @@ $( document ).ready(function() {
                 function () {
                     location.reload();
                 }
-            )
+            ).fail( function( response ) {
+                document.body.innerHTML = response.responseText;
+            });
         }
     });
 });
@@ -65,7 +69,9 @@ function deleteReport ( reportId ) {
             function () {
                 location.reload();
             }
-        );
+        ).fail( function( response ) {
+            document.body.innerHTML = response.responseText;
+        });
     }
     else{
         return false;

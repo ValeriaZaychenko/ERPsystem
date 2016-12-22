@@ -1,5 +1,7 @@
 package erp.controller;
 
+import erp.controller.constants.AttributeNames;
+import erp.controller.constants.ErrorKeys;
 import erp.controller.constants.ViewNames;
 import erp.dto.UserDto;
 import erp.service.IUserService;
@@ -32,8 +34,9 @@ public class IndexController {
 
     @RequestMapping("/accessDenied")
     public String accessDeniedError(Map<String, Object> model) {
-        model.put("errorMessage", "Access denied");
-        return "error";
+        model.put(AttributeNames.ErrorView.message, ErrorKeys.AccessDeniedMessage);
+        model.put(AttributeNames.ErrorView.attribute, "");
+        return ViewNames.ERROR.error;
     }
 
     @RequestMapping("/home")

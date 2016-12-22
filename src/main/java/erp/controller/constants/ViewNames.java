@@ -22,4 +22,8 @@ public interface ViewNames {
     interface PROGRESS {
         String progress = "progress";
     }
+
+    interface ERROR {
+        String error = "error";
+    }
 }
