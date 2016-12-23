@@ -40,15 +40,7 @@ public class UserServiceTest {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Test
-    public void serviceShouldNotBeNull() {
-        assertNotNull(userService);
-    }
-
-    @Test
-    public void serviceDontHaveUsersByDefault() {
-        assertTrue(userService.viewUsers().isEmpty());
-    }
+    //---CREATE USER VALIDATION TESTS-----------------------------------------------------------------------------------
 
     @Test(expected = ConstraintViolationException.class)
     public void createUserNullFields() {
@@ -79,6 +71,8 @@ public class UserServiceTest {
     public void createUserNullUserRole() {
         userService.createUser("pet", "peter@mail.ru", null);
     }
+
+    //---CREATE USER LOGIC TESTS----------------------------------------------------------------------------------------
 
     @Test
     public void createUserCorrectly() {
@@ -119,35 +113,7 @@ public class UserServiceTest {
         assertEquals(2, userService.viewUsers().size());
     }
 
-    @Test(expected = EntityNotFoundException.class)
-    public void deleteUserFromEmptyService() {
-        userService.removeUser(UUID.randomUUID().toString());
-    }
-
-    @Test(expected = ConstraintViolationException.class)
-    public void deleteUserNullId() {
-        userService.removeUser(null);
-    }
-
-    @Test(expected = EntityNotFoundException.class)
-    public void deleteUserCorrectly() {
-        String id0 = createSimpleUser();
-        String id1 = createSecondSimpleUser();
-
-        userService.removeUser(id0);
-
-        assertEquals(1, userService.viewUsers().size());
-        assertNotNull(userService.findUserById(id1));
-        userService.findUserById(id0);
-    }
-
-    @Test(expected = EntityNotFoundException.class)
-    public void deleteUserTwice() {
-        String id = createSimpleUser();
-
-        userService.removeUser(id);
-        userService.removeUser(id);
-    }
+    //---EDIT USER VALIDATION TESTS-------------------------------------------------------------------------------------
 
     @Test(expected = ConstraintViolationException.class)
     public void editNullIdUser() {
@@ -176,6 +142,15 @@ public class UserServiceTest {
 
         userService.editUser(id, "newName", "invalid", "ADMIN");
     }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void editUserNullUserRole() {
+        String id = createSimpleUser();
+
+        userService.editUser(id, "newName", "inv@ru", null);
+    }
+
+    //---EDIT USER LOGIC TESTS------------------------------------------------------------------------------------------
 
     @Test
     public void editNameCorrectly() {
@@ -229,6 +204,66 @@ public class UserServiceTest {
         assertEquals(dto.getUserRole(), "ADMIN");
     }
 
+    //---REMOVE USER VALIDATION TESTS-----------------------------------------------------------------------------------
+
+    @Test(expected = ConstraintViolationException.class)
+    public void deleteUserNullId() {
+        userService.removeUser(null);
+    }
+
+    //---REMOVE USER LOGIC TESTS----------------------------------------------------------------------------------------
+
+    @Test(expected = EntityNotFoundException.class)
+    public void deleteUserFromEmptyService() {
+        userService.removeUser(UUID.randomUUID().toString());
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void deleteUserCorrectly() {
+        String id0 = createSimpleUser();
+        String id1 = createSecondSimpleUser();
+
+        userService.removeUser(id0);
+
+        assertEquals(1, userService.viewUsers().size());
+        assertNotNull(userService.findUserById(id1));
+        userService.findUserById(id0);
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void deleteUserTwice() {
+        String id = createSimpleUser();
+
+        userService.removeUser(id);
+        userService.removeUser(id);
+    }
+
+    //---FIND USER TESTS------------------------------------------------------------------------------------------------
+
+    @Test(expected = ConstraintViolationException.class)
+    public void findUserNullId() {
+        userService.findUserById(null);
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void findUserRandomId() {
+        userService.findUserById(UUID.randomUUID().toString());
+    }
+
+    @Test
+    public void findUserCorrectly() {
+        String id = createSimpleUser();
+
+        UserDto userDto = userService.findUserById(id);
+
+        assertEquals(userDto.getId(), id);
+        assertEquals(userDto.getName(), "pet");
+        assertEquals(userDto.getEmail(), "peter@mail.ru");
+        assertEquals(userDto.getUserRole(), "ADMIN");
+    }
+
+    //---CHANGE PASSWORD VALIDATION TESTS-------------------------------------------------------------------------------
+
     @Test(expected = ConstraintViolationException.class)
     public void changePasswordNullId() {
         createSimpleUser();
@@ -247,6 +282,8 @@ public class UserServiceTest {
         userService.changePassword(id, "111", "");
     }
 
+    //---CHANGE PASSWORD LOGIC TESTS------------------------------------------------------------------------------------
+
     @Test(expected = MismatchPasswordException.class)
     public void changePasswordOldNoMatch() {
         String id = createSimpleUser();
@@ -262,6 +299,27 @@ public class UserServiceTest {
         User user = findUserById(id);
 
         assertTrue(passwordService.comparePasswords("333", user.getHashedPassword()));
+    }
+
+    //---VIEW USERS TESTS-----------------------------------------------------------------------------------------------
+
+    @Test
+    public void serviceDontHaveUsersByDefault() {
+        assertTrue(userService.viewUsers().isEmpty());
+    }
+
+    @Test
+    public void viewUsersCorrectly() {
+        String id = createSimpleUser();
+
+        assertEquals(userService.viewUsers().size(), 1);
+
+        UserDto user = userService.viewUsers().get(0);
+
+        assertEquals(user.getId(), id);
+        assertEquals(user.getName(), "pet");
+        assertEquals(user.getEmail(), "peter@mail.ru");
+        assertEquals(user.getUserRole(), "ADMIN");
     }
 
     private String createSimpleUser() {

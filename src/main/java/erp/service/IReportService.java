@@ -2,6 +2,7 @@ package erp.service;
 
 
 import erp.config.validation.Past;
+import erp.config.validation.PastOrToday;
 import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
 import org.hibernate.validator.constraints.NotBlank;
@@ -18,7 +19,7 @@ import java.util.List;
 public interface IReportService {
 
     String createReport(
-            LocalDate date,
+            @PastOrToday LocalDate date,
             @Min(value = 0)@Max(value = 24) double duration,
             @NotBlank String description,
             @NotNull String userId,
@@ -26,7 +27,7 @@ public interface IReportService {
 
     void editReport(
             @NotNull String id,
-            LocalDate date,
+            @PastOrToday LocalDate date,
             @Min(value = 0) @Max(value = 24) double duration,
             @NotBlank String description,
             boolean remote);
@@ -45,10 +46,10 @@ public interface IReportService {
     ProgressDto getUserWorkingTimeBetweenDates(
             @NotNull String userId,
             @Past LocalDate beginDate,
-            LocalDate endDate);
+            @PastOrToday LocalDate endDate);
 
     @PreAuthorize("hasAuthority('AUTH_ADMIN')")
     List<ProgressDto> getAllUsersWorkingTimeBetweenDates(
             @Past LocalDate beginDate,
-            LocalDate endDate);
+            @PastOrToday LocalDate endDate);
 }

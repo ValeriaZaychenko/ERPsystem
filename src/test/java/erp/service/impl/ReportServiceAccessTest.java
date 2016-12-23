@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDate;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = erp.config.JUnitConfiguration.class)
@@ -33,14 +34,14 @@ public class ReportServiceAccessTest {
     @Test(expected = AccessDeniedException.class)
     public void viewAllUsersReports() {
         String id = create();
-        reportService.createReport(DateParser.parseDate("2020-03-12"), 2, "description", id, false);
+        reportService.createReport(LocalDate.now(), 2, "description", id, false);
 
         reportService.viewAllReports();
     }
 
     @Test(expected = AccessDeniedException.class)
     public void viewAllUsersWorkingTime() {
-        reportService.getAllUsersWorkingTimeBetweenDates(DateParser.parseDate("2020-03-12"), DateParser.parseDate("2020-04-12"));
+        reportService.getAllUsersWorkingTimeBetweenDates(LocalDate.now(), DateParser.parseDate("2020-04-12"));
     }
 
     private String create() {

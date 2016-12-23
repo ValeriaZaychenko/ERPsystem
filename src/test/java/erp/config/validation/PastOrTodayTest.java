@@ -1,6 +1,5 @@
 package erp.config.validation;
 
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -16,17 +15,17 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = erp.config.JUnitConfiguration.class)
-public class PastTest {
+public class PastOrTodayTest {
 
     Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
-    public void test() {
-        TestDate date = new TestDate( LocalDate.now().plusDays( 1 ) );
+    public void testInvalid() {
+        TestDate date = new TestDate(LocalDate.now().plusDays(1));
         Set<ConstraintViolation<TestDate>> constraintViolations = validator.validate(date);
 
         assertEquals(1, constraintViolations.size());
-        assertEquals("date is not in the past", constraintViolations.iterator().next().getMessage());
+        assertEquals("date is not in the past or today", constraintViolations.iterator().next().getMessage());
     }
 
     static class TestDate {
@@ -35,8 +34,7 @@ public class PastTest {
             this.date = date;
         }
 
-        @Past
+        @PastOrToday
         LocalDate date;
     }
 }
-

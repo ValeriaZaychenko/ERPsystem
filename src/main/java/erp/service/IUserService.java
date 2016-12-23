@@ -31,7 +31,7 @@ public interface IUserService {
     void removeUser(@NotNull  String id);
 
     @PreAuthorize("hasAuthority('AUTH_ADMIN')")
-    UserDto findUserById(@NotNull String id);
+    UserDto findUserById(@NotNull String id);//TODO
 
     void changePassword(
             @NotNull String id,
