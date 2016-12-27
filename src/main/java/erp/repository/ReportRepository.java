@@ -13,7 +13,6 @@ import java.util.List;
 @Repository
 public interface ReportRepository extends CrudRepository<Report, String> {
 
-    List<Report> findByUser(User user);
     List<Report> findByUserOrderByDateDesc(User user);
 
     List<Report> findAll();

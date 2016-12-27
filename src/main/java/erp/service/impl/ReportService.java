@@ -100,13 +100,8 @@ public class ReportService implements IReportService {
     @Override
     public List<ReportDto> viewAllReports() {
         List<Report> reports = reportRepository.findAll();
-        List<ReportDto> reportDtos = new ArrayList<>();
 
-        for(Report r : reports) {
-            reportDtos.add(DtoBuilder.toDto(r));
-        }
-
-        return reportDtos;
+        return getReportDtosFromReportsList(reports);
     }
 
     @Transactional
@@ -115,12 +110,7 @@ public class ReportService implements IReportService {
         User user = restoreUserFromRepository(userId);
         List<Report> userReports = reportRepository.findByUserOrderByDateDesc(user);
 
-        List<ReportDto> reportDtos = new ArrayList<>();
-
-        for(Report r : userReports) {
-            reportDtos.add(DtoBuilder.toDto(r));
-        }
-        return reportDtos;
+        return getReportDtosFromReportsList(userReports);
     }
 
     @Override
@@ -195,5 +185,15 @@ public class ReportService implements IReportService {
     private void checkEndDateAfterBegin(LocalDate beginDate, LocalDate endDate) {
         if(beginDate.isAfter(endDate))
             throw new DateOrderException(beginDate, endDate);
+    }
+
+    private List<ReportDto> getReportDtosFromReportsList(List<Report> reports) {
+        List<ReportDto> reportDtos = new ArrayList<>();
+
+        for(Report r : reports) {
+            reportDtos.add(DtoBuilder.toDto(r));
+        }
+
+        return reportDtos;
     }
 }

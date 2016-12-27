@@ -48,8 +48,6 @@ public class IndexControllerTest {
     private String userId;
     private UserDto userDto;
 
-    private UsernamePasswordAuthenticationToken authToken;
-
     @Before
     public void setup() {
         userId = UUID.randomUUID().toString();
@@ -59,8 +57,6 @@ public class IndexControllerTest {
         userDto.setName("Oleg");
         userDto.setEmail("Olegov");
         userDto.setUserRole("USER");
-
-        authToken = new UsernamePasswordAuthenticationToken("myemail@gmail.com", "mypassword");
 
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
         resolver.setViewClass(JstlView.class);
@@ -191,13 +187,9 @@ public class IndexControllerTest {
                         .param("newPassword", "12345")
         )
         .andExpect(view().name("error"))
-                .andExpect(new ResultMatcher() {
-
-                    @Override
-                    public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains(ErrorKeys.MismatchPasswordMessage);
-                    }
-                });
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.MismatchPasswordMessage)
+                );
     }
 
     @Test

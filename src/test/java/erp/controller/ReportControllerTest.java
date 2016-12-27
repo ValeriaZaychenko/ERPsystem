@@ -129,13 +129,9 @@ public class ReportControllerTest {
 
         )
                 .andExpect(view().name("error"))
-                .andExpect(new ResultMatcher() {
-
-                    @Override
-                    public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains(ErrorKeys.DateParseMessage);
-                    }
-                });
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.DateParseMessage)
+                );
     }
 
     @Test
@@ -178,13 +174,9 @@ public class ReportControllerTest {
 
         )
                 .andExpect(view().name("error"))
-                .andExpect(new ResultMatcher() {
-
-                    @Override
-                    public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains(ErrorKeys.DateParseMessage);
-                    }
-                });
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.DateParseMessage)
+                );
     }
 
     @Test
@@ -211,12 +203,8 @@ public class ReportControllerTest {
                         .param("reportId", reportId)
         )
                 .andExpect(view().name("error"))
-                .andExpect(new ResultMatcher() {
-
-                    @Override
-                    public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains(ErrorKeys.EntityNotFoundMessage);
-                    }
-                });
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.EntityNotFoundMessage)
+                );
     }
 }

@@ -1,4 +1,4 @@
-package erp.config.validation;
+package erp.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -6,15 +6,14 @@ import java.lang.annotation.*;
 
 @Target({ ElementType.PARAMETER, ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = PastValidator.class)
+@Constraint(validatedBy = PastOrTodayValidator.class)
 @Documented
-public @interface Past {
+public @interface PastOrToday {
 
-    String message() default "date is not in the past";
+    String message() default "date is not in the past or today";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 
 }
-

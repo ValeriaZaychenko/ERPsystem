@@ -1,8 +1,8 @@
 package erp.service;
 
 
-import erp.config.validation.Past;
-import erp.config.validation.PastOrToday;
+import erp.validation.Past;
+import erp.validation.PastOrToday;
 import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
 import org.hibernate.validator.constraints.NotBlank;

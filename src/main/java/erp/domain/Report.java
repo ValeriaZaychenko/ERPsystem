@@ -29,7 +29,7 @@ public class Report {
         this.remote = remote;
     }
 
-    public Report(){}
+    protected Report(){}
 
     public String getId() {
         return id;

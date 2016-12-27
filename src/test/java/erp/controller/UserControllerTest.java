@@ -136,13 +136,9 @@ public class UserControllerTest {
         )
                 .andExpect(status().is4xxClientError())
                 .andExpect(view().name(ViewNames.ERROR.errorPlain))
-                .andExpect(new ResultMatcher() {
-
-                    @Override
-                    public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains(ErrorKeys.DuplicateEmailMessage);
-                    }
-                });
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.DuplicateEmailMessage)
+                );
     }
 
     @Test
@@ -158,13 +154,9 @@ public class UserControllerTest {
                         .param("userRole", userDto.getUserRole())
         )
                 .andExpect(view().name("error"))
-                .andExpect(new ResultMatcher() {
-
-                    @Override
-                    public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains(ErrorKeys.UnknownRoleMessage);
-                    }
-                });
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.UnknownRoleMessage)
+                );
     }
 
     @Test
@@ -202,13 +194,9 @@ public class UserControllerTest {
                         .param("userRole", userDto.getUserRole())
         )
                 .andExpect(view().name(ViewNames.ERROR.errorPlain))
-                .andExpect(new ResultMatcher() {
-
-                    @Override
-                    public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains(ErrorKeys.DuplicateEmailMessage);
-                    }
-                });
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.DuplicateEmailMessage)
+                );
     }
 
     @Test
@@ -225,13 +213,9 @@ public class UserControllerTest {
                         .param("userRole", "BBB")
         )
                 .andExpect(view().name("error"))
-                .andExpect(new ResultMatcher() {
-
-                    @Override
-                    public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains(ErrorKeys.UnknownRoleMessage);
-                    }
-                });
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.UnknownRoleMessage)
+                );
     }
 
     @Test
@@ -259,13 +243,9 @@ public class UserControllerTest {
                         .param("id", userId)
         )
                 .andExpect(view().name("error"))
-                .andExpect(new ResultMatcher() {
-
-                    @Override
-                    public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains(ErrorKeys.EntityNotFoundMessage);
-                    }
-                });
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.EntityNotFoundMessage)
+                );
     }
 
     @Test

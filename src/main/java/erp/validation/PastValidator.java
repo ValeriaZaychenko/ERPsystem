@@ -1,4 +1,4 @@
-package erp.config.validation;
+package erp.validation;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
