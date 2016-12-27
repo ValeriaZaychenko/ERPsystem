@@ -7,7 +7,7 @@ $( document ).ready(function() {
         $('#userModal input[name=user-email]').val("");
         $('#userModal option').val("");
         $('#userModal input[name=user-id]').val("").prop("disabled", true);
-        $('#userModal button[id=btnSaveUser]').attr('disabled', 'disabled');;
+        $('#userModal button[id=btnSaveUser]').attr('disabled', 'disabled');
 
         $('#userModal input[name=add-or-edit]').val("add");
 

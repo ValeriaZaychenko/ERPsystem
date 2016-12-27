@@ -136,7 +136,7 @@
                                             <div class="col-sm-12">
                                                 <div class="input-group">
                                                     <input type="hidden" class="reportId" name="reportId" value="">
-                                                    <button type="button" class="btn btn-lg btn-primary btn-block" id="btnSaveReport">
+                                                    <button type="button" class="btn btn-lg btn-primary btn-block" id="btnSaveReport" disabled="disabled">
                                                         <spring:message code="save"/>
                                                         <input type="text" id="add-or-edit" name="add-or-edit" class="hidden">
                                                     </button>

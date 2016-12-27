@@ -16,6 +16,8 @@ $( document ).ready(function() {
         $('#reportForm input[name=reportId]').val(reportId);
 
         $('#reportForm input[name=add-or-edit]').val("edit");
+
+        $('#reportForm button[id=btnSaveReport]').removeAttr('disabled');
     });
 
 
