@@ -25,5 +25,6 @@ public interface ViewNames {
 
     interface ERROR {
         String error = "error";
+        String errorPlain = "error_plain";
     }
 }

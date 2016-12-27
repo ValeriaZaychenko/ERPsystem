@@ -1,9 +1,12 @@
 package erp.exceptions;
 
 
-public class UnknownRoleException extends RuntimeException {
+import erp.controller.constants.ErrorKeys;
+
+public class UnknownRoleException extends DomainLogicException {
 
     public UnknownRoleException(String role) {
         super(role);
+        setName(ErrorKeys.UnknownRoleMessage);
     }
 }

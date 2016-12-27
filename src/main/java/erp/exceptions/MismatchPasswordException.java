@@ -1,9 +1,12 @@
 package erp.exceptions;
 
 
-public class MismatchPasswordException extends RuntimeException {
+import erp.controller.constants.ErrorKeys;
+
+public class MismatchPasswordException extends DomainLogicException {
 
     public MismatchPasswordException() {
-        super();
+        super("");
+        setName(ErrorKeys.MismatchPasswordMessage);
     }
 }

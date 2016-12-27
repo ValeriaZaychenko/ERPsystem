@@ -1,9 +1,12 @@
 package erp.exceptions;
 
 
-public class EntityNotFoundException extends RuntimeException {
+import erp.controller.constants.ErrorKeys;
+
+public class EntityNotFoundException extends DomainLogicException {
 
     public EntityNotFoundException(String className) {
         super(className);
+        setName(ErrorKeys.EntityNotFoundMessage);
     }
 }

@@ -133,7 +133,8 @@ public class UserControllerTest {
                         .param("email", userDto.getEmail())
                         .param("userRole", userDto.getUserRole())
         )
-                .andExpect(view().name("error"))
+                .andExpect(status().is4xxClientError())
+                .andExpect(view().name(ViewNames.ERROR.errorPlain))
                 .andExpect(new ResultMatcher() {
 
                     @Override
@@ -199,7 +200,7 @@ public class UserControllerTest {
                         .param("email", userDto.getEmail())
                         .param("userRole", userDto.getUserRole())
         )
-                .andExpect(view().name("error"))
+                .andExpect(view().name(ViewNames.ERROR.errorPlain))
                 .andExpect(new ResultMatcher() {
 
                     @Override
@@ -269,7 +270,7 @@ public class UserControllerTest {
     @Test
     public void viewProgress() throws Exception {
         when(mockReportService.
-                getAllUsersWorkingTimeBetweenDates(LocalDate.of(2016, 12, 1), LocalDate.of(2016, 12, 31)))
+                getAllUsersWorkingTimeBetweenDates(LocalDate.of(2016, 12, 1), LocalDate.now()))
                         .thenReturn(progressDtos);
 
         this.mockMvc.perform(
@@ -281,7 +282,7 @@ public class UserControllerTest {
                 );
 
         verify(mockReportService, times(1))
-                .getAllUsersWorkingTimeBetweenDates(LocalDate.of(2016, 12, 1), LocalDate.of(2016, 12, 31))
+                .getAllUsersWorkingTimeBetweenDates(LocalDate.of(2016, 12, 1), LocalDate.now())
         ;
     }
 }

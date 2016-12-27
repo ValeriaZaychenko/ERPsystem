@@ -49,10 +49,10 @@ public class ReportServiceAccessTest {
                 "Petya",
                 "p@mail",
                 UserRole.USER,
-                passwordService.getHashFromPassword( passwordService.generatePassword() )
+                passwordService.getHashFromPassword(passwordService.generatePassword())
         );
 
-        entityManager.persist( user );
+        entityManager.persist(user);
 
         return user.getId();
     }

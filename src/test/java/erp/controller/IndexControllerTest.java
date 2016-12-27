@@ -74,7 +74,7 @@ public class IndexControllerTest {
     public void returnHomePage() throws Exception {
         this.mockMvc.perform(
                 get("/")
-       )
+      )
                 .andExpect(redirectedUrl("/home"))
         ;
     }
@@ -119,7 +119,7 @@ public class IndexControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(request().sessionAttribute(
                         SessionKeys.LOCALE.locale,
-                        is( allOf(
+                        is(allOf(
                                 hasProperty("language", is("ru")),
                                 hasProperty("country", is("RU"))
                        ))));
@@ -134,7 +134,7 @@ public class IndexControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(request().sessionAttribute(
                         SessionKeys.LOCALE.locale,
-                        is( allOf(
+                        is(allOf(
                                 hasProperty("language", is("en"))
                        ))));
     }

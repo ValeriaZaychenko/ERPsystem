@@ -4,7 +4,6 @@ import erp.controller.constants.AttributeNames;
 import erp.controller.constants.ViewNames;
 import erp.dto.UserDto;
 import erp.service.IReportService;
-import erp.utils.DateParser;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -30,7 +29,7 @@ public class ReportController {
         model.put(
                 AttributeNames.UserViewReports.userReports,
                 this.reportService.viewUserReports(currentUser.getId())
-        );
+       );
 
         return ViewNames.REPORTS.reports;
     }

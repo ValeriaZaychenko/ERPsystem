@@ -34,10 +34,10 @@
                                             <div class="col-sm-12 col-md-10  col-md-offset-1 ">
                                                 <div class="form-group">
                                                     <div class="input-group">
-												<span class="input-group-addon">
-													<i class="glyphicon glyphicon-user"></i>
-												</span>
-                                                        <input class="form-control" placeholder="Username" name="userLogin" type="text" autofocus>
+                                                        <span class="input-group-addon">
+                                                            <i class="glyphicon glyphicon-user"></i>
+                                                        </span>
+                                                        <input class="form-control" placeholder="<spring:message code="username"/>" name="userLogin" type="text" autofocus>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -45,11 +45,11 @@
 												<span class="input-group-addon">
 													<i class="glyphicon glyphicon-lock"></i>
 												</span>
-                                                        <input class="form-control" placeholder="Password" name="password" type="password" value="">
+                                                        <input class="form-control" placeholder="<spring:message code="password"/>" name="password" type="password" value="">
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <input type="submit" class="btn btn-lg btn-primary btn-block" value="Sign in">
+                                                    <input type="submit" class="btn btn-lg btn-primary btn-block" value="<spring:message code="sign.in"/>">
                                                 </div>
                                             </div>
                                         </div>

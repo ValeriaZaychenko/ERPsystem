@@ -1,9 +1,12 @@
 package erp.exceptions;
 
 
-public class DuplicateEmailException extends RuntimeException {
+import erp.controller.constants.ErrorKeys;
+
+public class DuplicateEmailException extends DomainLogicException {
 
     public DuplicateEmailException(String email) {
         super(email);
+        setName(ErrorKeys.DuplicateEmailMessage);
     }
 }

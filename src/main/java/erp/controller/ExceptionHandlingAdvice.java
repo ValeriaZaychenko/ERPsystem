@@ -3,7 +3,7 @@ package erp.controller;
 import erp.controller.constants.AttributeNames;
 import erp.controller.constants.ErrorKeys;
 import erp.controller.constants.ViewNames;
-import erp.exceptions.*;
+import erp.exceptions.DomainLogicException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -19,49 +19,14 @@ public class ExceptionHandlingAdvice {
 
     //CUSTOM EXCEPTION HANDLERS----------------------------------------------------------------------------------------
 
-    @ExceptionHandler(InvalidDateException.class)
+    /*
+    Include MismatchPasswordException, UnknownRoleException, DuplicateEmailException,
+    EntityNotFoundException, InvalidDateException
+     */
+    @ExceptionHandler(DomainLogicException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ModelAndView handle (InvalidDateException e) {
-        ModelAndView mav = new ModelAndView(ViewNames.ERROR.error);
-        mav.addObject(AttributeNames.ErrorView.message, ErrorKeys.InvalidDateMessage);
-        mav.addObject(AttributeNames.ErrorView.attribute, e.getMessage());
-        return mav;
-    }
-
-    @ExceptionHandler(EntityNotFoundException.class)
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ModelAndView handle (EntityNotFoundException e) {
-        ModelAndView mav = new ModelAndView(ViewNames.ERROR.error);
-        mav.addObject(AttributeNames.ErrorView.message, ErrorKeys.EntityNotFoundMessage);
-        mav.addObject(AttributeNames.ErrorView.attribute, e.getMessage());
-        return mav;
-    }
-
-    @ExceptionHandler(DuplicateEmailException.class)
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ModelAndView handle (DuplicateEmailException e) {
-        ModelAndView mav = new ModelAndView(ViewNames.ERROR.error);
-        mav.addObject(AttributeNames.ErrorView.message, ErrorKeys.DuplicateEmailMessage);
-        mav.addObject(AttributeNames.ErrorView.attribute, e.getMessage());
-        return mav;
-    }
-
-    @ExceptionHandler(UnknownRoleException.class)
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ModelAndView handle (UnknownRoleException e) {
-        ModelAndView mav = new ModelAndView(ViewNames.ERROR.error);
-        mav.addObject(AttributeNames.ErrorView.message, ErrorKeys.UnknownRoleMessage);
-        mav.addObject(AttributeNames.ErrorView.attribute, e.getMessage());
-        return mav;
-    }
-
-    @ExceptionHandler(MismatchPasswordException.class)
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ModelAndView handle (MismatchPasswordException e) {
-        ModelAndView mav = new ModelAndView(ViewNames.ERROR.error);
-        mav.addObject(AttributeNames.ErrorView.message, ErrorKeys.MismatchPasswordMessage);
-        mav.addObject(AttributeNames.ErrorView.attribute, e.getMessage());
-        return mav;
+    public ModelAndView handle(DomainLogicException e) {
+        return getModelAndView(e.getName(), e);
     }
 
     //STANDART EXCEPTION HANDLERS--------------------------------------------------------------------------------------
@@ -69,35 +34,32 @@ public class ExceptionHandlingAdvice {
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ModelAndView handle(NoHandlerFoundException e)  {
-        ModelAndView mav = new ModelAndView(ViewNames.ERROR.error);
-        mav.addObject(AttributeNames.ErrorView.message, ErrorKeys.NoHandlerMessage);
-        mav.addObject(AttributeNames.ErrorView.attribute, e.getMessage());
-        return mav;
+        return getModelAndView(ErrorKeys.NoHandlerMessage, e);
     }
 
     @ExceptionHandler(DateTimeParseException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ModelAndView handle(DateTimeParseException e)  {
-        ModelAndView mav = new ModelAndView(ViewNames.ERROR.error);
-        mav.addObject(AttributeNames.ErrorView.message, ErrorKeys.DateParseMessage);
-        mav.addObject(AttributeNames.ErrorView.attribute, e.getMessage());
-        return mav;
+        return getModelAndView(ErrorKeys.DateParseMessage, e);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ModelAndView handle(IllegalArgumentException e)  {
-        ModelAndView mav = new ModelAndView(ViewNames.ERROR.error);
-        mav.addObject(AttributeNames.ErrorView.message, ErrorKeys.IllegalArgumentMessage);
-        mav.addObject(AttributeNames.ErrorView.attribute, e.getMessage());
-        return mav;
+        return getModelAndView(ErrorKeys.IllegalArgumentMessage, e);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ModelAndView handle (ConstraintViolationException e) {
+        return getModelAndView(ErrorKeys.ConstraintViolationMessage, e);
+    }
+
+    //-----------------------------------------------------------------------------------------------------------------
+
+    private ModelAndView getModelAndView(String message, Exception e) {
         ModelAndView mav = new ModelAndView(ViewNames.ERROR.error);
-        mav.addObject(AttributeNames.ErrorView.message, ErrorKeys.ConstraintViolationMessage);
+        mav.addObject(AttributeNames.ErrorView.message, message);
         mav.addObject(AttributeNames.ErrorView.attribute, e.getMessage());
         return mav;
     }

@@ -22,7 +22,7 @@ public class PastTest {
 
     @Test
     public void test() {
-        TestDate date = new TestDate( LocalDate.now().plusDays( 1 ) );
+        TestDate date = new TestDate(LocalDate.now().plusDays(1));
         Set<ConstraintViolation<TestDate>> constraintViolations = validator.validate(date);
 
         assertEquals(1, constraintViolations.size());
@@ -30,7 +30,7 @@ public class PastTest {
     }
 
     static class TestDate {
-        TestDate ( LocalDate date )
+        TestDate (LocalDate date)
         {
             this.date = date;
         }

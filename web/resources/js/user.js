@@ -11,6 +11,8 @@ $( document ).ready(function() {
 
         $('#userModal input[name=add-or-edit]').val("add");
 
+        $('#userModal #errorHint').hide();
+
         $('#userModal').modal('show');
     });
 
@@ -31,6 +33,8 @@ $( document ).ready(function() {
         $('#userModal input[name=add-or-edit]').val("edit");
         $('#userModal button[id=btnSaveUser]').removeAttr('disabled');
 
+        $('#userModal #errorHint').hide();
+
         $('#userModal').modal('show');
     });
 
@@ -50,8 +54,8 @@ $( document ).ready(function() {
                     location.reload();
                 }
             ).fail( function( response ) {
-                document.body.innerHTML = response.responseText;
-            });
+                $('#userModal #errorHint').html(response.responseText).show();
+             });
         }
         else if (add_edit == "edit") {
             $.post(
@@ -66,7 +70,7 @@ $( document ).ready(function() {
                     location.reload();
                 }
             ).fail( function( response ) {
-                document.body.innerHTML = response.responseText;
+                $('#userModal #errorHint').html( response.responseText ).show();
             });
         }
     });

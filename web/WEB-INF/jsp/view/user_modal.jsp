@@ -64,6 +64,9 @@
 
                     <div class="form-group">
                         <div class="col-sm-9 col-sm-offset-2">
+
+                            <div id="errorHint" class="alert alert-danger" hidden></div>
+
                             <div class="input-group">
                                 <button type="button" class="btn btn-primary" id="btnSaveUser">
                                     <spring:message code="save"/>

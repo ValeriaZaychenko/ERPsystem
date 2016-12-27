@@ -29,7 +29,7 @@ public class PastOrTodayTest {
     }
 
     static class TestDate {
-        TestDate ( LocalDate date )
+        TestDate (LocalDate date)
         {
             this.date = date;
         }

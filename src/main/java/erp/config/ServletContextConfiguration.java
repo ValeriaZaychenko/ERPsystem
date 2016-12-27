@@ -23,14 +23,14 @@ import java.util.Locale;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan( basePackages = "erp.controller")
+@ComponentScan(basePackages = "erp.controller")
 @WebListener
 public class ServletContextConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void configureMessageConverters(
             List<HttpMessageConverter<?>> converters
-   ) {
+  ) {
         converters.add(new FormHttpMessageConverter());
     }
 

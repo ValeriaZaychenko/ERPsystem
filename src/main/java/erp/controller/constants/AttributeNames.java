@@ -20,4 +20,8 @@ public interface AttributeNames {
         String message = "errorMessage";
         String attribute = "errorAttribute";
     }
+
+    interface ErrorPlainView {
+        String errorMessage = "errorMessage";
+    }
 }

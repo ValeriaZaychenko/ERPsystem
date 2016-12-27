@@ -46,7 +46,7 @@ public class AuthentificationServiceTest {
                     USER_NAME,
                     USER_EMAIL,
                     UserRole.USER,
-                    passwordService.getHashFromPassword( USER_PASSWORD )
+                    passwordService.getHashFromPassword(USER_PASSWORD)
             )
         );
     }
@@ -78,7 +78,7 @@ public class AuthentificationServiceTest {
 
     @Test
     public void authenticateUserCorrectlyUserRole() {
-        UserDto dto = authentificationService.authenticate(authToken(USER_EMAIL, USER_PASSWORD) );
+        UserDto dto = authentificationService.authenticate(authToken(USER_EMAIL, USER_PASSWORD));
 
         assertEquals(USER_NAME, dto.getName());
         assertEquals(USER_EMAIL, dto.getEmail());
@@ -101,11 +101,11 @@ public class AuthentificationServiceTest {
                         USER_NAME,
                         USER_EMAIL,
                         UserRole.ADMIN,
-                        passwordService.getHashFromPassword( USER_PASSWORD )
+                        passwordService.getHashFromPassword(USER_PASSWORD)
                 )
         );
 
-        UserDto dto = authentificationService.authenticate(authToken(USER_EMAIL, USER_PASSWORD) );
+        UserDto dto = authentificationService.authenticate(authToken(USER_EMAIL, USER_PASSWORD));
 
         assertEquals(USER_NAME, dto.getName());
         assertEquals(USER_EMAIL, dto.getEmail());
@@ -117,7 +117,7 @@ public class AuthentificationServiceTest {
         );
     }
 
-    private Authentication authToken ( String email, String password ) {
+    private Authentication authToken (String email, String password) {
         return new UsernamePasswordAuthenticationToken(email, password);
     }
 
