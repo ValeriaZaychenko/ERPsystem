@@ -1,5 +1,6 @@
 package erp.controller;
 
+import erp.controller.constants.ErrorKeys;
 import erp.controller.constants.SessionKeys;
 import erp.controller.constants.ViewNames;
 import erp.dto.UserDto;
@@ -194,7 +195,7 @@ public class IndexControllerTest {
 
                     @Override
                     public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains("Password doesn't match with old password");
+                        result.getResponse().getContentAsString().contains(ErrorKeys.MismatchPasswordMessage);
                     }
                 });
     }

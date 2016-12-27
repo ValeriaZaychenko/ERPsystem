@@ -11,6 +11,7 @@ $( document ).ready(function() {
         $('#reportForm input[name=date]').val(date);
         $('#reportForm input[name=duration]').val(duration);
         $('#reportForm input[name=description]').val(description);
+        $('#reportForm input[name=remote]').attr('checked', remote);
 
         $('#reportForm input[name=reportId]').val(reportId);
 

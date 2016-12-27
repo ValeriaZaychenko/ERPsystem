@@ -1,6 +1,7 @@
 package erp.controller;
 
 import erp.controller.constants.AttributeNames;
+import erp.controller.constants.ErrorKeys;
 import erp.controller.constants.ViewNames;
 import erp.domain.User;
 import erp.domain.UserRole;
@@ -139,7 +140,7 @@ public class UserControllerTest {
 
                     @Override
                     public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains("Database already has user with email");
+                        result.getResponse().getContentAsString().contains(ErrorKeys.DuplicateEmailMessage);
                     }
                 });
     }
@@ -161,7 +162,7 @@ public class UserControllerTest {
 
                     @Override
                     public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains("Can't parse role from");
+                        result.getResponse().getContentAsString().contains(ErrorKeys.UnknownRoleMessage);
                     }
                 });
     }
@@ -205,7 +206,7 @@ public class UserControllerTest {
 
                     @Override
                     public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains("Database already has user with email");
+                        result.getResponse().getContentAsString().contains(ErrorKeys.DuplicateEmailMessage);
                     }
                 });
     }
@@ -228,7 +229,7 @@ public class UserControllerTest {
 
                     @Override
                     public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains("Can't parse role from");
+                        result.getResponse().getContentAsString().contains(ErrorKeys.UnknownRoleMessage);
                     }
                 });
     }
@@ -262,7 +263,7 @@ public class UserControllerTest {
 
                     @Override
                     public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains("Database doesn't have entity with name");
+                        result.getResponse().getContentAsString().contains(ErrorKeys.EntityNotFoundMessage);
                     }
                 });
     }

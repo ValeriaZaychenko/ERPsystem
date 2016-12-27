@@ -4,6 +4,7 @@ import erp.domain.Report;
 import erp.domain.User;
 import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
+import erp.exceptions.DateOrderException;
 import erp.exceptions.EntityNotFoundException;
 import erp.repository.ReportRepository;
 import erp.repository.UserRepository;
@@ -133,6 +134,8 @@ public class ReportService implements IReportService {
     @Transactional
     @Override
     public ProgressDto getUserWorkingTimeBetweenDates(String userId, LocalDate beginDate, LocalDate endDate) {
+        checkEndDateAfterBegin(beginDate, endDate);
+
         User user = restoreUserFromRepository(userId);
         double userWorkingTimeForMonth = 0.0;
 
@@ -158,6 +161,8 @@ public class ReportService implements IReportService {
     @Transactional
     @Override
     public List<ProgressDto> getAllUsersWorkingTimeBetweenDates(LocalDate beginDate, LocalDate endDate) {
+        checkEndDateAfterBegin(beginDate, endDate);
+
         List<User> users = userRepository.findAll();
         List<ProgressDto> progressDtos = new ArrayList<>();
 
@@ -185,5 +190,10 @@ public class ReportService implements IReportService {
             throw new EntityNotFoundException(Report.class.getName());
 
         return report;
+    }
+
+    private void checkEndDateAfterBegin(LocalDate beginDate, LocalDate endDate) {
+        if(beginDate.isAfter(endDate))
+            throw new DateOrderException(beginDate, endDate);
     }
 }

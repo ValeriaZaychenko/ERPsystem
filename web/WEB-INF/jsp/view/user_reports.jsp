@@ -123,13 +123,12 @@
                                             <label for="remote" class="col-sm-2 control-label">
                                             </label>
                                             <div class="col-sm-12">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-thumb-tack" aria-hidden="true"></i>
+                                                <div>
+                                                    <spring:message code="remote"/>
+                                                    <span>
+                                                        <input id="remote"  placeholder="<spring:message code='remote'/>" name="remote" type="checkbox" value="">
                                                     </span>
-                                                    <input id="remote" class="form-control" placeholder="<spring:message code='remote'/>" name="remote" type="checkbox" value="">
                                                 </div>
-                                                <span class="help-block"><spring:message code="hint.description"/></span>
                                             </div>
                                         </div>
 

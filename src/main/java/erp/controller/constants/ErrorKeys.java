@@ -13,4 +13,5 @@ public interface ErrorKeys {
     String IllegalArgumentMessage = "error.illegal.argument.message";
     String ConstraintViolationMessage = "error.constraint.violation.message";
     String AccessDeniedMessage = "error.access.denied.message";
+    String InvalidDateOrderMessage = "error.invalid.date.order.message";
 }

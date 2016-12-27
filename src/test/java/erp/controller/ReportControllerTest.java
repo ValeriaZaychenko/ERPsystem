@@ -1,6 +1,7 @@
 package erp.controller;
 
 import erp.controller.constants.AttributeNames;
+import erp.controller.constants.ErrorKeys;
 import erp.controller.constants.ViewNames;
 import erp.dto.ReportDto;
 import erp.dto.UserDto;
@@ -113,7 +114,7 @@ public class ReportControllerTest {
 
     @Test
     public void createReportInvalidDate() throws Exception {
-        doThrow(new DateTimeParseException("Invalid date", reportDto.getDate().toString(), 0))
+        doThrow(new DateTimeParseException(ErrorKeys.DateParseMessage, reportDto.getDate().toString(), 0))
                 .when(mockReportService).
                 createReport(reportDto.getDate(), reportDto.getDuration(),
                         reportDto.getDescription(), userDto.getId(), reportDto.isRemote());
@@ -132,7 +133,7 @@ public class ReportControllerTest {
 
                     @Override
                     public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains("Invalid date");
+                        result.getResponse().getContentAsString().contains(ErrorKeys.DateParseMessage);
                     }
                 });
     }
@@ -162,7 +163,7 @@ public class ReportControllerTest {
 
     @Test
     public void editReportInvalidDate() throws Exception {
-        doThrow(new DateTimeParseException("Invalid date", reportDto.getDate().toString(), 0))
+        doThrow(new DateTimeParseException(ErrorKeys.DateParseMessage, reportDto.getDate().toString(), 0))
                 .when(mockReportService).
                 editReport(reportDto.getId(), reportDto.getDate(), reportDto.getDuration(),
                         reportDto.getDescription(), reportDto.isRemote());
@@ -181,7 +182,7 @@ public class ReportControllerTest {
 
                     @Override
                     public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains("Invalid date");
+                        result.getResponse().getContentAsString().contains(ErrorKeys.DateParseMessage);
                     }
                 });
     }
@@ -214,7 +215,7 @@ public class ReportControllerTest {
 
                     @Override
                     public void match(MvcResult result) throws Exception {
-                        result.getResponse().getContentAsString().contains("Database doesn't have entity with name");
+                        result.getResponse().getContentAsString().contains(ErrorKeys.EntityNotFoundMessage);
                     }
                 });
     }

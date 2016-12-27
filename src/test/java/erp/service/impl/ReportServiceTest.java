@@ -2,6 +2,7 @@ package erp.service.impl;
 
 import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
+import erp.exceptions.DateOrderException;
 import erp.exceptions.EntityNotFoundException;
 import erp.exceptions.InvalidDateException;
 import erp.service.IReportService;
@@ -600,6 +601,20 @@ public class ReportServiceTest {
         assertEquals(progress.getProgress(), 15.0 * 100 / 160, 0.1);
     }
 
+    @Test(expected = DateOrderException.class)
+    public void viewUserProgressEndDateBeforeBeginDate() {
+        String userId = createSimpleUser();
+        reportService.createReport(DateParser.parseDate("2016-11-11"),
+                8, "description", userId, true);
+        reportService.createReport(LocalDate.now(),
+                7, "description", userId, true);
+
+        LocalDate begin = DateParser.parseDate("2016-12-12");
+        LocalDate end = DateParser.parseDate("2016-10-10");
+
+        reportService.getUserWorkingTimeBetweenDates(userId, begin, end);
+    }
+
     //---GET ALL USERS WORKING TIME BETWEEN DATES VALIDATION TESTS------------------------------------------------------
 
     @Test(expected = ConstraintViolationException.class)
@@ -634,6 +649,15 @@ public class ReportServiceTest {
         assertEquals(dtos.size(), 2);
         assertEquals(dtos.get(0).getProgress(), 16.0 * 100/ 160, 0.1);
         assertEquals(dtos.get(1).getProgress(), 7.0 * 100/ 160, 0.1);
+    }
+
+    @Test(expected = DateOrderException.class)
+    public void viewAllUsersProgressEndDateBeforeBeginDate() {
+        createSimpleUser();
+        LocalDate begin = DateParser.parseDate("2016-12-12");
+        LocalDate end = DateParser.parseDate("2016-11-11");
+
+        reportService.getAllUsersWorkingTimeBetweenDates(begin, end);
     }
 
     //TODO tests for past, past or today

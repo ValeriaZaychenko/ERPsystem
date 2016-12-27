@@ -76,7 +76,7 @@ public class UserController {
             return ViewNames.ERROR.errorPlain;
         }
     }
-    
+
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ResponseEntity delete(String id) {
         userService.removeUser(id);
