@@ -1,8 +1,10 @@
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ tag body-content="scriptless" trimDirectiveWhitespaces="true" %>
 <%@ attribute name="htmlTitle" type="java.lang.String" rtexprvalue="true" required="true" %>
 <%@ attribute name="headContent" fragment="true" required="false" %>
 <%@ attribute name="activeLink" type="java.lang.String" rtexprvalue="true" required="false"  %>
 <%@ include file="/WEB-INF/jsp/base.jspf" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -58,6 +60,20 @@
 
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav navbar-right">
+                        <sec:authorize access="hasAuthority('AUTH_ADMIN')">
+                            <li>
+                                <a href="/users/progress">
+                                    <spring:message code="progress"/>
+                                </a>
+                            </li>
+                        </sec:authorize>
+                        <sec:authorize access="hasAuthority('AUTH_ADMIN')">
+                            <li>
+                                <a href="/users">
+                                    <spring:message code="users"/>
+                                </a>
+                            </li>
+                        </sec:authorize>
                         <li class="dropdown">
                             <c:set var="languageCode" value="${pageContext.response.locale.language}" />
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
