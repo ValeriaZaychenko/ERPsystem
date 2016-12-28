@@ -1,6 +1,5 @@
 package erp.service.impl;
 
-import erp.domain.Report;
 import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
 import erp.event.RemoveUserEvent;

@@ -8,12 +8,13 @@ import erp.exceptions.DuplicateEmailException;
 import erp.exceptions.EntityNotFoundException;
 import erp.exceptions.MismatchPasswordException;
 import erp.exceptions.UnknownRoleException;
-import erp.repository.ReportRepository;
 import erp.repository.UserRepository;
-import erp.service.*;
+import erp.service.IAuthenticationService;
+import erp.service.IMailService;
+import erp.service.IPasswordService;
+import erp.service.IUserService;
 import erp.utils.DtoBuilder;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ import java.util.List;
 
 
 @Service
-public class UserService implements IUserService, IAuthenticationService, ApplicationEventPublisherAware {
+public class UserService implements IUserService, IAuthenticationService {
 
     @Inject
     private UserRepository userRepository;
@@ -33,13 +34,8 @@ public class UserService implements IUserService, IAuthenticationService, Applic
     private IPasswordService passwordService;
     @Inject
     private IMailService mailService;
-
+    @Inject
     private ApplicationEventPublisher eventPublisher;
-
-    @Override
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.eventPublisher = applicationEventPublisher;
-    }
 
     @Transactional
     @Override

@@ -1,10 +1,8 @@
 package erp.domain;
 
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
 import java.time.LocalDate;
 
 @Entity(name = "reports")

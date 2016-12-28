@@ -1,7 +1,6 @@
 package erp.event;
 
 
-import erp.domain.User;
 import org.springframework.context.ApplicationEvent;
 
 public class RemoveUserEvent extends ApplicationEvent{
