@@ -4,23 +4,29 @@ import erp.domain.Report;
 import erp.domain.User;
 import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
+import erp.event.RemoveUserEvent;
 import erp.exceptions.DateOrderException;
 import erp.exceptions.EntityNotFoundException;
 import erp.repository.ReportRepository;
 import erp.repository.UserRepository;
 import erp.service.IReportService;
 import erp.utils.DtoBuilder;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ReportService implements IReportService {
+public class ReportService implements IReportService, ApplicationListener<RemoveUserEvent> {
 
     @Inject
     private ReportRepository reportRepository;
@@ -113,6 +119,7 @@ public class ReportService implements IReportService {
         return getReportDtosFromReportsList(userReports);
     }
 
+
     @Override
     public double getCurrentMonthFullTime() {
         return 160.0;
@@ -195,5 +202,10 @@ public class ReportService implements IReportService {
         }
 
         return reportDtos;
+    }
+
+    @Override
+    public void onApplicationEvent(RemoveUserEvent event) {
+        reportRepository.removeByUserIdEquals(event.getUserId());
     }
 }

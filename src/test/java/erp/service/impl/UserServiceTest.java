@@ -2,6 +2,7 @@ package erp.service.impl;
 
 import erp.domain.User;
 import erp.dto.UserDto;
+import erp.event.RemoveUserEvent;
 import erp.exceptions.DuplicateEmailException;
 import erp.exceptions.EntityNotFoundException;
 import erp.exceptions.MismatchPasswordException;
@@ -10,7 +11,12 @@ import erp.service.IMailService;
 import erp.service.IUserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +42,9 @@ public class UserServiceTest {
     private IMailService mailService;
     @Inject
     private PasswordService passwordService;
+
+    @Inject
+    private ApplicationContext context;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -321,6 +330,37 @@ public class UserServiceTest {
         assertEquals(user.getEmail(), "peter@mail.ru");
         assertEquals(user.getUserRole(), "ADMIN");
     }
+
+    //---EVENT TESTS----------------------------------------------------------------------------------------------------
+
+    @Component
+    static class TestEventHandler implements ApplicationListener<RemoveUserEvent> {
+
+        private boolean eventHappened;
+
+        public void resetHappened() { eventHappened = false; }
+
+        public boolean didHappen() { return eventHappened; }
+
+        @Override
+        public void onApplicationEvent(RemoveUserEvent event) {
+            eventHappened = true;
+        }
+    }
+
+    @Test
+    public void removeUserTriggersEvent () {
+
+        TestEventHandler handler = context.getBean(TestEventHandler.class);
+        handler.resetHappened();
+
+        String id = createSimpleUser();
+        userService.removeUser(id);
+
+        assertTrue(handler.didHappen());
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
 
     private String createSimpleUser() {
         return userService.createUser("pet", "peter@mail.ru", "ADMIN");

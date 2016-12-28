@@ -1,7 +1,9 @@
 package erp.service.impl;
 
+import erp.domain.Report;
 import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
+import erp.event.RemoveUserEvent;
 import erp.exceptions.DateOrderException;
 import erp.exceptions.EntityNotFoundException;
 import erp.exceptions.InvalidDateException;
@@ -10,6 +12,7 @@ import erp.service.IUserService;
 import erp.utils.DateParser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -33,6 +36,9 @@ public class ReportServiceTest {
     private IReportService reportService;
     @Inject
     private IUserService userService;
+
+    @Inject
+    private ApplicationEventPublisher publisher;
 
     @Test
     public void serviceDontHaveReportByDefault() {
@@ -662,6 +668,26 @@ public class ReportServiceTest {
 
     //TODO tests for past, past or today
     //do find methods on tests from repository
+
+    //---USER DELETE EVENT TESTS----------------------------------------------------------------------------------------
+
+    @Test
+    public void deleteUserReportsWhenHandleEvent() {
+        String id = createSimpleUser();
+        reportService.createReport(DateParser.parseDate("2016-11-11"),
+                8, "description", id, true);
+        List<ReportDto> reports = reportService.viewUserReports(id);
+
+        assertEquals(reports.size(), 1);
+
+        publisher.publishEvent(new RemoveUserEvent(this, id));
+
+        List<ReportDto> reportsNull = reportService.viewUserReports(id);
+
+        assertEquals(reportsNull.size(), 0);
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
 
     private LocalDate get2015_11_11() {
         return DateParser.parseDate("2015-11-11");

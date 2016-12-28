@@ -2,6 +2,7 @@ package erp.repository;
 
 import erp.domain.Report;
 import erp.domain.User;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -21,5 +22,9 @@ public interface ReportRepository extends CrudRepository<Report, String> {
     List<Report> findByUserAndBetweenQuery(@Param("beginDate")LocalDate beginDate,
                                           @Param("endDate")LocalDate endDate,
                                           @Param("user")User user);
+
+    @Query("DELETE FROM reports r WHERE r.user.id = :id")
+    @Modifying
+    void removeByUserIdEquals(@Param("id")String id);
 
 }

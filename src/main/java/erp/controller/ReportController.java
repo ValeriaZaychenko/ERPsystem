@@ -5,6 +5,8 @@ import erp.controller.constants.ViewNames;
 import erp.dto.UserDto;
 import erp.service.IReportService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,25 +37,25 @@ public class ReportController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public RedirectView add(@AuthenticationPrincipal UserDto currentUser,
-                            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-                            double duration, String description, boolean remote) {
+    public ResponseEntity add(@AuthenticationPrincipal UserDto currentUser,
+                              @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                              double duration, String description, boolean remote) {
 
         reportService.createReport(date, duration, description, currentUser.getId(), remote);
-        return new RedirectView("/reports");
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public RedirectView edit(@RequestParam String reportId,
+    public ResponseEntity edit(@RequestParam String reportId,
                              @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                              @RequestParam double duration, @RequestParam String description, boolean remote) {
         reportService.editReport(reportId, date, duration, description, remote);
-        return new RedirectView("/reports");
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public RedirectView delete(@RequestParam String reportId) {
+    public ResponseEntity delete(@RequestParam String reportId) {
         reportService.removeReport(reportId);
-        return new RedirectView("/reports");
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

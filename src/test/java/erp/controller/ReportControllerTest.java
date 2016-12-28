@@ -99,7 +99,7 @@ public class ReportControllerTest {
                         .param("remote", Boolean.toString(reportDto.isRemote()))
 
        )
-                .andExpect(redirectedUrl("/reports"))
+                .andExpect(status().isOk())
         ;
 
         verify(mockReportService, only())
@@ -144,7 +144,7 @@ public class ReportControllerTest {
                         .param("description", reportDto.getDescription())
                         .param("remote", Boolean.toString(reportDto.isRemote()))
        )
-                .andExpect(redirectedUrl("/reports"))
+                .andExpect(status().isOk())
         ;
 
         verify(mockReportService, only())
@@ -185,7 +185,7 @@ public class ReportControllerTest {
                 post("/reports/delete")
                         .param("reportId", reportId)
        )
-                .andExpect(redirectedUrl("/reports")
+                .andExpect(status().isOk()
                );
 
         verify(mockReportService, only())
