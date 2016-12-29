@@ -20,23 +20,75 @@ public class PastTest {
 
     Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    @Test
-    public void test() {
-        TestDate date = new TestDate(LocalDate.now().plusDays(1));
-        Set<ConstraintViolation<TestDate>> constraintViolations = validator.validate(date);
-
-        assertEquals(1, constraintViolations.size());
-        assertEquals("date is not in the past", constraintViolations.iterator().next().getMessage());
-    }
-
-    static class TestDate {
-        TestDate (LocalDate date)
+    static class TestPastDate {
+        TestPastDate (LocalDate date)
         {
             this.date = date;
         }
 
-        @Past
+        @Past(value = DateBorder.ONLY_PAST)
         LocalDate date;
+    }
+
+    @Test
+    public void testPastInvalid() {
+        TestPastDate date = new TestPastDate(LocalDate.now().plusDays(1));
+        Set<ConstraintViolation<TestPastDate>> constraintViolations = validator.validate(date);
+
+        assertEquals(1, constraintViolations.size());
+        assertEquals(ValidationMessages.FutureDate, constraintViolations.iterator().next().getMessage());
+    }
+
+    @Test
+    public void testPastInvalidToday() {
+        TestPastDate date = new TestPastDate(LocalDate.now());
+        Set<ConstraintViolation<TestPastDate>> constraintViolations = validator.validate(date);
+
+        assertEquals(1, constraintViolations.size());
+        assertEquals(ValidationMessages.FutureDate, constraintViolations.iterator().next().getMessage());
+    }
+
+    @Test
+    public void testPastCorrect() {
+        TestPastDate date = new TestPastDate(LocalDate.now().minusDays(1));
+        Set<ConstraintViolation<TestPastDate>> constraintViolations = validator.validate(date);
+
+        assertEquals(0, constraintViolations.size());
+    }
+
+    static class TestPastDateIncludeToday {
+        TestPastDateIncludeToday (LocalDate date)
+        {
+            this.date = date;
+        }
+
+        @Past(value = DateBorder.INCLUDE_TODAY)
+        LocalDate date;
+    }
+
+    @Test
+    public void testPastIncludeInvalid() {
+        TestPastDateIncludeToday date = new TestPastDateIncludeToday(LocalDate.now().plusDays(1));
+        Set<ConstraintViolation<TestPastDateIncludeToday>> constraintViolations = validator.validate(date);
+
+        assertEquals(1, constraintViolations.size());
+        assertEquals(ValidationMessages.FutureDate, constraintViolations.iterator().next().getMessage());
+    }
+
+    @Test
+    public void testPastIncludeTodayCorrect() {
+        TestPastDateIncludeToday date = new TestPastDateIncludeToday(LocalDate.now());
+        Set<ConstraintViolation<TestPastDateIncludeToday>> constraintViolations = validator.validate(date);
+
+        assertEquals(0, constraintViolations.size());
+    }
+
+    @Test
+    public void testPastIncludeTodayCorrectPast() {
+        TestPastDateIncludeToday date = new TestPastDateIncludeToday(LocalDate.now().minusDays(1));
+        Set<ConstraintViolation<TestPastDateIncludeToday>> constraintViolations = validator.validate(date);
+
+        assertEquals(0, constraintViolations.size());
     }
 }
 

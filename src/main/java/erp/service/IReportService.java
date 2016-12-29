@@ -3,8 +3,8 @@ package erp.service;
 
 import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
+import erp.validation.DateBorder;
 import erp.validation.Past;
-import erp.validation.PastOrToday;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -19,7 +19,7 @@ import java.util.List;
 public interface IReportService {
 
     String createReport(
-            @PastOrToday LocalDate date,
+            @Past(value = DateBorder.INCLUDE_TODAY) LocalDate date,
             @Min(value = 0)@Max(value = 24) double duration,
             @NotBlank String description,
             @NotNull String userId,
@@ -27,7 +27,7 @@ public interface IReportService {
 
     void editReport(
             @NotNull String id,
-            @PastOrToday LocalDate date,
+            @Past(value = DateBorder.INCLUDE_TODAY) LocalDate date,
             @Min(value = 0) @Max(value = 24) double duration,
             @NotBlank String description,
             boolean remote);
@@ -45,11 +45,11 @@ public interface IReportService {
 
     ProgressDto getUserWorkingTimeBetweenDates(
             @NotNull String userId,
-            @Past LocalDate beginDate,
-            @PastOrToday LocalDate endDate);
+            @Past(value = DateBorder.ONLY_PAST) LocalDate beginDate,
+            @Past(value = DateBorder.INCLUDE_TODAY) LocalDate endDate);
 
     @PreAuthorize("hasAuthority('AUTH_ADMIN')")
     List<ProgressDto> getAllUsersWorkingTimeBetweenDates(
-            @Past LocalDate beginDate,
-            @PastOrToday LocalDate endDate);
+            @Past(value = DateBorder.ONLY_PAST) LocalDate beginDate,
+            @Past(value = DateBorder.INCLUDE_TODAY) LocalDate endDate);
 }
