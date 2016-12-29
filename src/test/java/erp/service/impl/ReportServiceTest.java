@@ -665,9 +665,6 @@ public class ReportServiceTest {
         reportService.getAllUsersWorkingTimeBetweenDates(begin, end);
     }
 
-    //TODO tests for past, past or today
-    //do find methods on tests from repository
-
     //---USER DELETE EVENT TESTS----------------------------------------------------------------------------------------
 
     @Test

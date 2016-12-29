@@ -101,7 +101,7 @@ public class UserService implements IUserService, IAuthenticationService {
     /*
     CRUD Repository has own delete methods by id and by entity.
     I've choosed deleting by entity because of adding another ids at frontside in the future.
-    TODO May be discussed
+    May be discussed
      */
     @Transactional
     @Override
