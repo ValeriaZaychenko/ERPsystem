@@ -3,6 +3,10 @@
 
     <jsp:attribute name="headContent">
         <link rel="stylesheet" href="<c:url value="/resources/css/progress.css" />" />
+        <!--<link rel="stylesheet" href="<c:url value="/resources/css/external/bootstrap-combined.min.css" />" />-->
+        <link rel="stylesheet" href="<c:url value="/resources/css/external/datepicker.css" />" />
+        <script src="<c:url value="/resources/js/external/bootstrap-datepicker.js" />"></script>
+        <script src="<c:url value="/resources/js/monthpicker.js" />"></script>
     </jsp:attribute>
 
     <jsp:body>
@@ -31,6 +35,46 @@
                 </tbody>
             </table>
         </div>
+        <div class='col-md-6'>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong><spring:message code="view.progress.between"/></strong>
+                </div>
+
+                <div class="panel-body">
+                    <form role="form" id="progressDatesForm" action="/users/progress" method="GET">
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-sm-12 col-md-10  col-md-offset-1 ">
+
+                                    <div class="form-group">
+                                        <label for="datepicker" class="col-sm-2 control-label">
+                                        </label>
+                                        <div class="col-sm-12">
+                                            <div class="input-append date" id="datepicker" data-date-format="yyyy-mm" data-date="2017-01">
+                                                <input  type="text" readonly="readonly" name="month" >
+                                                <span class="add-on"><i class="fa fa-th"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <div class="input-group">
+                                                <input type="submit" value="<spring:message code="view.progress"/>"
+                                                       name="View Progress" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
     </jsp:body>
+
 
 </template:main>

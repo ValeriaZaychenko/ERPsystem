@@ -41,15 +41,17 @@ public interface IReportService {
 
     List<ReportDto> viewUserReports(@NotNull String userId);
 
-    double getCurrentMonthFullTime();
+    double getFullTimeBetweenDates(
+            LocalDate beginDate,
+            LocalDate endDate);
 
     ProgressDto getUserWorkingTimeBetweenDates(
             @NotNull String userId,
-            @Past(value = DateBorder.ONLY_PAST) LocalDate beginDate,
-            @Past(value = DateBorder.INCLUDE_TODAY) LocalDate endDate);
+            @Past(value = DateBorder.INCLUDE_TODAY) LocalDate beginDate,
+            LocalDate endDate);
 
     @PreAuthorize("hasAuthority('AUTH_ADMIN')")
     List<ProgressDto> getAllUsersWorkingTimeBetweenDates(
-            @Past(value = DateBorder.ONLY_PAST) LocalDate beginDate,
-            @Past(value = DateBorder.INCLUDE_TODAY) LocalDate endDate);
+            @Past(value = DateBorder.INCLUDE_TODAY) LocalDate beginDate,
+            LocalDate endDate);
 }

@@ -9,12 +9,23 @@ import java.time.format.DateTimeParseException;
 
 public final class DateParser {
 
-    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    public static final DateTimeFormatter wholeDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    public static final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("yyyy-MM");
 
     public static LocalDate parseDate(String date) {
         LocalDate localDate = null;
         try {
-            localDate = LocalDate.parse(date, formatter);
+            localDate = LocalDate.parse(date, wholeDateFormatter);
+            return localDate;
+        } catch (DateTimeParseException e) {
+            throw new InvalidDateException(date);
+        }
+    }
+
+    public static LocalDate parseMonthDate(String date) {
+        LocalDate localDate = null;
+        try {
+            localDate = LocalDate.parse(date + "-01", wholeDateFormatter );
             return localDate;
         } catch (DateTimeParseException e) {
             throw new InvalidDateException(date);

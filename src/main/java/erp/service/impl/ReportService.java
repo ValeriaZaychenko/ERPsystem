@@ -5,11 +5,12 @@ import erp.domain.User;
 import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
 import erp.event.RemoveUserEvent;
-import erp.exceptions.DateOrderException;
 import erp.exceptions.EntityNotFoundException;
 import erp.repository.ReportRepository;
 import erp.repository.UserRepository;
+import erp.service.IDayCounterService;
 import erp.service.IReportService;
+import erp.utils.DateOrderChecker;
 import erp.utils.DtoBuilder;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ public class ReportService implements IReportService, ApplicationListener<Remove
     private ReportRepository reportRepository;
     @Inject
     private UserRepository userRepository;
+
+    @Inject
+    private IDayCounterService dayCounterService;
 
     @Transactional
     @Override
@@ -115,10 +119,11 @@ public class ReportService implements IReportService, ApplicationListener<Remove
         return getReportDtosFromReportsList(userReports);
     }
 
+    public double getFullTimeBetweenDates(LocalDate begin, LocalDate end) {
+        int allDays = dayCounterService.getAllDaysQuantityBetweenDates(begin, end);
+        int weekendDays = dayCounterService.countWeekendsBetweenDates(begin, end);
 
-    @Override
-    public double getCurrentMonthFullTime() {
-        return 160.0;
+        return (allDays - weekendDays) * 8.00;
     }
 
     /*
@@ -127,7 +132,7 @@ public class ReportService implements IReportService, ApplicationListener<Remove
     @Transactional
     @Override
     public ProgressDto getUserWorkingTimeBetweenDates(String userId, LocalDate beginDate, LocalDate endDate) {
-        checkEndDateAfterBegin(beginDate, endDate);
+        DateOrderChecker.checkEndDateAfterBegin(beginDate, endDate);
 
         User user = restoreUserFromRepository(userId);
         double userWorkingTimeForMonth = 0.0;
@@ -142,7 +147,7 @@ public class ReportService implements IReportService, ApplicationListener<Remove
         progressDto.setUserId(userId);
         progressDto.setUserName(user.getName());
         progressDto.setUserCurrentMonthWorkingTime(userWorkingTimeForMonth);
-        progressDto.setProgress(userWorkingTimeForMonth * 100.0 / getCurrentMonthFullTime());
+        progressDto.setProgress(userWorkingTimeForMonth * 100.0 / getFullTimeBetweenDates(beginDate, endDate));
 
         return progressDto;
     }
@@ -154,7 +159,7 @@ public class ReportService implements IReportService, ApplicationListener<Remove
     @Transactional
     @Override
     public List<ProgressDto> getAllUsersWorkingTimeBetweenDates(LocalDate beginDate, LocalDate endDate) {
-        checkEndDateAfterBegin(beginDate, endDate);
+        DateOrderChecker.checkEndDateAfterBegin(beginDate, endDate);
 
         List<User> users = userRepository.findAll();
         List<ProgressDto> progressDtos = new ArrayList<>();
@@ -183,11 +188,6 @@ public class ReportService implements IReportService, ApplicationListener<Remove
             throw new EntityNotFoundException(Report.class.getName());
 
         return report;
-    }
-
-    private void checkEndDateAfterBegin(LocalDate beginDate, LocalDate endDate) {
-        if(beginDate.isAfter(endDate))
-            throw new DateOrderException(beginDate, endDate);
     }
 
     private List<ReportDto> getReportDtosFromReportsList(List<Report> reports) {

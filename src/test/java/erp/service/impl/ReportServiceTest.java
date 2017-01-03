@@ -6,6 +6,7 @@ import erp.event.RemoveUserEvent;
 import erp.exceptions.DateOrderException;
 import erp.exceptions.EntityNotFoundException;
 import erp.exceptions.InvalidDateException;
+import erp.service.IDayCounterService;
 import erp.service.IReportService;
 import erp.service.IUserService;
 import erp.utils.DateParser;
@@ -35,6 +36,8 @@ public class ReportServiceTest {
     private IReportService reportService;
     @Inject
     private IUserService userService;
+    @Inject
+    private IDayCounterService dayCounterService;
 
     @Inject
     private ApplicationEventPublisher publisher;
@@ -490,7 +493,16 @@ public class ReportServiceTest {
 
     @Test
     public void getCurrentMonthFullDurationConst() {
-        assertEquals(reportService.getCurrentMonthFullTime(), 160, 0.1);
+        LocalDate now = LocalDate.now();
+
+        LocalDate begin = LocalDate.of(now.getYear(), now.getMonth(), 1);
+        LocalDate end = LocalDate.of(now.getYear(), now.getMonth(), now.lengthOfMonth());
+
+        int weekends = dayCounterService.countWeekendsBetweenDates(begin, end);
+        int allDays = now.lengthOfMonth();
+
+        assertEquals(reportService.getFullTimeBetweenDates(begin, end),
+                (allDays - weekends) * 8.0, 0.1);
     }
 
     //---GET USER WORKING TIME BETWEEN DATES VALIDATION TESTS-----------------------------------------------------------
@@ -551,7 +563,7 @@ public class ReportServiceTest {
         ProgressDto progress = reportService.getUserWorkingTimeBetweenDates(userId, begin, end);
 
         assertEquals(progress.getUserCurrentMonthWorkingTime(), 15.0,  0.1);
-        assertEquals(progress.getProgress(), 15.0 * 100 / 160, 0.1);
+        assertEquals(progress.getProgress(), 15.0 * 100 / reportService.getFullTimeBetweenDates(begin, end), 0.1);
     }
 
     @Test
@@ -567,7 +579,7 @@ public class ReportServiceTest {
         ProgressDto progress = reportService.getUserWorkingTimeBetweenDates(userId, begin, LocalDate.now());
 
         assertEquals(progress.getUserCurrentMonthWorkingTime(), 15.0,  0.1);
-        assertEquals(progress.getProgress(), 15.0 * 100 / 160, 0.1);
+        assertEquals(progress.getProgress(), 15.0 * 100 / reportService.getFullTimeBetweenDates(begin, LocalDate.now()), 0.1);
     }
 
     @Test
@@ -585,7 +597,7 @@ public class ReportServiceTest {
         ProgressDto progress = reportService.getUserWorkingTimeBetweenDates(userId, begin, end);
 
         assertEquals(progress.getUserCurrentMonthWorkingTime(), 15.0,  0.1);
-        assertEquals(progress.getProgress(), 15.0 * 100 / 160, 0.1);
+        assertEquals(progress.getProgress(), 15.0 * 100 / reportService.getFullTimeBetweenDates(begin, end), 0.1);
     }
 
     @Test
@@ -603,7 +615,7 @@ public class ReportServiceTest {
         ProgressDto progress = reportService.getUserWorkingTimeBetweenDates(userId, begin, end);
 
         assertEquals(progress.getUserCurrentMonthWorkingTime(), 15.0,  0.1);
-        assertEquals(progress.getProgress(), 15.0 * 100 / 160, 0.1);
+        assertEquals(progress.getProgress(), 15.0 * 100 / reportService.getFullTimeBetweenDates(begin, end), 0.1);
     }
 
     @Test(expected = DateOrderException.class)
@@ -627,11 +639,6 @@ public class ReportServiceTest {
         reportService.getAllUsersWorkingTimeBetweenDates(LocalDate.now().plusDays(1), get2015_11_11());
     }
 
-    @Test(expected = ConstraintViolationException.class)
-    public void viewAllUsersProgressFutureEndDate() {
-        reportService.getAllUsersWorkingTimeBetweenDates(get2015_11_11(), LocalDate.now().plusDays(1));
-    }
-
     //---GET ALL USERS WORKING TIME BETWEEN DATES LOGIC TESTS-----------------------------------------------------------
 
     @Test
@@ -652,8 +659,8 @@ public class ReportServiceTest {
         List<ProgressDto> dtos = reportService.getAllUsersWorkingTimeBetweenDates(begin, end);
 
         assertEquals(dtos.size(), 2);
-        assertEquals(dtos.get(0).getProgress(), 16.0 * 100/ 160, 0.1);
-        assertEquals(dtos.get(1).getProgress(), 7.0 * 100/ 160, 0.1);
+        assertEquals(dtos.get(0).getProgress(), 16.0 * 100/ reportService.getFullTimeBetweenDates(begin, end), 0.1);
+        assertEquals(dtos.get(1).getProgress(), 7.0 * 100/ reportService.getFullTimeBetweenDates(begin, end), 0.1);
     }
 
     @Test(expected = DateOrderException.class)

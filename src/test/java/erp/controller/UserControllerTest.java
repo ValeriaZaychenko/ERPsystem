@@ -247,9 +247,9 @@ public class UserControllerTest {
     }
 
     @Test
-    public void viewProgress() throws Exception {
+    public void viewProgressDefault() throws Exception {
         when(mockReportService.
-                getAllUsersWorkingTimeBetweenDates(LocalDate.of(2016, 12, 1), LocalDate.now()))
+                getAllUsersWorkingTimeBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.now()))
                         .thenReturn(progressDtos);
 
         this.mockMvc.perform(
@@ -261,7 +261,26 @@ public class UserControllerTest {
                 );
 
         verify(mockReportService, times(1))
-                .getAllUsersWorkingTimeBetweenDates(LocalDate.of(2016, 12, 1), LocalDate.now())
+                .getAllUsersWorkingTimeBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.now())
+        ;
+    }
+
+    @Test
+    public void viewProgressBetweenDates() throws Exception {
+        when(mockReportService.
+                getAllUsersWorkingTimeBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31)))
+                .thenReturn(progressDtos);
+
+        this.mockMvc.perform(
+                get("/users/progress")
+                        .param("month", "2017-01")
+        )
+                .andExpect(view().name(ViewNames.PROGRESS.progress))
+                .andExpect(model().attribute(AttributeNames.UserViewUsers.progress, progressDtos)
+                );
+
+        verify(mockReportService, times(1))
+                .getAllUsersWorkingTimeBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31))
         ;
     }
 }
