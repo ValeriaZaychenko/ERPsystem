@@ -99,7 +99,7 @@ public class ReportService implements IReportService, ApplicationListener<Remove
     public ReportDto findReport(String id) {
         Report report = restoreReportFromRepository(id);
 
-        return DtoBuilder.toDto(report);
+        return DtoBuilder.reportToDto(report);
     }
 
     @Transactional
@@ -143,13 +143,10 @@ public class ReportService implements IReportService, ApplicationListener<Remove
             userWorkingTimeForMonth += r.getDuration();
         }
 
-        ProgressDto progressDto = new ProgressDto();
-        progressDto.setUserId(userId);
-        progressDto.setUserName(user.getName());
-        progressDto.setUserCurrentMonthWorkingTime(userWorkingTimeForMonth);
-        progressDto.setProgress(userWorkingTimeForMonth * 100.0 / getFullTimeBetweenDates(beginDate, endDate));
-
-        return progressDto;
+        return DtoBuilder.progressToDto(
+                user,
+                userWorkingTimeForMonth,
+                getFullTimeBetweenDates(beginDate, endDate));
     }
 
     /*
@@ -194,7 +191,7 @@ public class ReportService implements IReportService, ApplicationListener<Remove
         List<ReportDto> reportDtos = new ArrayList<>();
 
         for(Report r : reports) {
-            reportDtos.add(DtoBuilder.toDto(r));
+            reportDtos.add(DtoBuilder.reportToDto(r));
         }
 
         return reportDtos;

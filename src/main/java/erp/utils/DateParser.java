@@ -10,7 +10,6 @@ import java.time.format.DateTimeParseException;
 public final class DateParser {
 
     public static final DateTimeFormatter wholeDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    public static final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("yyyy-MM");
 
     public static LocalDate parseDate(String date) {
         LocalDate localDate = null;

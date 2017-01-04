@@ -40,7 +40,6 @@
                 <div class="panel-heading">
                     <strong><spring:message code="view.progress.between"/></strong>
                 </div>
-
                 <div class="panel-body">
                     <form role="form" id="progressDatesForm" action="/users/progress" method="GET">
                         <fieldset>
@@ -58,12 +57,10 @@
                                         </div>
                                     </div>
 
-
                                     <div class="form-group">
                                         <div class="col-sm-12">
                                             <div class="input-group">
-                                                <input type="submit" value="<spring:message code="view.progress"/>"
-                                                       name="View Progress" />
+                                                <input type="submit" value="<spring:message code="view.progress"/>" name="View Progress" />
                                             </div>
                                         </div>
                                     </div>
@@ -75,6 +72,5 @@
             </div>
         </div>
     </jsp:body>
-
-
+    
 </template:main>

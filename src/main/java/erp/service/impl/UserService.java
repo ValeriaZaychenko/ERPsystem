@@ -115,7 +115,7 @@ public class UserService implements IUserService, IAuthenticationService {
     @Override
     public UserDto findUserById(String id) {
         User user = restoreUserFromRepository(id);
-        return DtoBuilder.toDto(user);
+        return DtoBuilder.userToDto(user);
     }
 
     @Transactional
@@ -136,7 +136,7 @@ public class UserService implements IUserService, IAuthenticationService {
         List<User> users = userRepository.findAllByOrderByNameAsc();
         List<UserDto> userDtos = new ArrayList<>();
         for(User user : users) {
-            userDtos.add(DtoBuilder.toDto(user));
+            userDtos.add(DtoBuilder.userToDto(user));
         }
         return userDtos;
     }
@@ -159,7 +159,7 @@ public class UserService implements IUserService, IAuthenticationService {
             return null;
         }
 
-        UserDto dto = DtoBuilder.toDto(user);
+        UserDto dto = DtoBuilder.userToDto(user);
         dto.setAuthenticated(true);
 
         switch (user.getUserRole())
