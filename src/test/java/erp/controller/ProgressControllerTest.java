@@ -1,9 +1,12 @@
 package erp.controller;
 
 import erp.controller.constants.AttributeNames;
+import erp.controller.constants.ErrorKeys;
 import erp.controller.constants.ViewNames;
+import erp.dto.HolidayDto;
 import erp.dto.ProgressDto;
 import erp.dto.UserDto;
+import erp.exceptions.EntityNotFoundException;
 import erp.service.IDayCounterService;
 import erp.service.IReportService;
 import org.junit.Before;
@@ -24,6 +27,7 @@ import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -39,15 +43,20 @@ public class ProgressControllerTest {
 
     private MockMvc mockMvc;
     private String userId;
+    private String holidayId;
     private UserDto userDto;
     private ProgressDto progressDto;
+    private HolidayDto holidayDto;
     private List<ProgressDto> progressDtos;
+    private List<HolidayDto> holidayDtos;
 
     @Before
     public void setup() {
         progressDtos = new ArrayList<>();
+        holidayDtos = new ArrayList<>();
 
         userId = UUID.randomUUID().toString();
+        holidayId = UUID.randomUUID().toString();
 
         userDto = new UserDto();
         userDto.setId(userId);
@@ -62,6 +71,13 @@ public class ProgressControllerTest {
         progressDto.setProgress(30.0);
 
         progressDtos.add(progressDto);
+
+        holidayDto = new HolidayDto();
+        holidayDto.setId(holidayId);
+        holidayDto.setDate(LocalDate.of(2016, 3, 8));
+        holidayDto.setDescription("International women day");
+
+        holidayDtos.add(holidayDto);
 
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
         resolver.setViewClass(JstlView.class);
@@ -146,5 +162,108 @@ public class ProgressControllerTest {
                 .countHolidaysBetweenDates(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 1, 31));
         verify(mockDayCounterService, times(1))
                 .getAllDaysQuantityBetweenDates(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 1, 31));
+    }
+
+    @Test
+    public void getHolidays() throws Exception {
+        when(mockDayCounterService.findHolidaysOfYear(LocalDate.now().getYear()))
+                .thenReturn(holidayDtos);
+
+        this.mockMvc.perform(
+                get("/holidays")
+        )
+                .andExpect(status().isOk())
+                .andExpect(model().attribute(AttributeNames.ProgressView.holiday, holidayDtos))
+                .andExpect(view().name(ViewNames.HOLIDAY.holiday))
+                ;
+
+        verify(mockDayCounterService, times(1))
+                .findHolidaysOfYear(LocalDate.now().getYear());
+    }
+
+    @Test
+    public void createHoliday() throws Exception {
+        this.mockMvc.perform(
+                post("/holidays/add")
+                        .param("date", holidayDto.getDate().toString())
+                        .param("description", holidayDto.getDescription())
+
+        )
+                .andExpect(status().isOk())
+        ;
+
+        verify(mockDayCounterService, only())
+                .createHoliday(
+                        holidayDto.getDate(),
+                        holidayDto.getDescription()
+                );
+    }
+
+    @Test
+    public void editHoliday() throws Exception {
+        this.mockMvc.perform(
+                post("/holidays/edit")
+                        .param("holidayId", holidayId)
+                        .param("date", holidayDto.getDate().toString())
+                        .param("description", holidayDto.getDescription())
+
+        )
+                .andExpect(status().isOk())
+        ;
+
+        verify(mockDayCounterService, only())
+                .editHoliday(
+                        holidayId,
+                        holidayDto.getDate(),
+                        holidayDto.getDescription()
+                );
+    }
+
+    @Test
+    public void editHolidayNotFound() throws Exception {
+        doThrow(new EntityNotFoundException(ErrorKeys.EntityNotFoundMessage))
+                .when(mockDayCounterService).
+                editHoliday(holidayId, holidayDto.getDate(), holidayDto.getDescription());
+
+        this.mockMvc.perform(
+                post("/holidays/edit")
+                        .param("holidayId", holidayId)
+                        .param("date", holidayDto.getDate().toString())
+                        .param("description", holidayDto.getDescription())
+
+        )
+                .andExpect(view().name("error"))
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.EntityNotFoundMessage))
+        ;
+    }
+
+    @Test
+    public void deleteHoliday() throws Exception {
+        this.mockMvc.perform(
+                post("/holidays/delete")
+                        .param("holidayId", holidayId)
+        )
+                .andExpect(status().isOk()
+                );
+
+        verify(mockDayCounterService, only())
+                .deleteHoliday(holidayId);
+    }
+
+    @Test
+    public void deleteHolidayNotFound() throws Exception {
+        doThrow(new EntityNotFoundException(holidayId))
+                .when(mockDayCounterService).
+                deleteHoliday(holidayId);
+
+        this.mockMvc.perform(
+                post("/holidays/delete")
+                        .param("holidayId", holidayId)
+        )
+                .andExpect(view().name("error"))
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.EntityNotFoundMessage)
+                );
     }
 }

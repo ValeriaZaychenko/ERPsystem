@@ -6,11 +6,12 @@ import erp.service.IDayCounterService;
 import erp.service.IReportService;
 import erp.utils.DateParser;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
@@ -53,12 +54,26 @@ public class ProgressController {
     }
 
     @RequestMapping(value = "/holidays/add", method = RequestMethod.POST)
-    public RedirectView addHoliday(
+    public ResponseEntity addHoliday(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             String description) {
 
         dayCounterService.createHoliday(date, description);
-        return new RedirectView("/holidays");
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/holidays/edit", method = RequestMethod.POST)
+    public ResponseEntity edit(@RequestParam String holidayId,
+                               @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                               @RequestParam String description) {
+        dayCounterService.editHoliday(holidayId, date, description);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "holidays/delete", method = RequestMethod.POST)
+    public ResponseEntity delete(@RequestParam String holidayId) {
+        dayCounterService.deleteHoliday(holidayId);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     private void putAttrToModel(Map<String, Object> model, LocalDate begin, LocalDate end) {

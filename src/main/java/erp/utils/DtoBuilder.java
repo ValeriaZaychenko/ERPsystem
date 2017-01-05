@@ -44,6 +44,7 @@ public final class DtoBuilder {
 
     public static HolidayDto holidayToDto(Holiday holiday) {
         HolidayDto dto = new HolidayDto();
+        dto.setId(holiday.getId());
         dto.setDate(holiday.getDate());
         dto.setDescription(holiday.getDescription());
         return dto;
