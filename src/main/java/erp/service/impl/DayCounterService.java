@@ -43,7 +43,7 @@ public class DayCounterService implements IDayCounterService{
     public int countHolidaysBetweenDates(LocalDate begin, LocalDate end) {
         DateOrderChecker.checkEndDateAfterBegin(begin, end);
 
-        return holidayRepository.findByDateBetweenQuery(begin, end).size();
+        return holidayRepository.findByDateBetweenQueryOrderByDateDesc(begin, end).size();
     }
 
     @Override
@@ -123,7 +123,7 @@ public class DayCounterService implements IDayCounterService{
         LocalDate begin = LocalDate.of(year - 1, 12, 31);
         LocalDate end = LocalDate.of(year + 1, 1, 1);
 
-        List<Holiday> holidays = holidayRepository.findByDateBetweenQuery(begin, end);
+        List<Holiday> holidays = holidayRepository.findByDateBetweenQueryOrderByDateDesc(begin, end);
 
         for(Holiday holiday : holidays) {
             dtos.add(DtoBuilder.holidayToDto(holiday));
@@ -138,7 +138,7 @@ public class DayCounterService implements IDayCounterService{
         LocalDate begin = LocalDate.of(year - 1, 12, 31);
         LocalDate end = LocalDate.of(year + 1, 1, 1);
 
-        List<Holiday> holidays = holidayRepository.findByDateBetweenQuery(begin, end);
+        List<Holiday> holidays = holidayRepository.findByDateBetweenQueryOrderByDateDesc(begin, end);
 
         for(Holiday holiday : holidays) {
             LocalDate oldDate = holiday.getDate();

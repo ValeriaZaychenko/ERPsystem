@@ -102,6 +102,9 @@ public class ProgressControllerTest {
                 countHolidaysBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31)))
                 .thenReturn(0);
         when(mockDayCounterService.
+                getWorkingDaysQuantityBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31)))
+                .thenReturn(22);
+        when(mockDayCounterService.
                 getAllDaysQuantityBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31)))
                 .thenReturn(31);
 
@@ -114,7 +117,7 @@ public class ProgressControllerTest {
                 .andExpect(model().attribute(AttributeNames.ProgressView.weekends, 9))
                 .andExpect(model().attribute(AttributeNames.ProgressView.holiday, 0))
                 .andExpect(model().attribute(AttributeNames.ProgressView.allDays, 31))
-                .andExpect(model().attribute(AttributeNames.ProgressView.monthName, "JANUARY"))
+                .andExpect(model().attribute(AttributeNames.ProgressView.monthDate, "1/2017"))
                 ;
 
         verify(mockReportService, times(1))
@@ -123,6 +126,8 @@ public class ProgressControllerTest {
                 .countWeekendsBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31));
         verify(mockDayCounterService, times(1))
                 .countHolidaysBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31));
+        verify(mockDayCounterService, times(1))
+                .getWorkingDaysQuantityBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31));
         verify(mockDayCounterService, times(1))
                 .getAllDaysQuantityBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31));
     }
@@ -139,6 +144,9 @@ public class ProgressControllerTest {
                 countHolidaysBetweenDates(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 1, 31)))
                 .thenReturn(1);
         when(mockDayCounterService.
+                getWorkingDaysQuantityBetweenDates(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 1, 31)))
+                .thenReturn(22);
+        when(mockDayCounterService.
                 getAllDaysQuantityBetweenDates(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 1, 31)))
                 .thenReturn(31);
 
@@ -151,7 +159,7 @@ public class ProgressControllerTest {
                 .andExpect(model().attribute(AttributeNames.ProgressView.weekends, 8))
                 .andExpect(model().attribute(AttributeNames.ProgressView.holiday, 1))
                 .andExpect(model().attribute(AttributeNames.ProgressView.allDays, 31))
-                .andExpect(model().attribute(AttributeNames.ProgressView.monthName, "JANUARY"))
+                .andExpect(model().attribute(AttributeNames.ProgressView.monthDate, "1/2016"))
                 ;
 
         verify(mockReportService, times(1))
@@ -160,6 +168,8 @@ public class ProgressControllerTest {
                 .countWeekendsBetweenDates(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 1, 31));
         verify(mockDayCounterService, times(1))
                 .countHolidaysBetweenDates(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 1, 31));
+        verify(mockDayCounterService, times(1))
+                .getWorkingDaysQuantityBetweenDates(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 1, 31));
         verify(mockDayCounterService, times(1))
                 .getAllDaysQuantityBetweenDates(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 1, 31));
     }

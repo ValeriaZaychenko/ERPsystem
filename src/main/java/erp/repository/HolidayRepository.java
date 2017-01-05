@@ -14,7 +14,7 @@ public interface HolidayRepository extends CrudRepository<Holiday, String> {
 
     List<Holiday> findByDate(LocalDate date);
 
-    @Query("SELECT h FROM holidays h where h.date >= :beginDate AND h.date <= :endDate")
-    List<Holiday> findByDateBetweenQuery(@Param("beginDate") LocalDate beginDate,
+    @Query("SELECT h FROM holidays h where h.date >= :beginDate AND h.date <= :endDate ORDER BY date DESC")
+    List<Holiday> findByDateBetweenQueryOrderByDateDesc(@Param("beginDate") LocalDate beginDate,
                                         @Param("endDate") LocalDate endDate);
 }

@@ -73,10 +73,11 @@
         </div>
         <div class='col-md-6'>
             <ul>
-                ${monthName} has:
-                <li>weekends ${weekends}</li>
-                <li>holidays ${holiday}</li>
-                <li>all days ${allDays}</li>
+                ${monthDate} :
+                <li><spring:message code="weekends"/> - ${weekends}</li>
+                <li><spring:message code="holidays"/> - ${holiday}</li>
+                <li><spring:message code="working.days"/> - ${workingDays}</li>
+                <li><spring:message code="all.days"/> - ${allDays}</li>
             </ul>
         </div>
     </jsp:body>

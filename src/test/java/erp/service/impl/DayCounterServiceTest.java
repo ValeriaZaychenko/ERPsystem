@@ -353,6 +353,20 @@ public class DayCounterServiceTest {
         assertEquals(dtos.size(), 1);
     }
 
+    //---FIND HOLIDAY OF YEAR SORTED TESTS------------------------------------------------------------------------------
+
+    @Test
+    public void findHolidaysSortedCorrectly() {
+        String idSecond = dayCounterService.createHoliday(LocalDate.of(2016, 2, 29), "Company's anniversary");
+        String idLast = dayCounterService.createHoliday(LocalDate.of(2016, 12, 20), "Company's anniversary");
+        String idFirst = dayCounterService.createHoliday(LocalDate.of(2016, 1, 10), "Company's anniversary");
+        List<HolidayDto> dtos = dayCounterService.findHolidaysOfYear(2016);
+
+        assertEquals(dtos.get(0).getId(), idLast);
+        assertEquals(dtos.get(1).getId(), idSecond);
+        assertEquals(dtos.get(2).getId(), idFirst);
+    }
+
     //---COPY YEAR HOLIDAY VALIDATION TESTS-----------------------------------------------------------------------------
 
     @Test(expected = ConstraintViolationException.class)

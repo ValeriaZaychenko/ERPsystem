@@ -69,6 +69,13 @@
                         </sec:authorize>
                         <sec:authorize access="hasAuthority('AUTH_ADMIN')">
                             <li>
+                                <a href="/holidays">
+                                    <spring:message code="holidays"/>
+                                </a>
+                            </li>
+                        </sec:authorize>
+                        <sec:authorize access="hasAuthority('AUTH_ADMIN')">
+                            <li>
                                 <a href="/users">
                                     <spring:message code="users"/>
                                 </a>

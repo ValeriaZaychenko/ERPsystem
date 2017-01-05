@@ -87,11 +87,14 @@ public class ProgressController {
                 AttributeNames.ProgressView.holiday,
                 dayCounterService.countHolidaysBetweenDates(begin, end));
         model.put(
+                AttributeNames.ProgressView.workingDays,
+                dayCounterService.getWorkingDaysQuantityBetweenDates(begin, end));
+        model.put(
                 AttributeNames.ProgressView.allDays,
                 dayCounterService.getAllDaysQuantityBetweenDates(begin, end));
         model.put(
-                AttributeNames.ProgressView.monthName,
-                begin.getMonth().toString());
+                AttributeNames.ProgressView.monthDate,
+                begin.getMonth().getValue() + "/" + begin.getYear());
     }
 
     private LocalDate getCurrentMonthBeginDate() {

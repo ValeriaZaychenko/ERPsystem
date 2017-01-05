@@ -12,7 +12,8 @@ public interface AttributeNames {
         String holiday = "holiday";
         String weekends = "weekends";
         String allDays = "allDays";
-        String monthName = "monthName";
+        String monthDate = "monthDate";
+        String workingDays = "workingDays";
     }
 
     interface UserViewPossibleUserRoles {
