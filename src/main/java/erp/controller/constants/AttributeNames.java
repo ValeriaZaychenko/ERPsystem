@@ -5,7 +5,14 @@ public interface AttributeNames {
 
     interface UserViewUsers {
         String users = "users";
+    }
+
+    interface ProgressView {
         String progress = "progress";
+        String holiday = "holiday";
+        String weekends = "weekends";
+        String allDays = "allDays";
+        String monthName = "monthName";
     }
 
     interface UserViewPossibleUserRoles {

@@ -23,6 +23,10 @@ public interface ViewNames {
         String progress = "progress";
     }
 
+    interface HOLIDAY {
+        String holiday = "holiday";
+    }
+
     interface ERROR {
         String error = "error";
         String errorPlain = "error_plain";

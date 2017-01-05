@@ -41,7 +41,7 @@
                     <strong><spring:message code="view.progress.between"/></strong>
                 </div>
                 <div class="panel-body">
-                    <form role="form" id="progressDatesForm" action="/users/progress" method="GET">
+                    <form role="form" id="progressDatesForm" action="/progress" method="GET">
                         <fieldset>
                             <div class="row">
                                 <div class="col-sm-12 col-md-10  col-md-offset-1 ">
@@ -71,6 +71,14 @@
                 </div>
             </div>
         </div>
+        <div class='col-md-6'>
+            <ul>
+                ${monthName} has:
+                <li>weekends ${weekends}</li>
+                <li>holidays ${holiday}</li>
+                <li>all days ${allDays}</li>
+            </ul>
+        </div>
     </jsp:body>
-    
+
 </template:main>

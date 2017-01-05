@@ -94,6 +94,54 @@ public class DayCounterServiceTest {
         assertEquals(days, 4);
     }
 
+    //---COUNT HOLIDAYS TESTS-------------------------------------------------------------------------------------------
+
+    @Test(expected = DateOrderException.class)
+    public void countHolidaysBeginAfterEndDate() {
+        dayCounterService.countHolidaysBetweenDates(LocalDate.now(), LocalDate.now().minusDays(1));
+    }
+
+    @Test
+    public void countHolidaysCorrectly() {
+        dayCounterService.createHoliday(LocalDate.now(), "sss");
+        int days = dayCounterService.countHolidaysBetweenDates(
+                LocalDate.now().minusDays(1),
+                LocalDate.now().plusDays(1));
+
+        assertEquals(days, 1);
+    }
+
+    @Test
+    public void countHolidayTodayIncludeBeginDateCorrectly() {
+        dayCounterService.createHoliday(LocalDate.now(), "sss");
+        int days = dayCounterService.countHolidaysBetweenDates(
+                LocalDate.now(),
+                LocalDate.now().plusDays(1));
+
+        assertEquals(days, 1);
+    }
+
+    @Test
+    public void countHolidayTodayIncludeEndDateCorrectly() {
+        dayCounterService.createHoliday(LocalDate.now(), "sss");
+        int days = dayCounterService.countHolidaysBetweenDates(
+                LocalDate.now().minusDays(1),
+                LocalDate.now());
+
+        assertEquals(days, 1);
+    }
+
+    @Test
+    public void countHolidayTodayDateCorrectly() {
+        dayCounterService.createHoliday(LocalDate.now(), "sss");
+        dayCounterService.createHoliday(LocalDate.of(2015, 11, 11), "past");
+        int days = dayCounterService.countHolidaysBetweenDates(
+                LocalDate.now(),
+                LocalDate.now());
+
+        assertEquals(days, 1);
+    }
+
     //---CALCULATE ALL DAYS TESTS---------------------------------------------------------------------------------------
 
     @Test(expected = DateOrderException.class)
@@ -269,29 +317,29 @@ public class DayCounterServiceTest {
 
     @Test(expected = ConstraintViolationException.class)
     public void findYearHolidayMinYear() {
-        dayCounterService.findHolidaysOneYear(-1);
+        dayCounterService.findHolidaysOfYear(-1);
     }
 
     @Test
     public void findYearHolidayMinYearBoundaryValue() {
-        dayCounterService.findHolidaysOneYear(0);
+        dayCounterService.findHolidaysOfYear(0);
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void findYearHolidayMaxYear() {
-        dayCounterService.findHolidaysOneYear(3001);
+        dayCounterService.findHolidaysOfYear(3001);
     }
 
     @Test
     public void findYearHolidayMaxYearBoundaryValue() {
-        dayCounterService.findHolidaysOneYear(3000);
+        dayCounterService.findHolidaysOfYear(3000);
     }
 
     //---FIND YEAR HOLIDAY LOGIC TESTS----------------------------------------------------------------------------------
 
     @Test
     public void findHolidaysDontExist() {
-        List<HolidayDto> dtos = dayCounterService.findHolidaysOneYear(2016);
+        List<HolidayDto> dtos = dayCounterService.findHolidaysOfYear(2016);
 
         assertEquals(dtos.size(), 0);
     }
@@ -300,7 +348,7 @@ public class DayCounterServiceTest {
     public void findHolidaysCorrectly() {
         dayCounterService.createHoliday(LocalDate.of(2016, 2, 29), "Company's anniversary");
         dayCounterService.createHoliday(LocalDate.of(2017, 2, 20), "Company's anniversary");
-        List<HolidayDto> dtos = dayCounterService.findHolidaysOneYear(2016);
+        List<HolidayDto> dtos = dayCounterService.findHolidaysOfYear(2016);
 
         assertEquals(dtos.size(), 1);
     }
@@ -335,7 +383,7 @@ public class DayCounterServiceTest {
         dayCounterService.createHoliday(LocalDate.of(2016, 2, 20), "Birthday");
         dayCounterService.copyYearHolidaysToNext(2016);
 
-        List<HolidayDto> dtos = dayCounterService.findHolidaysOneYear(2017);
+        List<HolidayDto> dtos = dayCounterService.findHolidaysOfYear(2017);
 
         assertEquals(dtos.size(), 2);
         assertNotNull(holidayRepository.findByDate(LocalDate.of(2017, 3, 1)));

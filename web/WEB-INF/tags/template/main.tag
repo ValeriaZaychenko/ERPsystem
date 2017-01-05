@@ -62,7 +62,7 @@
                     <ul class="nav navbar-nav navbar-right">
                         <sec:authorize access="hasAuthority('AUTH_ADMIN')">
                             <li>
-                                <a href="/users/progress">
+                                <a href="/progress">
                                     <spring:message code="progress"/>
                                 </a>
                             </li>

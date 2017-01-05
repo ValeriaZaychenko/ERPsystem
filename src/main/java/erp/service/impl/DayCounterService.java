@@ -40,10 +40,24 @@ public class DayCounterService implements IDayCounterService{
     }
 
     @Override
+    public int countHolidaysBetweenDates(LocalDate begin, LocalDate end) {
+        DateOrderChecker.checkEndDateAfterBegin(begin, end);
+
+        return holidayRepository.findByDateBetweenQuery(begin, end).size();
+    }
+
+    @Override
     public int getAllDaysQuantityBetweenDates(LocalDate begin, LocalDate end) {
         DateOrderChecker.checkEndDateAfterBegin(begin, end);
 
         return (int) ChronoUnit.DAYS.between(begin, end) + 1;
+    }
+
+    @Override
+    public int getWorkingDaysQuantityBetweenDates(LocalDate begin, LocalDate end) {
+        return getAllDaysQuantityBetweenDates(begin, end)
+                - countWeekendsBetweenDates(begin, end)
+                - countHolidaysBetweenDates(begin, end);
     }
 
     @Transactional
@@ -104,7 +118,7 @@ public class DayCounterService implements IDayCounterService{
     }
 
     @Override
-    public List<HolidayDto> findHolidaysOneYear(int year) {
+    public List<HolidayDto> findHolidaysOfYear(int year) {
         List<HolidayDto> dtos = new ArrayList<>();
         LocalDate begin = LocalDate.of(year - 1, 12, 31);
         LocalDate end = LocalDate.of(year + 1, 1, 1);

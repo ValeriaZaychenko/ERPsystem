@@ -492,17 +492,22 @@ public class ReportServiceTest {
     //---GET CURRENT MONTH FULL TIME------------------------------------------------------------------------------------
 
     @Test
-    public void getCurrentMonthFullDurationConst() {
+    public void getCurrentMonthFullDurationCorrectly() {
         LocalDate now = LocalDate.now();
+        dayCounterService.createHoliday(now.minusDays(2), "holiday");
 
         LocalDate begin = LocalDate.of(now.getYear(), now.getMonth(), 1);
         LocalDate end = LocalDate.of(now.getYear(), now.getMonth(), now.lengthOfMonth());
 
         int weekends = dayCounterService.countWeekendsBetweenDates(begin, end);
+        int holidays = dayCounterService.countHolidaysBetweenDates(begin, end);
         int allDays = now.lengthOfMonth();
 
+        assertNotEquals(weekends, 0);
+        assertEquals(holidays, 1);
+        assertTrue(allDays > 28);
         assertEquals(reportService.getFullTimeBetweenDates(begin, end),
-                (allDays - weekends) * 8.0, 0.1);
+                (allDays - weekends - holidays) * 8.0, 0.1);
     }
 
     //---GET USER WORKING TIME BETWEEN DATES VALIDATION TESTS-----------------------------------------------------------
@@ -557,6 +562,8 @@ public class ReportServiceTest {
         reportService.createReport(DateParser.parseDate("2016-12-24"),
                 7, "description", userId, true);
 
+        dayCounterService.createHoliday(LocalDate.of(2016, 11,11), "Holiday");
+
         LocalDate begin = DateParser.parseDate("2016-10-10");
         LocalDate end = DateParser.parseDate("2016-12-12");
 
@@ -573,6 +580,8 @@ public class ReportServiceTest {
                 8, "description", userId, true);
         reportService.createReport(LocalDate.now(),
                 7, "description", userId, true);
+
+        dayCounterService.createHoliday(LocalDate.of(2016, 11,11), "Holiday");
 
         LocalDate begin = DateParser.parseDate("2016-10-10");
 
@@ -591,6 +600,8 @@ public class ReportServiceTest {
         reportService.createReport(DateParser.parseDate("2016-11-11"),
                 7, "description", userId, true);
 
+        dayCounterService.createHoliday(LocalDate.of(2016, 11,11), "Holiday");
+
         LocalDate begin = DateParser.parseDate("2016-11-01");
         LocalDate end = DateParser.parseDate("2016-12-12");
 
@@ -608,6 +619,8 @@ public class ReportServiceTest {
                 8, "description", userId, true);
         reportService.createReport(DateParser.parseDate("2016-11-12"),
                 7, "description", userId, true);
+
+        dayCounterService.createHoliday(LocalDate.of(2016, 11,11), "Holiday");
 
         LocalDate begin = DateParser.parseDate("2016-11-01");
         LocalDate end = DateParser.parseDate("2016-11-12");

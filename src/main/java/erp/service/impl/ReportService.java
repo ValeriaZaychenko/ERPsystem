@@ -119,11 +119,9 @@ public class ReportService implements IReportService, ApplicationListener<Remove
         return getReportDtosFromReportsList(userReports);
     }
 
+    @Override
     public double getFullTimeBetweenDates(LocalDate begin, LocalDate end) {
-        int allDays = dayCounterService.getAllDaysQuantityBetweenDates(begin, end);
-        int weekendDays = dayCounterService.countWeekendsBetweenDates(begin, end);
-
-        return (allDays - weekendDays) * 8.00;
+        return dayCounterService.getWorkingDaysQuantityBetweenDates(begin, end) * 8.00;
     }
 
     /*

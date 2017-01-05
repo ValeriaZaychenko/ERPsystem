@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -244,44 +243,6 @@ public class UserControllerTest {
                 .andExpect( (result) ->
                         result.getResponse().getContentAsString().contains(ErrorKeys.EntityNotFoundMessage)
                 );
-    }
-
-    @Test
-    public void viewProgressDefault() throws Exception {
-        when(mockReportService.
-                getAllUsersWorkingTimeBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.now()))
-                        .thenReturn(progressDtos);
-
-        this.mockMvc.perform(
-                get("/users/progress")
-        )
-                .andExpect(status().isOk())
-                .andExpect(view().name(ViewNames.PROGRESS.progress))
-                .andExpect(model().attribute(AttributeNames.UserViewUsers.progress, progressDtos)
-                );
-
-        verify(mockReportService, times(1))
-                .getAllUsersWorkingTimeBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.now())
-        ;
-    }
-
-    @Test
-    public void viewProgressBetweenDates() throws Exception {
-        when(mockReportService.
-                getAllUsersWorkingTimeBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31)))
-                .thenReturn(progressDtos);
-
-        this.mockMvc.perform(
-                get("/users/progress")
-                        .param("month", "2017-01")
-        )
-                .andExpect(view().name(ViewNames.PROGRESS.progress))
-                .andExpect(model().attribute(AttributeNames.UserViewUsers.progress, progressDtos)
-                );
-
-        verify(mockReportService, times(1))
-                .getAllUsersWorkingTimeBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31))
-        ;
     }
 }
 

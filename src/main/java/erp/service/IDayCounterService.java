@@ -13,13 +13,13 @@ import java.util.List;
 @Validated
 public interface IDayCounterService {
 
-    int countWeekendsBetweenDates(
-            LocalDate begin,
-            LocalDate end);
+    int countWeekendsBetweenDates(LocalDate begin, LocalDate end);
 
-    int getAllDaysQuantityBetweenDates(
-            LocalDate begin,
-            LocalDate end);
+    int countHolidaysBetweenDates(LocalDate begin, LocalDate end);
+
+    int getAllDaysQuantityBetweenDates(LocalDate begin, LocalDate end);
+
+    int getWorkingDaysQuantityBetweenDates(LocalDate begin, LocalDate end);
 
     String createHoliday(@NotNull LocalDate date, @NotBlank String description);
 
@@ -29,7 +29,7 @@ public interface IDayCounterService {
 
     String copyHolidayToNextYear(@NotNull String id);
 
-    List<HolidayDto> findHolidaysOneYear(@Min(value=0) @Max(value = 3000) int year);
+    List<HolidayDto> findHolidaysOfYear(@Min(value=0) @Max(value = 3000) int year);
 
     void copyYearHolidaysToNext(@Min(value=0) @Max(value = 3000) int year);
 }
