@@ -14,4 +14,5 @@ public interface ErrorKeys {
     String ConstraintViolationMessage = "error.constraint.violation.message";
     String AccessDeniedMessage = "error.access.denied.message";
     String InvalidDateOrderMessage = "error.invalid.date.order.message";
+    String DateNotUniqueMessage = "error.date.not.unique.message";
 }

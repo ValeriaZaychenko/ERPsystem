@@ -2,6 +2,7 @@ package erp.service.impl;
 
 import erp.domain.Holiday;
 import erp.dto.HolidayDto;
+import erp.exceptions.DateNotUniqueException;
 import erp.exceptions.DateOrderException;
 import erp.exceptions.EntityNotFoundException;
 import erp.repository.HolidayRepository;
@@ -193,6 +194,12 @@ public class DayCounterServiceTest {
         assertEquals(holiday.getDescription(), "Company's anniversary");
     }
 
+    @Test(expected = DateNotUniqueException.class)
+    public void createHolidayDateNotUnique() {
+        dayCounterService.createHoliday(LocalDate.now(), "bla bla");
+        dayCounterService.createHoliday(LocalDate.now(), "Company's anniversary");
+    }
+
     //---EDIT HOLIDAY VALIDATION TESTS----------------------------------------------------------------------------------
 
     @Test(expected = ConstraintViolationException.class)
@@ -240,6 +247,13 @@ public class DayCounterServiceTest {
         assertNotNull(holiday);
         assertEquals(holiday.getDate(), LocalDate.now().plusDays(1));
         assertEquals(holiday.getDescription(), "Company's anniversary");
+    }
+
+    @Test(expected = DateNotUniqueException.class)
+    public void editHolidayDateNotUnique() {
+        dayCounterService.createHoliday(LocalDate.now().minusDays(1), "bla bla");
+        String id = dayCounterService.createHoliday(LocalDate.now(), "Company's anniversary");
+        dayCounterService.editHoliday(id, LocalDate.now().minusDays(1), "Company's anniversary");
     }
 
     @Test
@@ -311,6 +325,13 @@ public class DayCounterServiceTest {
         Holiday holiday = holidayRepository.findOne(newId);
 
         assertEquals(holiday.getDate(), LocalDate.of(2017, 3, 1));
+    }
+
+    @Test(expected = DateNotUniqueException.class)
+    public void copyHolidayToNotUniqueDate() {
+        String id0 = dayCounterService.createHoliday(LocalDate.of(2016, 2, 20), "Company's anniversary");
+        dayCounterService.createHoliday(LocalDate.of(2017, 2, 20), "Company's anniversary");
+        dayCounterService.copyHolidayToNextYear(id0);
     }
 
     //---FIND YEAR HOLIDAY VALIDATION TESTS-----------------------------------------------------------------------------
@@ -395,6 +416,7 @@ public class DayCounterServiceTest {
     public void copyYearHolidayCorrectly() {
         dayCounterService.createHoliday(LocalDate.of(2016, 2, 29), "Company's anniversary");
         dayCounterService.createHoliday(LocalDate.of(2016, 2, 20), "Birthday");
+        dayCounterService.createHoliday(LocalDate.of(2017, 2, 20), "Birthday");
         dayCounterService.copyYearHolidaysToNext(2016);
 
         List<HolidayDto> dtos = dayCounterService.findHolidaysOfYear(2017);

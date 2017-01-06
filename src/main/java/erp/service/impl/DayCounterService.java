@@ -3,6 +3,7 @@ package erp.service.impl;
 
 import erp.domain.Holiday;
 import erp.dto.HolidayDto;
+import erp.exceptions.DateNotUniqueException;
 import erp.exceptions.EntityNotFoundException;
 import erp.repository.HolidayRepository;
 import erp.service.IDayCounterService;
@@ -63,6 +64,7 @@ public class DayCounterService implements IDayCounterService{
     @Transactional
     @Override
     public String createHoliday(LocalDate date, String description) {
+        checkDateIsUnique(date);
         Holiday holiday = new Holiday(date, description);
 
         holidayRepository.save(holiday);
@@ -87,6 +89,7 @@ public class DayCounterService implements IDayCounterService{
             return; //No modification detected
 
         if(dateModified)
+            checkDateIsUnique(date);
             holiday.setDate(date);
 
         if(descriptionModified)
@@ -109,8 +112,11 @@ public class DayCounterService implements IDayCounterService{
         Holiday holiday = restoreHolidayFromRepository(id);
         LocalDate oldDate = holiday.getDate();
 
+        LocalDate newDate = getDateForClone(oldDate);
+        checkDateIsUnique(newDate);
+
         Holiday newHoliday = new Holiday(
-                getDateForClone(oldDate),
+                newDate,
                 holiday.getDescription());
 
         holidayRepository.save(newHoliday);
@@ -142,11 +148,11 @@ public class DayCounterService implements IDayCounterService{
 
         for(Holiday holiday : holidays) {
             LocalDate oldDate = holiday.getDate();
-            Holiday newHoliday = new Holiday(
-                    getDateForClone(oldDate),
-                    holiday.getDescription());
-
-            holidayRepository.save(newHoliday);
+            LocalDate newDate = getDateForClone(oldDate);
+            if (isDateUnique(newDate)) {
+                Holiday newHoliday = new Holiday(newDate, holiday.getDescription());
+                holidayRepository.save(newHoliday);
+            }
         }
     }
 
@@ -166,5 +172,16 @@ public class DayCounterService implements IDayCounterService{
             return LocalDate.of(date.getYear() + 1, 3, 1);
 
         return LocalDate.of(date.getYear() + 1, date.getMonth(), date.getDayOfMonth());
+    }
+
+    private boolean checkDateIsUnique(LocalDate date) {
+        if (!isDateUnique(date))
+            throw new DateNotUniqueException(date);
+        return true;
+    }
+
+    private boolean isDateUnique(LocalDate date) {
+        List<Holiday> holidays = holidayRepository.findByDate(date);
+        return holidays.size() == 0;
     }
 }

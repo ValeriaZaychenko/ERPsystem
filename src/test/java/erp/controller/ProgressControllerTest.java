@@ -6,6 +6,7 @@ import erp.controller.constants.ViewNames;
 import erp.dto.HolidayDto;
 import erp.dto.ProgressDto;
 import erp.dto.UserDto;
+import erp.exceptions.DateNotUniqueException;
 import erp.exceptions.EntityNotFoundException;
 import erp.service.IDayCounterService;
 import erp.service.IReportService;
@@ -228,6 +229,24 @@ public class ProgressControllerTest {
     }
 
     @Test
+    public void createHolidayNotUnique() throws Exception {
+        doThrow(new DateNotUniqueException(holidayDto.getDate()))
+                .when(mockDayCounterService).
+                createHoliday(holidayDto.getDate(), holidayDto.getDescription());
+
+        this.mockMvc.perform(
+                post("/holidays/add")
+                        .param("date", holidayDto.getDate().toString())
+                        .param("description", holidayDto.getDescription())
+
+        )
+                .andExpect(view().name("error"))
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.DateNotUniqueMessage)
+                );
+    }
+
+    @Test
     public void editHoliday() throws Exception {
         this.mockMvc.perform(
                 post("/holidays/edit")
@@ -263,6 +282,25 @@ public class ProgressControllerTest {
                 .andExpect(view().name("error"))
                 .andExpect( (result) ->
                         result.getResponse().getContentAsString().contains(ErrorKeys.EntityNotFoundMessage))
+        ;
+    }
+
+    @Test
+    public void editHolidayDateNotUnique() throws Exception {
+        doThrow(new DateNotUniqueException(holidayDto.getDate()))
+                .when(mockDayCounterService).
+                editHoliday(holidayId, holidayDto.getDate(), holidayDto.getDescription());
+
+        this.mockMvc.perform(
+                post("/holidays/edit")
+                        .param("holidayId", holidayId)
+                        .param("date", holidayDto.getDate().toString())
+                        .param("description", holidayDto.getDescription())
+
+        )
+                .andExpect(view().name("error"))
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.DateNotUniqueMessage))
         ;
     }
 
