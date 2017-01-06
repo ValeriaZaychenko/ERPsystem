@@ -370,15 +370,21 @@
 		parseFormat: function(format){
 			var separator = format.match(/[.\/\-\s].*?/),
 				parts = format.split(/\W+/);
-			if (!separator || !parts || parts.length === 0){
+			if (!parts || parts.length === 0){
 				throw new Error("Invalid date format.");
 			}
 			return {separator: separator, parts: parts};
 		},
 		parseDate: function(date, format) {
-			var parts = date.split(format.separator),
-				date = new Date(),
-				val;
+			var parts = null;
+			if (format.separator)
+				parts = date.split(format.separator);
+			else
+				parts = [ date ];
+
+			date = new Date();
+			var val;
+
 			date.setHours(0);
 			date.setMinutes(0);
 			date.setSeconds(0);

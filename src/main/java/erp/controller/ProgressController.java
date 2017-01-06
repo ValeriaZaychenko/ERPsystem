@@ -36,19 +36,22 @@ public class ProgressController {
             LocalDate begin = LocalDate.of(localDate.getYear(), localDate.getMonth(), 1);
             LocalDate end = LocalDate.of(localDate.getYear(), localDate.getMonth(), begin.lengthOfMonth());
 
-            putAttrToModel(model, begin, end);
+            putProgressAttrToModel(model, begin, end);
         }
         else
-            putAttrToModel(model, getCurrentMonthBeginDate(), getCurrentMonthEndDate());
+            putProgressAttrToModel(model, getCurrentMonthBeginDate(), getCurrentMonthEndDate());
 
         return ViewNames.PROGRESS.progress;
     }
 
     @RequestMapping(value = "/holidays", method = RequestMethod.GET)
-    public String getHolidaysOfYear(Map<String, Object> model) {
-        model.put(
-                AttributeNames.ProgressView.holiday,
-                dayCounterService.findHolidaysOfYear(LocalDate.now().getYear()));
+    public String getHolidaysOfYear(Map<String, Object> model, @RequestParam Optional<String> year) {
+
+        if (year.isPresent())
+            putHolidaysAttrToModel(model, Integer.valueOf(year.get()));
+
+        else
+            putHolidaysAttrToModel(model, LocalDate.now().getYear());
 
         return ViewNames.HOLIDAY.holiday;
     }
@@ -76,7 +79,7 @@ public class ProgressController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    private void putAttrToModel(Map<String, Object> model, LocalDate begin, LocalDate end) {
+    private void putProgressAttrToModel(Map<String, Object> model, LocalDate begin, LocalDate end) {
         model.put(
                 AttributeNames.ProgressView.progress,
                 reportService.getAllUsersWorkingTimeBetweenDates(begin, end));
@@ -95,6 +98,21 @@ public class ProgressController {
         model.put(
                 AttributeNames.ProgressView.monthDate,
                 begin.getMonth().getValue() + "/" + begin.getYear());
+    }
+
+    @RequestMapping(value = "holidays/clone", method = RequestMethod.POST)
+    public ResponseEntity cloneAll(@RequestParam int year) {
+        dayCounterService.copyYearHolidaysToNext(year);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    private void putHolidaysAttrToModel(Map<String, Object> model, int year) {
+        model.put(
+                AttributeNames.ProgressView.holiday,
+                dayCounterService.findHolidaysOfYear(year));
+        model.put(
+                AttributeNames.ProgressView.holidaysYear,
+                year);
     }
 
     private LocalDate getCurrentMonthBeginDate() {

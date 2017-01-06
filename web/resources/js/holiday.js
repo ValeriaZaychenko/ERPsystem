@@ -72,3 +72,22 @@ function deleteHoliday ( holidayId ) {
         return false;
     }
 }
+
+function cloneHolidays ( year ) {
+    if(confirm(strings['confirm.clone'])){
+        $.post(
+            "/holidays/clone",
+            {
+                year: year
+            },
+            function () {
+                location.reload();
+            }
+        ).fail( function( response ) {
+            document.body.innerHTML = response.responseText;
+        });
+    }
+    else{
+        return false;
+    }
+}

@@ -175,7 +175,7 @@ public class ProgressControllerTest {
     }
 
     @Test
-    public void getHolidays() throws Exception {
+    public void getHolidaysDefault() throws Exception {
         when(mockDayCounterService.findHolidaysOfYear(LocalDate.now().getYear()))
                 .thenReturn(holidayDtos);
 
@@ -189,6 +189,24 @@ public class ProgressControllerTest {
 
         verify(mockDayCounterService, times(1))
                 .findHolidaysOfYear(LocalDate.now().getYear());
+    }
+
+    @Test
+    public void getHolidays() throws Exception {
+        when(mockDayCounterService.findHolidaysOfYear(2016))
+                .thenReturn(holidayDtos);
+
+        this.mockMvc.perform(
+                get("/holidays")
+                .param("year", "2016")
+        )
+                .andExpect(status().isOk())
+                .andExpect(model().attribute(AttributeNames.ProgressView.holiday, holidayDtos))
+                .andExpect(view().name(ViewNames.HOLIDAY.holiday))
+        ;
+
+        verify(mockDayCounterService, times(1))
+                .findHolidaysOfYear(2016);
     }
 
     @Test
@@ -275,5 +293,18 @@ public class ProgressControllerTest {
                 .andExpect( (result) ->
                         result.getResponse().getContentAsString().contains(ErrorKeys.EntityNotFoundMessage)
                 );
+    }
+
+    @Test
+    public void cloneHolidays() throws Exception {
+        this.mockMvc.perform(
+                post("/holidays/clone")
+                        .param("year", "2016")
+        )
+                .andExpect(status().isOk()
+                );
+
+        verify(mockDayCounterService, only())
+                .copyYearHolidaysToNext(2016);
     }
 }

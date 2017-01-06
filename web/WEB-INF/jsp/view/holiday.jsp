@@ -4,6 +4,9 @@
     <jsp:attribute name="headContent">
         <script src="<c:url value="/resources/js/holiday_validate.js" />"></script>
         <script src="<c:url value="/resources/js/holiday.js" />"></script>
+        <link rel="stylesheet" href="<c:url value="/resources/css/external/datepicker.css" />" />
+        <script src="<c:url value="/resources/js/external/bootstrap-datepicker.js" />"></script>
+        <script src="<c:url value="/resources/js/yearpicker.js" />"></script>
     </jsp:attribute>
 
     <jsp:body>
@@ -17,6 +20,7 @@
 
                 <c:otherwise>
                     <div class="col-lg-6 col-md-6 col-sm-6">
+                            ${holidaysYear}
                         <table id="holidaytable" class="table">
                             <thead>
                                 <tr>
@@ -48,6 +52,10 @@
                                 </c:forEach>
                             </tbody>
                         </table>
+                        <a class="btn btn-danger btn-xs" onclick="cloneHolidays('${holidaysYear}')">
+                            <i class="fa fa-clone" aria-hidden="true"></i>
+                            <spring:message code="clone.holidays.to.next.year" />
+                        </a>
                     </div>
                  </c:otherwise>
             </c:choose>
@@ -110,6 +118,42 @@
                     </div>
                 </div>
             </div>
+            <div class='col-md-6'>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <strong><spring:message code="pick.holidays.year"/></strong>
+                    </div>
+                    <div class="panel-body">
+                        <form role="form" id="pickYearHolidayForm" action="/holidays" method="GET">
+                            <fieldset>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-10  col-md-offset-1 ">
+
+                                        <div class="form-group">
+                                            <label for="datepicker" class="col-sm-2 control-label">
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <div class="input-append date" id="datepicker" data-date-format="yyyy" data-date="2017">
+                                                    <input  type="text" readonly="readonly" name="year" >
+                                                    <span class="add-on"><i class="fa fa-th"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <div class="input-group">
+                                                    <input type="submit" value="<spring:message code="view.holidays"/>" name="View Holidays" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
         <script type="text/javascript">
             var validateModalStrings = new Array();
@@ -117,10 +161,9 @@
             validateModalStrings['invalid.value.error.message']  = "<spring:message code='invalid.value.error.message' />";
             validateModalStrings['invalid.date.error.message']  = "<spring:message code='invalid.date.error.message' />";
             validateModalStrings['empty.date.error.message'] = "<spring:message code='empty.date.error.message' />";
-            validateModalStrings['empty.duration.error.message']  = "<spring:message code='empty.duration.error.message' />";
-            validateModalStrings['invalid.duration.error.message'] = "<spring:message code='invalid.duration.error.message' />";
             validateModalStrings['empty.description.error.message'] = "<spring:message code='empty.description.error.message' />";
-            strings['confirm.delete'] = "<spring:message code='confirm.report.delete' />";
+            strings['confirm.delete'] = "<spring:message code='confirm.holiday.delete' />";
+            strings['confirm.clone'] = "<spring:message code='confirm.holiday.clone' />";
         </script>
     </jsp:body>
 
