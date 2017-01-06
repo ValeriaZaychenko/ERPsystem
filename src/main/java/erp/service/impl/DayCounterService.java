@@ -88,9 +88,10 @@ public class DayCounterService implements IDayCounterService{
         if (!(dateModified || descriptionModified))
             return; //No modification detected
 
-        if(dateModified)
+        if(dateModified) {
             checkDateIsUnique(date);
             holiday.setDate(date);
+        }
 
         if(descriptionModified)
             holiday.setDescription(description);

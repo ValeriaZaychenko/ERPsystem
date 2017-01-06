@@ -46,6 +46,11 @@
                                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                                     <spring:message code="delete" />
                                                 </a>
+
+                                                <a class="btn btn-danger btn-xs" onclick="cloneHoliday('${h.id}')">
+                                                    <i class="fa fa-clone" aria-hidden="true"></i>
+                                                    <spring:message code="clone" />
+                                                </a>
                                             </td>
                                         </tr>
                                     </form>
@@ -163,7 +168,8 @@
             validateModalStrings['empty.date.error.message'] = "<spring:message code='empty.date.error.message' />";
             validateModalStrings['empty.description.error.message'] = "<spring:message code='empty.description.error.message' />";
             strings['confirm.delete'] = "<spring:message code='confirm.holiday.delete' />";
-            strings['confirm.clone'] = "<spring:message code='confirm.holiday.clone' />";
+            strings['confirm.clone'] = "<spring:message code='confirm.holidays.clone' />";
+            strings['confirm.clone.one'] = "<spring:message code='confirm.holiday.clone' />";
         </script>
     </jsp:body>
 

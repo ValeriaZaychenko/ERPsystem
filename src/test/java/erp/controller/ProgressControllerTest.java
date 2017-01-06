@@ -334,6 +334,34 @@ public class ProgressControllerTest {
     }
 
     @Test
+    public void cloneHoliday() throws Exception {
+        this.mockMvc.perform(
+                post("/holidays/holiday/clone")
+                        .param("holidayId", holidayId)
+        )
+                .andExpect(status().isOk()
+                );
+
+        verify(mockDayCounterService, only())
+                .copyHolidayToNextYear(holidayId);
+    }
+
+    @Test
+    public void cloneHolidayDateNotUnique() throws Exception {
+        doThrow(new DateNotUniqueException(holidayDto.getDate()))
+                .when(mockDayCounterService).
+                copyHolidayToNextYear(holidayId);
+
+        this.mockMvc.perform(
+                post("/holidays/holiday/clone")
+                        .param("holidayId", holidayId)
+        )
+                .andExpect(view().name("error"))
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.DateNotUniqueMessage));
+    }
+
+    @Test
     public void cloneHolidays() throws Exception {
         this.mockMvc.perform(
                 post("/holidays/clone")

@@ -79,6 +79,18 @@ public class ProgressController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @RequestMapping(value = "holidays/holiday/clone", method = RequestMethod.POST)
+    public ResponseEntity cloneAll(@RequestParam String holidayId) {
+        dayCounterService.copyHolidayToNextYear(holidayId);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "holidays/clone", method = RequestMethod.POST)
+    public ResponseEntity cloneAll(@RequestParam int year) {
+        dayCounterService.copyYearHolidaysToNext(year);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
     private void putProgressAttrToModel(Map<String, Object> model, LocalDate begin, LocalDate end) {
         model.put(
                 AttributeNames.ProgressView.progress,
@@ -98,12 +110,6 @@ public class ProgressController {
         model.put(
                 AttributeNames.ProgressView.monthDate,
                 begin.getMonth().getValue() + "/" + begin.getYear());
-    }
-
-    @RequestMapping(value = "holidays/clone", method = RequestMethod.POST)
-    public ResponseEntity cloneAll(@RequestParam int year) {
-        dayCounterService.copyYearHolidaysToNext(year);
-        return new ResponseEntity(HttpStatus.OK);
     }
 
     private void putHolidaysAttrToModel(Map<String, Object> model, int year) {

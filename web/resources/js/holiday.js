@@ -91,3 +91,22 @@ function cloneHolidays ( year ) {
         return false;
     }
 }
+
+function cloneHoliday ( holidayId ) {
+    if (confirm(strings['confirm.clone.one'])) {
+        $.post(
+            "/holidays/holiday/clone",
+            {
+                holidayId: holidayId
+            },
+            function () {
+                location.reload();
+            }
+        ).fail(function (response) {
+            document.body.innerHTML = response.responseText;
+        });
+    }
+    else {
+        return false;
+    }
+}
