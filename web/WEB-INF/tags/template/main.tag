@@ -121,6 +121,11 @@
         <form action="/logout" id="logoutForm" method="post" ></form>
         <form action="/changePassword/" id="changePasswordForm" method="get" ></form>
 
+        <script type="text/javascript">
+            var locale = new Array();
+            locale['languageCode'] = '${languageCode}';
+        </script>
+
         <jsp:doBody />
 
     </body>

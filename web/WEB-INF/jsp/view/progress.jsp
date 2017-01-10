@@ -6,6 +6,7 @@
         <!--<link rel="stylesheet" href="<c:url value="/resources/css/external/bootstrap-combined.min.css" />" />-->
         <link rel="stylesheet" href="<c:url value="/resources/css/external/datepicker.css" />" />
         <script src="<c:url value="/resources/js/external/bootstrap-datepicker.js" />"></script>
+        <script src="<c:url value="/resources/js/bootstrap-datepicker.ru.js" />" charset="UTF-8"></script>
         <script src="<c:url value="/resources/js/custom_datepicker.js" />"></script>
     </jsp:attribute>
 
