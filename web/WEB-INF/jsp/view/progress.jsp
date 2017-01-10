@@ -6,7 +6,7 @@
         <!--<link rel="stylesheet" href="<c:url value="/resources/css/external/bootstrap-combined.min.css" />" />-->
         <link rel="stylesheet" href="<c:url value="/resources/css/external/datepicker.css" />" />
         <script src="<c:url value="/resources/js/external/bootstrap-datepicker.js" />"></script>
-        <script src="<c:url value="/resources/js/monthpicker.js" />"></script>
+        <script src="<c:url value="/resources/js/custom_datepicker.js" />"></script>
     </jsp:attribute>
 
     <jsp:body>
@@ -47,10 +47,10 @@
                                 <div class="col-sm-12 col-md-10  col-md-offset-1 ">
 
                                     <div class="form-group">
-                                        <label for="datepicker" class="col-sm-2 control-label">
+                                        <label for="datepicker_month" class="col-sm-2 control-label">
                                         </label>
                                         <div class="col-sm-12">
-                                            <div class="input-append date" id="datepicker" data-date-format="yyyy-mm" data-date="2017-01">
+                                            <div class="input-append date" id="datepicker_month" data-date-format="yyyy-mm" data-date="2017-01">
                                                 <input  type="text" readonly="readonly" name="month" >
                                                 <span class="add-on"><i class="fa fa-th"></i></span>
                                             </div>

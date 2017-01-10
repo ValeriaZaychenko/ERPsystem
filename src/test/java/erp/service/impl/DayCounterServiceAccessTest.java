@@ -1,7 +1,6 @@
 package erp.service.impl;
 
 import erp.domain.Holiday;
-import erp.repository.HolidayRepository;
 import erp.service.IDayCounterService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

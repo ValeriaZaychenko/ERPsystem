@@ -6,7 +6,7 @@
         <script src="<c:url value="/resources/js/holiday.js" />"></script>
         <link rel="stylesheet" href="<c:url value="/resources/css/external/datepicker.css" />" />
         <script src="<c:url value="/resources/js/external/bootstrap-datepicker.js" />"></script>
-        <script src="<c:url value="/resources/js/yearpicker.js" />"></script>
+        <script src="<c:url value="/resources/js/custom_datepicker.js" />"></script>
     </jsp:attribute>
 
     <jsp:body>
@@ -135,10 +135,10 @@
                                     <div class="col-sm-12 col-md-10  col-md-offset-1 ">
 
                                         <div class="form-group">
-                                            <label for="datepicker" class="col-sm-2 control-label">
+                                            <label for="datepicker_year" class="col-sm-2 control-label">
                                             </label>
                                             <div class="col-sm-12">
-                                                <div class="input-append date" id="datepicker" data-date-format="yyyy" data-date="2017">
+                                                <div class="input-append date" id="datepicker_year" data-date-format="yyyy" data-date="2017">
                                                     <input  type="text" readonly="readonly" name="year" >
                                                     <span class="add-on"><i class="fa fa-th"></i></span>
                                                 </div>
