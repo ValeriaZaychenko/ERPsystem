@@ -80,7 +80,7 @@ public class ProgressController {
     }
 
     @RequestMapping(value = "holidays/holiday/clone", method = RequestMethod.POST)
-    public ResponseEntity cloneAll(@RequestParam String holidayId) {
+    public ResponseEntity cloneOne(@RequestParam String holidayId) {
         dayCounterService.copyHolidayToNextYear(holidayId);
         return new ResponseEntity(HttpStatus.OK);
     }

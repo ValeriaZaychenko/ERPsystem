@@ -9,6 +9,7 @@ import erp.repository.HolidayRepository;
 import erp.service.IDayCounterService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = erp.config.JUnitConfiguration.class)
 @Transactional
+@WithMockUser(username = "ram", authorities={"AUTH_ADMIN"})
 public class DayCounterServiceTest {
 
     @Inject
