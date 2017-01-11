@@ -6,6 +6,7 @@ import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
 import erp.event.RemoveUserEvent;
 import erp.exceptions.EntityNotFoundException;
+import erp.exceptions.WorkloadIncompatibilityException;
 import erp.repository.ReportRepository;
 import erp.repository.UserRepository;
 import erp.service.IDayCounterService;
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ReportService implements IReportService, ApplicationListener<RemoveUserEvent> {
@@ -36,8 +38,9 @@ public class ReportService implements IReportService, ApplicationListener<Remove
     @Transactional
     @Override
     public String createReport(LocalDate date, double duration, String description, String userId, boolean remote) {
-        User user = restoreUserFromRepository(userId);
+        checkDurationOfReportsLess24(countDurationsSum(userId, date), duration);
 
+        User user = restoreUserFromRepository(userId);
         Report report = new Report(date, duration, description, user, remote);
 
         reportRepository.save(report);
@@ -72,8 +75,12 @@ public class ReportService implements IReportService, ApplicationListener<Remove
         if(dateModified)
             report.setDate(date);
 
-        if(durationModified)
+        if(durationModified) {
+            checkDurationOfReportsLess24(
+                    countDurationsSum(report.getUser().getId(), date) - report.getDuration(),
+                    duration);
             report.setDuration(duration);
+        }
 
         if(descriptionModified)
             report.setDescription(description);
@@ -193,6 +200,21 @@ public class ReportService implements IReportService, ApplicationListener<Remove
         }
 
         return reportDtos;
+    }
+
+    private double countDurationsSum(String userId, LocalDate date) {
+        try (Stream<Report> stream = reportRepository.findAllByCustomQueryNotNull(userId, date)) {
+            return stream
+                    .map(Report::getDuration)
+                    .reduce(
+                            0.0,
+                            (a, b) -> a + b);
+        }
+    }
+
+    private void checkDurationOfReportsLess24(double sumDurations, double duration) {
+        if (sumDurations + duration > 24.0)
+            throw new WorkloadIncompatibilityException(Double.toString(duration));
     }
 
     @Override

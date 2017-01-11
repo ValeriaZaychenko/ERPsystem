@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Repository
 public interface ReportRepository extends CrudRepository<Report, String> {
@@ -27,4 +28,7 @@ public interface ReportRepository extends CrudRepository<Report, String> {
     @Modifying
     void removeByUserIdEquals(@Param("id")String id);
 
+    @Query("SELECT r FROM reports r WHERE r.user.id = :id AND r.date = :date")
+    Stream<Report> findAllByCustomQueryNotNull(@Param("id")String id,
+                                 @Param("date")LocalDate date);
 }

@@ -21,7 +21,7 @@ public class ExceptionHandlingAdvice {
 
     /*
     Include MismatchPasswordException, UnknownRoleException, DuplicateEmailException,
-    EntityNotFoundException, InvalidDateException, DateNotUniqueException
+    EntityNotFoundException, InvalidDateException, DateNotUniqueException, WorkloadIncompatibilityMessage
      */
     @ExceptionHandler(DomainLogicException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)

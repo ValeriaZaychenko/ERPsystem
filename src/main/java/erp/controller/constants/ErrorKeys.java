@@ -15,4 +15,5 @@ public interface ErrorKeys {
     String AccessDeniedMessage = "error.access.denied.message";
     String InvalidDateOrderMessage = "error.invalid.date.order.message";
     String DateNotUniqueMessage = "error.date.not.unique.message";
+    String WorkloadIncompatibilityMessage = "error.workload.incompability.message";
 }

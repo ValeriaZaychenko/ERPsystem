@@ -6,6 +6,7 @@ import erp.event.RemoveUserEvent;
 import erp.exceptions.DateOrderException;
 import erp.exceptions.EntityNotFoundException;
 import erp.exceptions.InvalidDateException;
+import erp.exceptions.WorkloadIncompatibilityException;
 import erp.service.IDayCounterService;
 import erp.service.IReportService;
 import erp.service.IUserService;
@@ -125,6 +126,33 @@ public class ReportServiceTest {
         assertEquals("description", dto.getDescription());
         assertEquals(userId, dto.getUserId());
         assertEquals(dto.isRemote(), true);
+    }
+
+    @Test
+    public void createReportCorrectlyTwiceSumLess24() {
+        String userId = createSimpleUser();
+        reportService.createReport(get2015_11_11(),
+                8, "description", userId, true);
+        reportService.createReport(get2015_11_11(),
+                8, "description", userId, true);
+    }
+
+    @Test
+    public void createReportCorrectlyTwiceSum24() {
+        String userId = createSimpleUser();
+        reportService.createReport(get2015_11_11(),
+                8, "description", userId, true);
+        reportService.createReport(get2015_11_11(),
+                16, "description", userId, true);
+    }
+
+    @Test(expected = WorkloadIncompatibilityException.class)
+    public void createReportCorrectlyTwiceSumMore24() {
+        String userId = createSimpleUser();
+        reportService.createReport(get2015_11_11(),
+                8, "description", userId, true);
+        reportService.createReport(get2015_11_11(),
+                20, "description", userId, true);
     }
 
     @Test
@@ -332,6 +360,18 @@ public class ReportServiceTest {
         ReportDto dto = reportService.findReport(reportId);
 
         assertEquals(dto.getDuration(), 24, 0.1);
+    }
+
+    @Test(expected = WorkloadIncompatibilityException.class)
+    public void editReportWorkingDurationMoreMax() {
+        String userId = createSimpleUser();
+        String reportId = reportService.createReport(get2015_11_11(),
+                8, "description", userId, true);
+        reportService.createReport(get2015_11_11(),
+                14, "description", userId, true);
+
+        reportService.editReport(reportId, get2015_11_11(),
+                12, "description", true);
     }
 
     @Test
