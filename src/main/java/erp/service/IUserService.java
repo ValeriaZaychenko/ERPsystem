@@ -38,6 +38,8 @@ public interface IUserService {
             @NotEmpty String oldPassword,
             @NotEmpty String newPassword);
 
+    boolean needToChangePassword(UserDto dto);
+
     @PreAuthorize("hasAuthority('AUTH_ADMIN')")
     List<UserDto> viewUsers();
 }

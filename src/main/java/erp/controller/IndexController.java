@@ -43,8 +43,12 @@ public class IndexController {
     public View home(@AuthenticationPrincipal UserDto currentUser) {
         if (currentUser != null && currentUser.getUserRole().equals("ADMIN"))
             return new RedirectView("/users");
-        else
-            return new RedirectView("/reports");
+        else {
+            if (userService.needToChangePassword(currentUser))
+                return new RedirectView("/changePassword/");
+            else
+                return new RedirectView("/reports");
+        }
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)

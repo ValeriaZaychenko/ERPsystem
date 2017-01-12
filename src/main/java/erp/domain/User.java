@@ -16,6 +16,8 @@ public class User {
     private String email;
     private byte[] hashedPassword;
 
+    private boolean needToChangePassword;
+
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
@@ -24,6 +26,8 @@ public class User {
         this.email = email;
         this.userRole = userRole;
         this.hashedPassword = hashedPassword;
+
+        this.needToChangePassword = true;
     }
 
     protected User(){}
@@ -62,5 +66,13 @@ public class User {
 
     public void setHashedPassword(byte[] hashedPassword) {
         this.hashedPassword = hashedPassword;
+    }
+
+    public boolean isNeedToChangePassword() {
+        return needToChangePassword;
+    }
+
+    public void setNeedToChangePassword(boolean needToChangePassword) {
+        this.needToChangePassword = needToChangePassword;
     }
 }

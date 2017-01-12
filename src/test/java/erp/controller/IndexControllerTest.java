@@ -83,12 +83,30 @@ public class IndexControllerTest {
     }
 
     @Test
-    public void returnHomePageForUser() throws Exception {
+    public void returnHomePageForUserToHome() throws Exception {
+        when(mockUserService.
+                needToChangePassword(userDto))
+                .thenReturn(false);
+
         this.mockMvc.perform(
                 get("/home")
                 .principal(userDto)
         )
                 .andExpect(redirectedUrl("/reports"))
+        ;
+    }
+
+    @Test
+    public void returnHomePageForUserSecondTime() throws Exception {
+        when(mockUserService.
+                needToChangePassword(userDto))
+                .thenReturn(true);
+
+        this.mockMvc.perform(
+                get("/home")
+                        .principal(userDto)
+        )
+                .andExpect(redirectedUrl("/changePassword/"))
         ;
     }
 

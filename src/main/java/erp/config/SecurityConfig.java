@@ -48,7 +48,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/setlocale/**").permitAll()
 
                 .and()
-
                     .formLogin()
                         .loginPage("/login")
                         .defaultSuccessUrl("/home")

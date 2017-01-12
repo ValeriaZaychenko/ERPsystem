@@ -4,7 +4,6 @@ import erp.controller.constants.AttributeNames;
 import erp.controller.constants.ViewNames;
 import erp.domain.UserRole;
 import erp.exceptions.DuplicateEmailException;
-import erp.service.IReportService;
 import erp.service.IUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +22,6 @@ public class UserController {
 
     @Inject
     private IUserService userService;
-    @Inject
-    private IReportService reportService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String getUsersList(Map<String, Object> model) {

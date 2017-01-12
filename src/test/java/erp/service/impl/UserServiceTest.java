@@ -329,6 +329,23 @@ public class UserServiceTest {
         assertEquals(user.getUserRole(), "ADMIN");
     }
 
+    //---NEED TO CHANGE PASSWORD TESTS----------------------------------------------------------------------------------
+
+    @Test
+    public void needToChangeByDefault() {
+        String id = createSimpleUser();
+
+        assertTrue(userService.needToChangePassword(userService.findUserById(id)));
+    }
+
+    @Test
+    public void needToChangeAfterChange() {
+        String id = createSimpleUser();
+        userService.changePassword(id, mailService.getLastContent(), "111");
+
+        assertFalse(userService.needToChangePassword(userService.findUserById(id)));
+    }
+
     //---EVENT TESTS----------------------------------------------------------------------------------------------------
 
     @Component

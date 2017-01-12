@@ -125,6 +125,8 @@ public class UserService implements IUserService, IAuthenticationService {
 
         if(passwordService.comparePasswords(oldPassword, user.getHashedPassword())) {
             user.setHashedPassword(passwordService.getHashFromPassword(newPassword));
+            if (user.isNeedToChangePassword())
+                user.setNeedToChangePassword(false);
         }
         else
             throw new MismatchPasswordException();
@@ -179,6 +181,11 @@ public class UserService implements IUserService, IAuthenticationService {
         }
 
         return dto;
+    }
+
+    @Override
+    public boolean needToChangePassword(UserDto dto) {
+        return userRepository.findOne(dto.getId()).isNeedToChangePassword();
     }
 
     @Override

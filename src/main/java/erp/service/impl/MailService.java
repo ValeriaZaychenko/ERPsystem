@@ -12,7 +12,7 @@ public class MailService implements IMailService {
 
     private String lastContent;
 
-    private static final String FILENAME = "src/main/resources/first_login_passwords.txt";
+    private static final String FILENAME = "C:\\Users\\lera\\IdeaProjects\\ERP\\src\\main\\resources\\first_login_passwords.txt";
 
 
     @Override
