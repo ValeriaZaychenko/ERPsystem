@@ -4,6 +4,7 @@ import erp.controller.constants.AttributeNames;
 import erp.controller.constants.ErrorKeys;
 import erp.controller.constants.ViewNames;
 import erp.dto.UserDto;
+import erp.exceptions.MismatchPasswordException;
 import erp.service.IUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,7 +81,13 @@ public class IndexController {
      */
     @RequestMapping(value = "/changePassword/", method = RequestMethod.POST)
     public View changePassword(
-            @RequestParam String userId, @RequestParam String oldPassword, @RequestParam String newPassword) {
+            @RequestParam String userId,
+            @RequestParam String oldPassword,
+            @RequestParam String newPassword,
+            @RequestParam String newPasswordConfirmed) {
+
+        if (! newPassword.equals(newPasswordConfirmed))
+            throw new MismatchPasswordException();
 
         userService.changePassword(userId, oldPassword, newPassword);
         return new RedirectView("/");

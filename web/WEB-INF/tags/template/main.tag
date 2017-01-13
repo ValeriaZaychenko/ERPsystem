@@ -107,7 +107,7 @@
                                     <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a onclick="document.getElementById('changePasswordForm').submit();"><spring:message code="change.password"/></a></li>
+                                    <li><a onclick="document.getElementById('goChangePasswordForm').submit();"><spring:message code="change.password"/></a></li>
                                     <li role="separator" class="divider"></li>
                                     <li><a onclick="document.getElementById('logoutForm').submit();"><spring:message code="log.out"/></a></li>
                                 </ul>
@@ -119,7 +119,7 @@
         </nav>
 
         <form action="/logout" id="logoutForm" method="post" ></form>
-        <form action="/changePassword/" id="changePasswordForm" method="get" ></form>
+        <form action="/changePassword/" id="goChangePasswordForm" method="get" ></form>
 
         <script type="text/javascript">
             var locale = new Array();

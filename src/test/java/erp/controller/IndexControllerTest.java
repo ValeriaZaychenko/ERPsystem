@@ -180,6 +180,7 @@ public class IndexControllerTest {
                 .param("userId", userId)
                 .param("oldPassword", "111")
                 .param("newPassword", "12345")
+                .param("newPasswordConfirmed", "12345")
        );
 
         verify(mockUserService, only())
@@ -191,7 +192,7 @@ public class IndexControllerTest {
     }
 
     @Test
-    public void changePasswordMismatch() throws Exception {
+    public void changePasswordMismatchOld() throws Exception {
         doThrow(new MismatchPasswordException())
                 .when(mockUserService).changePassword(userId, "111", "12345");
 
@@ -200,6 +201,7 @@ public class IndexControllerTest {
                         .param("userId", userId)
                         .param("oldPassword", "111")
                         .param("newPassword", "12345")
+                        .param("newPasswordConfirmed", "12345")
         )
         .andExpect(view().name("error"))
                 .andExpect( (result) ->
@@ -214,6 +216,7 @@ public class IndexControllerTest {
                         .param("userId", userId)
                         .param("oldPassword", "111")
                         .param("newPassword", "12345")
+                        .param("newPasswordConfirmed", "12345")
        )
                 .andExpect(redirectedUrl("/"));
 
