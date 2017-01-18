@@ -17,6 +17,7 @@ public interface ViewNames {
 
     interface REPORTS {
         String reports = "user_reports";
+        String reportsComponent = "user-reports-component";
     }
 
     interface PROGRESS {

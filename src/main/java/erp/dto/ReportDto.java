@@ -13,6 +13,10 @@ public class ReportDto implements Serializable {
     private String userId;
     private boolean remote;
 
+    private int day;
+    private String month;
+    private int year;
+
     public String getId() {
         return id;
     }
@@ -59,5 +63,30 @@ public class ReportDto implements Serializable {
 
     public void setRemote(boolean remote) {
         this.remote = remote;
+    }
+
+
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 }

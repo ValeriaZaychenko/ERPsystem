@@ -2,8 +2,10 @@ package erp.controller;
 
 import erp.controller.constants.AttributeNames;
 import erp.controller.constants.ViewNames;
+import erp.dto.ReportDto;
 import erp.dto.UserDto;
 import erp.service.IReportService;
+import erp.utils.DateParser;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/reports")
@@ -25,15 +28,41 @@ public class ReportController {
     private IReportService reportService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String getUserReportsList(@AuthenticationPrincipal UserDto currentUser,
-                                     Map<String, Object> model) {
-        model.put(
-                AttributeNames.UserViewReports.userReports,
-                this.reportService.viewUserReports(currentUser.getId())
-       );
+    public String getUserReportsPage(@AuthenticationPrincipal UserDto currentUser,
+                                     Map<String, Object> model, @RequestParam Optional<String> filter) {
 
+        putReportsModel( currentUser, model, filter );
         return ViewNames.REPORTS.reports;
     }
+
+    @RequestMapping(value = "/userReports", method = RequestMethod.GET)
+    public String getUserReportsList(@AuthenticationPrincipal UserDto currentUser,
+                                     Map<String, Object> model, @RequestParam Optional<String> filter) {
+
+        putReportsModel( currentUser, model, filter );
+        return ViewNames.REPORTS.reportsComponent;
+    }
+
+
+    private void putReportsModel(UserDto currentUser,Map<String, Object> model, Optional<String> filter) {
+
+        if (filter.isPresent()) {
+            LocalDate localDate = DateParser.parseMonthDate(filter.get());
+
+            LocalDate begin = LocalDate.of(localDate.getYear(), localDate.getMonth(), 1);
+            LocalDate end = LocalDate.of(localDate.getYear(), localDate.getMonth(), begin.lengthOfMonth());
+
+            model.put(
+                    AttributeNames.UserViewReports.userReports,
+                    this.reportService.viewUserReportsBetweenDates(currentUser.getId(), begin, end));
+        }
+        else
+            model.put(
+                    AttributeNames.UserViewReports.userReports,
+                    this.reportService.viewUserReportsBetweenDates(currentUser.getId(), LocalDate.now(), LocalDate.now())
+            );
+    }
+
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseEntity add(@AuthenticationPrincipal UserDto currentUser,

@@ -126,7 +126,9 @@
             locale['languageCode'] = '${languageCode}';
         </script>
 
-        <jsp:doBody />
+        <div class="container-fluid">
+            <jsp:doBody />
+        </div>
 
     </body>
 </html>

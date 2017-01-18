@@ -196,7 +196,7 @@ public class ReportServiceTest {
         reportService.createReport(DateParser.parseDate("2016-11-11"),
                 5, "Done: issue1", userId, true);
 
-        assertEquals(reportService.viewUserReports(userId).size(), 2);
+        assertEquals(reportService.viewUserReportsBetweenDates(userId, LocalDate.now(), LocalDate.now()).size(), 2);
     }
 
     @Test
@@ -500,7 +500,7 @@ public class ReportServiceTest {
 
     @Test(expected = ConstraintViolationException.class)
     public void viewUserReportNullId() {
-        reportService.viewUserReports(null);
+        reportService.viewUserReportsBetweenDates(null, LocalDate.now(), LocalDate.now());
     }
 
     //---VIEW USER REPORTS LOGIC TESTS----------------------------------------------------------------------------------
@@ -508,7 +508,7 @@ public class ReportServiceTest {
     @Test
     public void viewUserReportDontHaveAny() {
         String userId = createSimpleUser();
-        List<ReportDto> dtos = reportService.viewUserReports(userId);
+        List<ReportDto> dtos = reportService.viewUserReportsBetweenDates(userId, LocalDate.now(), LocalDate.now());
 
         assertEquals(dtos.size(), 0);
     }
@@ -519,7 +519,7 @@ public class ReportServiceTest {
         String reportId = reportService.createReport(get2015_11_11(),
                 8, "description", userId, true);
 
-        List<ReportDto> dtos = reportService.viewUserReports(userId);
+        List<ReportDto> dtos = reportService.viewUserReportsBetweenDates(userId, LocalDate.now(), LocalDate.now());
 
         assertEquals(dtos.size(), 1);
         assertEquals(dtos.get(0).getId(), reportId);
@@ -732,13 +732,13 @@ public class ReportServiceTest {
         String id = createSimpleUser();
         reportService.createReport(DateParser.parseDate("2016-11-11"),
                 8, "description", id, true);
-        List<ReportDto> reports = reportService.viewUserReports(id);
+        List<ReportDto> reports = reportService.viewUserReportsBetweenDates(id, LocalDate.now(), LocalDate.now());
 
         assertEquals(reports.size(), 1);
 
         publisher.publishEvent(new RemoveUserEvent(this, id));
 
-        List<ReportDto> reportsNull = reportService.viewUserReports(id);
+        List<ReportDto> reportsNull = reportService.viewUserReportsBetweenDates(id, LocalDate.now(), LocalDate.now());
 
         assertEquals(reportsNull.size(), 0);
     }

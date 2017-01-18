@@ -48,10 +48,10 @@
                                 <div class="col-sm-12 col-md-10  col-md-offset-1 ">
 
                                     <div class="form-group">
-                                        <label for="datepicker_month" class="col-sm-2 control-label">
+                                        <label for="datepicker-month" class="col-sm-2 control-label">
                                         </label>
                                         <div class="col-sm-12">
-                                            <div class="input-append date" id="datepicker_month" data-date-format="yyyy-mm" data-date="2017-01">
+                                            <div class="input-append date" id="datepicker-month" data-date-format="yyyy-mm" data-date="2017-01">
                                                 <input  type="text" readonly="readonly" name="month" >
                                                 <span class="add-on"><i class="fa fa-th"></i></span>
                                             </div>

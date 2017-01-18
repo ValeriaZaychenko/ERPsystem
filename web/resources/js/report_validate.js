@@ -1,9 +1,9 @@
 $(document).ready(function() {
 
-    $('#reportForm').bootstrapValidator({
+    $('#report-form').bootstrapValidator({
         message: validateModalStrings['invalid.value.error.message'],
         live: 'enabled',
-        submitButtons: '#btnSaveReport',
+        submitButtons: '#btn-save-report',
         feedbackIcons: {
             valid: 'glyphicon glyphicon-ok',
             invalid: 'glyphicon glyphicon-remove',

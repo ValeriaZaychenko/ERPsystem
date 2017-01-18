@@ -1,7 +1,7 @@
 
 $(document).ready(function () {
 
-    $("#datepicker_month").datepicker(
+    $("#datepicker-month").datepicker(
         {
             language: locale['languageCode'],
             viewMode: 'months',

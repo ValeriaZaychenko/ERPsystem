@@ -30,6 +30,11 @@ public final class DtoBuilder {
         dto.setDescription(report.getDescription());
         dto.setUserId(report.getUser().getId());
         dto.setRemote(report.isRemote());
+
+        dto.setDay(report.getDate().getDayOfMonth());
+        dto.setMonth(report.getDate().getMonth().name().substring(0,3));
+        dto.setYear(report.getDate().getYear());
+
         return dto;
     }
 

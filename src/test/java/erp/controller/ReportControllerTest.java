@@ -17,6 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +71,7 @@ public class ReportControllerTest {
 
     @Test
     public void noUsersInListYet() throws Exception {
-        when(mockReportService.viewUserReports(userDto.getId())).thenReturn(dtos);
+        when(mockReportService.viewUserReportsBetweenDates(userDto.getId(), LocalDate.now(), LocalDate.now())).thenReturn(dtos);
 
         this.mockMvc.perform(
                 get("/reports")
@@ -82,7 +83,7 @@ public class ReportControllerTest {
         ;
 
         verify(mockReportService, times(1))
-                .viewUserReports(userDto.getId())
+                .viewUserReportsBetweenDates(userDto.getId(), LocalDate.now(), LocalDate.now())
         ;
     }
 

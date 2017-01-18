@@ -39,7 +39,10 @@ public interface IReportService {
     @PreAuthorize("hasAuthority('AUTH_ADMIN')")
     List<ReportDto> viewAllReports();
 
-    List<ReportDto> viewUserReports(@NotNull String userId);
+    List<ReportDto> viewUserReportsBetweenDates(
+            @NotNull String userId,
+            @Past(value = DateBorder.INCLUDE_TODAY) LocalDate begin,
+            LocalDate end);
 
     double getFullTimeBetweenDates(
             LocalDate beginDate,

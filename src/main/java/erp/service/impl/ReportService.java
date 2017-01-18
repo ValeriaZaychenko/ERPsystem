@@ -119,9 +119,11 @@ public class ReportService implements IReportService, ApplicationListener<Remove
 
     @Transactional
     @Override
-    public List<ReportDto> viewUserReports(String userId) {
+    public List<ReportDto> viewUserReportsBetweenDates(String userId, LocalDate begin, LocalDate end) {
+        DateOrderChecker.checkEndDateAfterBegin(begin, end);
+
         User user = restoreUserFromRepository(userId);
-        List<Report> userReports = reportRepository.findByUserOrderByDateDesc(user);
+        List<Report> userReports = reportRepository.findByUserAndBetweenQuery(begin, end, user);
 
         return getReportDtosFromReportsList(userReports);
     }
