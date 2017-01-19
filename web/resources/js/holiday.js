@@ -1,23 +1,23 @@
 $( document ).ready(function() {
 
-    $('.editHolidayBtnClass').click(function () {
+    $('.edit-holiday-btn').click(function () {
 
         date=$(this.parentNode.parentNode).find(".date").html();
         description=$(this.parentNode.parentNode).find(".description").html();
         holidayId=$(this.parentNode.parentNode).find(".holidayId").val();
 
-        $('#holidayForm input[name=date]').val(date);
-        $('#holidayForm input[name=description]').val(description);
+        $('#holiday-form input[name=date]').val(date);
+        $('#holiday-form input[name=description]').val(description);
 
-        $('#holidayForm input[name=holidayId]').val(holidayId);
+        $('#holiday-form input[name=holidayId]').val(holidayId);
 
-        $('#holidayForm input[name=add-or-edit]').val("edit");
+        $('#holiday-form input[name=add-or-edit]').val("edit");
 
-        $('#holidayForm button[id=btnSaveHoliday]').removeAttr('disabled');
+        $('#holiday-form button[id=save-holiday-btn]').removeAttr('disabled');
     });
 
 
-    $('#btnSaveHoliday').click(function () {
+    $('#save-holiday-btn').click(function () {
         add_edit=$(this).find("#add-or-edit").val();
 
         if(add_edit == "edit") {
@@ -25,9 +25,9 @@ $( document ).ready(function() {
             $.post(
                 "/holidays/edit",
                 {
-                    holidayId: $('#holidayForm input[name=holidayId]').val(),
-                    date: $('#holidayForm  input[name=date]').val(),
-                    description: $('#holidayForm input[name=description]').val(),
+                    holidayId: $('#holiday-form input[name=holidayId]').val(),
+                    date: $('#holiday-form  input[name=date]').val(),
+                    description: $('#holiday-form input[name=description]').val(),
                 },
                 function () {
                     location.reload();
@@ -40,8 +40,8 @@ $( document ).ready(function() {
             $.post(
                 "/holidays/add",
                 {
-                    date: $('#holidayForm  input[name=date]').val(),
-                    description: $('#holidayForm input[name=description]').val(),
+                    date: $('#holiday-form  input[name=date]').val(),
+                    description: $('#holiday-form input[name=description]').val(),
                 },
                 function () {
                     location.reload();

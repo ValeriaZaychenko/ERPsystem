@@ -63,7 +63,7 @@ body {
     margin: 0px;
 }
 .event-list > li > .info > ul,
-.event-list > li > .social > ul {
+.event-list > li > .action-buttons > ul {
     display: table;
     list-style: none;
     margin: 10px 0px 0px;
@@ -71,11 +71,11 @@ body {
     width: 100%;
     text-align: center;
 }
-.event-list > li > .social > ul {
+.event-list > li > .action-buttons > ul {
     margin: 0px;
 }
 .event-list > li > .info > ul > li,
-.event-list > li > .social > ul > li {
+.event-list > li > .action-buttons > ul > li {
     display: table-cell;
     cursor: pointer;
     color: rgb(30, 30, 30);
@@ -89,20 +89,20 @@ body {
     color: rgb(30, 30, 30);
     text-decoration: none;
 }
-.event-list > li > .social > ul > li {
+.event-list > li > .action-buttons > ul > li {
     padding: 0px;
 }
-.event-list > li > .social > ul > li > a {
+.event-list > li > .action-buttons > ul > li > a {
     padding: 3px 0px;
 }
 .event-list > li > .info > ul > li:hover,
-.event-list > li > .social > ul > li:hover {
+.event-list > li > .action-buttons > ul > li:hover {
     color: rgb(30, 30, 30);
     background-color: rgb(200, 200, 200);
 }
-.facebook a,
+.edit-report-btn a,
 .twitter a,
-.google-plus a {
+.delete-report-btn a {
     display: block;
     width: 100%;
     color: rgb(75, 110, 168) !important;
@@ -110,10 +110,10 @@ body {
 .twitter a {
     color: rgb(79, 213, 248) !important;
 }
-.google-plus a {
+.delete-report-btn a {
     color: rgb(221, 75, 57) !important;
 }
-.facebook:hover a {
+.edit-report-btn:hover a {
     color: rgb(255, 255, 255) !important;
     background-color: rgb(75, 110, 168) !important;
 }
@@ -121,7 +121,7 @@ body {
     color: rgb(255, 255, 255) !important;
     background-color: rgb(79, 213, 248) !important;
 }
-.google-plus:hover a {
+.delete-report-btn:hover a {
     color: rgb(255, 255, 255) !important;
     background-color: rgb(221, 75, 57) !important;
 }
@@ -169,21 +169,21 @@ body {
         left: 0px;
         bottom: 0px;
     }
-    .event-list > li > .social {
+    .event-list > li > .action-buttons {
         position: absolute;
         top: 0px;
         right: 0px;
         display: block;
         width: 40px;
     }
-    .event-list > li > .social > ul {
+    .event-list > li > .action-buttons > ul {
         border-left: 1px solid rgb(230, 230, 230);
     }
-    .event-list > li > .social > ul > li {
+    .event-list > li > .action-buttons > ul > li {
         display: block;
         padding: 0px;
     }
-    .event-list > li > .social > ul > li > a {
+    .event-list > li > .action-buttons > ul > li > a {
         display: block;
         width: 40px;
         padding: 10px 0px 9px;

@@ -22,7 +22,7 @@ $(document).ready(function() {
         }
     });
 
-    $('#changePasswordForm').validate({
+    $('#change-password-form').validate({
         rules: {
             'oldPassword': {
                 minlength: 1,

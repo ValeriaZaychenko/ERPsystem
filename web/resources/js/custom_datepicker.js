@@ -10,7 +10,7 @@ $(document).ready(function () {
             maxViewMode: "years"
         });
 
-    $("#datepicker_year").datepicker(
+    $("#datepicker-year").datepicker(
         {
             language: locale['languageCode'],
             viewMode: 'years',

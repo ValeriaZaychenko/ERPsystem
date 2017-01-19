@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-    $('#userModalForm').bootstrapValidator({
+    $('#user-modal-form').bootstrapValidator({
         message: validateModalStrings['invalid.value.error.message'],
         live: 'enabled',
         submitButtons: '#btnSaveUser',

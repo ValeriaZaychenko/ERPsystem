@@ -1,9 +1,9 @@
 $(document).ready(function() {
 
-    $('#holidayForm').bootstrapValidator({
+    $('#holiday-form').bootstrapValidator({
         message: validateModalStrings['invalid.value.error.message'],
         live: 'enabled',
-        submitButtons: '#btnSaveHoliday',
+        submitButtons: '#save-holiday-btn',
         feedbackIcons: {
             valid: 'glyphicon glyphicon-ok',
             invalid: 'glyphicon glyphicon-remove',

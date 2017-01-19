@@ -1,23 +1,23 @@
 $( document ).ready(function() {
 
-    $('#addUserBtn').click(function () {
-        $('#userModal-title').html( strings['title.add'] );
+    $('#add-user-btn').click(function () {
+        $('#user-modal-title').html( strings['title.add'] );
 
-        $('#userModal input[name=user-name]').val("");
-        $('#userModal input[name=user-email]').val("");
-        $('#userModal option').val("");
-        $('#userModal input[name=user-id]').val("").prop("disabled", true);
-        $('#userModal button[id=btnSaveUser]').attr('disabled', 'disabled');
+        $('#user-modal input[name=user-name]').val("");
+        $('#user-modal input[name=user-email]').val("");
+        $('#user-modal option').val("");
+        $('#user-modal input[name=user-id]').val("").prop("disabled", true);
+        $('#user-modal button[id=btnSaveUser]').attr('disabled', 'disabled');
 
-        $('#userModal input[name=add-or-edit]').val("add");
+        $('#user-modal input[name=add-or-edit]').val("add");
 
-        $('#userModal #errorHint').hide();
+        $('#user-modal #error-hint').hide();
 
-        $('#userModal').modal('show');
+        $('#user-modal').modal('show');
     });
 
-    $('.editUserBtnClass').click(function () {
-        $('#userModal-title').html( strings['title.edit'] );
+    $('.edit-user-btn').click(function () {
+        $('#user-modal-title').html( strings['title.edit'] );
 
         name=$(this).find(".user-name").html();
         email=$(this).find(".user-email").html();
@@ -25,17 +25,17 @@ $( document ).ready(function() {
         id=$(this).find(".user-id").html();
 
 
-        $('#userModal input[name=user-name]').val(name);
-        $('#userModal input[name=user-email]').val(email);
-        $('#userModal option').val(role).prop("selected", true);
-        $('#userModal input[name=user-id]').val(id).prop("disabled", false);
+        $('#user-modal input[name=user-name]').val(name);
+        $('#user-modal input[name=user-email]').val(email);
+        $('#user-modal option').val(role).prop("selected", true);
+        $('#user-modal input[name=user-id]').val(id).prop("disabled", false);
 
-        $('#userModal input[name=add-or-edit]').val("edit");
-        $('#userModal button[id=btnSaveUser]').removeAttr('disabled');
+        $('#user-modal input[name=add-or-edit]').val("edit");
+        $('#user-modal button[id=btnSaveUser]').removeAttr('disabled');
 
-        $('#userModal #errorHint').hide();
+        $('#user-modal #error-hint').hide();
 
-        $('#userModal').modal('show');
+        $('#user-modal').modal('show');
     });
 
     $('#btnSaveUser').click(function () {
@@ -46,37 +46,37 @@ $( document ).ready(function() {
             $.post(
                 "/users/add",
                 {
-                    name: $('#userModal input[name=user-name]').val(),
-                    email: $('#userModal input[name=user-email]').val(),
-                    userRole: $('#userModal option:selected').text()
+                    name: $('#user-modal input[name=user-name]').val(),
+                    email: $('#user-modal input[name=user-email]').val(),
+                    userRole: $('#user-modal option:selected').text()
                 },
                 function () {
                     location.reload();
                 }
             ).fail( function( response ) {
-                $('#userModal #errorHint').html(response.responseText).show();
+                $('#user-modal #error-hint').html(response.responseText).show();
              });
         }
         else if (add_edit == "edit") {
             $.post(
                 "/users/edit",
                 {
-                    id: $('#userModal input[name=user-id]').val(),
-                    name: $('#userModal input[name=user-name]').val(),
-                    email: $('#userModal input[name=user-email]').val(),
-                    userRole: $('#userModal option:selected').text()
+                    id: $('#user-modal input[name=user-id]').val(),
+                    name: $('#user-modal input[name=user-name]').val(),
+                    email: $('#user-modal input[name=user-email]').val(),
+                    userRole: $('#user-modal option:selected').text()
                 },
                 function () {
                     location.reload();
                 }
             ).fail( function( response ) {
-                $('#userModal #errorHint').html( response.responseText ).show();
+                $('#user-modal #error-hint').html( response.responseText ).show();
             });
         }
     });
 
 
-    $('#userModal').on('shown.bs.modal', function () {
+    $('#user-modal').on('shown.bs.modal', function () {
         $("input[name=user-name]").focus();
     });
 });

@@ -55,7 +55,7 @@
               </div>
             </div>
 
-            <!--- Search (autocomplete in future -->
+            <!--- Search (autocomplete in future) -->
             <div class="form-group">
               <label class="filter-col" for="search">
                 <spring:message code="search" />
