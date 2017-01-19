@@ -35,10 +35,10 @@
                 <option value="filter-option-other-month">
                   <spring:message code="other.month" />
                 </option>
-                <option value="filter-option-other-day">
+                <option value="filter-option-current-day">
                   <spring:message code="today" />
                 </option>
-                <option value="filter-option-current-day">
+                <option value="filter-option-other-day">
                   <spring:message code="other.day" />
                 </option>
               </select>
@@ -52,6 +52,19 @@
               <div class="input-append date form-control" id="datepicker-month" data-date-format="yyyy-mm" data-date="2017-01">
                 <input class="input-sm" id="filter-month" name="filter-month" type="text" readonly="readonly">
                 <span class="add-on"><i class="fa fa-th"></i></span>
+              </div>
+            </div>
+
+            <!--- Datepicker for other day option -->
+            <div class="form-group" id="other-day-picker">
+              <label class="col-sm-2 control-label" for="filter-date"></label>
+              <div class="col-sm-12">
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                  </span>
+                  <input class="form-control" id="filter-date" name="filter-date" type="date" placeholder="<spring:message code='date'/>" autofocus>
+                </div>
               </div>
             </div>
 

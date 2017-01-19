@@ -2,10 +2,18 @@ $( document ).ready(function() {
 
     var updatePickerB = function () {
         var selectedValue = $( "#filter-select").val();
-        if ( selectedValue === "filter-option-other-month" )
+        if ( selectedValue === "filter-option-other-month" ) {
             $( "#other-month-picker" ).show();
-        else
-            $( "#other-month-picker" ).hide();
+            $( "#other-day-picker").hide();
+        }
+        else if (selectedValue == "filter-option-other-day") {
+            $("#other-day-picker").show();
+            $("#other-month-picker").hide();
+        }
+        else {
+            $("#other-month-picker").hide();
+            $( "#other-day-picker").hide();
+        }
     };
 
     updatePickerB();
@@ -105,8 +113,80 @@ function filterOrSearch() {
             function (data) {
 
                 refreshUserReports(data);
+            }
+        ).fail( function( response ) {
+            document.body.innerHTML = response.responseText;
+        });
+    }
 
-                //location.reload();
+    else if(selectedOption == "filter-option-current-month"){
+        var today = new Date();
+        var mm = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+        var strDate = "";
+
+        if(mm < 10) {
+            strDate = yyyy.toString() + "-0" + mm.toString();
+        }
+        else {
+            strDate = yyyy.toString() + "-" + mm.toString();
+        }
+
+        $.get(
+            "/reports/userReports",
+            {
+                filter: strDate
+            },
+            function (data) {
+
+                refreshUserReports(data);
+            }
+        ).fail( function( response ) {
+            document.body.innerHTML = response.responseText;
+        });
+    }
+
+    else if(selectedOption == "filter-option-current-day"){
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+        var strDate = "";
+
+        if(dd < 10) {
+            dd='0'+dd
+        }
+
+        if( mm < 10 ) {
+            mm='0'+mm
+        }
+        var strDate = yyyy.toString() + "-" + mm.toString() + "-" + dd.toString();
+        alert(strDate);
+
+        $.get(
+            "/reports/userReports",
+            {
+                filter: strDate
+            },
+            function (data) {
+
+                refreshUserReports(data);
+            }
+        ).fail( function( response ) {
+            document.body.innerHTML = response.responseText;
+        });
+    }
+
+    else if(selectedOption == "filter-option-other-day") {
+        date = $("#filter-panel input[name=filter-date]").val();
+        $.get(
+            "/reports/userReports",
+            {
+                filter: date
+            },
+            function (data) {
+
+                refreshUserReports(data);
             }
         ).fail( function( response ) {
             document.body.innerHTML = response.responseText;

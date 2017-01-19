@@ -43,14 +43,24 @@ public class ReportController {
         return ViewNames.REPORTS.reportsComponent;
     }
 
-
     private void putReportsModel(UserDto currentUser,Map<String, Object> model, Optional<String> filter) {
 
         if (filter.isPresent()) {
-            LocalDate localDate = DateParser.parseMonthDate(filter.get());
+            LocalDate localDate = null;
+            LocalDate begin = null;
+            LocalDate end = null;
+            String filterDate = filter.get();
 
-            LocalDate begin = LocalDate.of(localDate.getYear(), localDate.getMonth(), 1);
-            LocalDate end = LocalDate.of(localDate.getYear(), localDate.getMonth(), begin.lengthOfMonth());
+            if (filterDate.length() == 7) {
+                localDate = DateParser.parseMonthDate(filterDate);
+                begin = LocalDate.of(localDate.getYear(), localDate.getMonth(), 1);
+                end = LocalDate.of(localDate.getYear(), localDate.getMonth(), begin.lengthOfMonth());
+            }
+            else if (filterDate.length() == 10) {
+                localDate = DateParser.parseDate(filterDate);
+                begin = localDate;
+                end = localDate;
+            }
 
             model.put(
                     AttributeNames.UserViewReports.userReports,
@@ -62,7 +72,6 @@ public class ReportController {
                     this.reportService.viewUserReportsBetweenDates(currentUser.getId(), LocalDate.now(), LocalDate.now())
             );
     }
-
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseEntity add(@AuthenticationPrincipal UserDto currentUser,
