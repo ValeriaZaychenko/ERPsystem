@@ -88,6 +88,66 @@ public class ReportControllerTest {
     }
 
     @Test
+    public void getUserReportsComponentCorrectlyWithoutFilter() throws Exception {
+        when(mockReportService.viewUserReportsBetweenDates(userDto.getId(), LocalDate.now(), LocalDate.now())).thenReturn(dtos);
+
+        this.mockMvc.perform(
+                get("/reports/userReports")
+                        .principal(userDto)
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name(ViewNames.REPORTS.reportsComponent))
+                .andExpect(model().attribute(AttributeNames.UserViewReports.userReports, dtos))
+        ;
+
+        verify(mockReportService, times(1))
+                .viewUserReportsBetweenDates(userDto.getId(), LocalDate.now(), LocalDate.now())
+        ;
+    }
+
+    @Test
+    public void getUserReportsComponentWithMonthFilter() throws Exception {
+        when(mockReportService.viewUserReportsBetweenDates(
+                userDto.getId(), LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 30))).thenReturn(dtos);
+
+        this.mockMvc.perform(
+                get("/reports/userReports")
+                        .param("filter", "2016-11")
+                        .principal(userDto)
+
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name(ViewNames.REPORTS.reportsComponent))
+                .andExpect(model().attribute(AttributeNames.UserViewReports.userReports, dtos))
+        ;
+
+        verify(mockReportService, times(1))
+                .viewUserReportsBetweenDates(userDto.getId(),LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 30))
+        ;
+    }
+
+    @Test
+    public void getUserReportsComponentWithFullDateFilter() throws Exception {
+        when(mockReportService.viewUserReportsBetweenDates(
+                userDto.getId(), LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 1))).thenReturn(dtos);
+
+        this.mockMvc.perform(
+                get("/reports/userReports")
+                        .param("filter", "2016-11-01")
+                        .principal(userDto)
+
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name(ViewNames.REPORTS.reportsComponent))
+                .andExpect(model().attribute(AttributeNames.UserViewReports.userReports, dtos))
+        ;
+
+        verify(mockReportService, times(1))
+                .viewUserReportsBetweenDates(userDto.getId(),LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 1))
+        ;
+    }
+
+    @Test
     public void createReport() throws Exception {
         this.mockMvc.perform(
                 post("/reports/add")

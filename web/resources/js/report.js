@@ -1,6 +1,6 @@
 $( document ).ready(function() {
 
-    var updatePickerB = function () {
+    var updateDatepicker = function () {
         var selectedValue = $( "#filter-select").val();
         if ( selectedValue === "filter-option-other-month" ) {
             $( "#other-month-picker" ).show();
@@ -16,9 +16,9 @@ $( document ).ready(function() {
         }
     };
 
-    updatePickerB();
+    updateDatepicker();
     $( "#filter-select" ).change( function () {
-        updatePickerB();
+        updateDatepicker();
     } );
 
     $('#btn-save-report').click(function () {
@@ -105,45 +105,20 @@ function filterOrSearch() {
 
     if(selectedOption == "filter-option-other-month") {
         month = $("#filter-panel input[name=filter-month]").val();
-        $.get(
-            "/reports/userReports",
-            {
-                filter: month
-            },
-            function (data) {
-
-                refreshUserReports(data);
-            }
-        ).fail( function( response ) {
-            document.body.innerHTML = response.responseText;
-        });
+        getReportsWithFilter(month);
     }
 
     else if(selectedOption == "filter-option-current-month"){
         var today = new Date();
         var mm = today.getMonth() + 1; //January is 0!
         var yyyy = today.getFullYear();
-        var strDate = "";
 
-        if(mm < 10) {
-            strDate = yyyy.toString() + "-0" + mm.toString();
+        if( mm < 10 ) {
+            mm='0'+mm
         }
-        else {
-            strDate = yyyy.toString() + "-" + mm.toString();
-        }
+        var strDate = yyyy.toString() + "-" + mm.toString();
 
-        $.get(
-            "/reports/userReports",
-            {
-                filter: strDate
-            },
-            function (data) {
-
-                refreshUserReports(data);
-            }
-        ).fail( function( response ) {
-            document.body.innerHTML = response.responseText;
-        });
+        getReportsWithFilter(strDate);
     }
 
     else if(selectedOption == "filter-option-current-day"){
@@ -151,7 +126,6 @@ function filterOrSearch() {
         var dd = today.getDate();
         var mm = today.getMonth() + 1; //January is 0!
         var yyyy = today.getFullYear();
-        var strDate = "";
 
         if(dd < 10) {
             dd='0'+dd
@@ -161,41 +135,31 @@ function filterOrSearch() {
             mm='0'+mm
         }
         var strDate = yyyy.toString() + "-" + mm.toString() + "-" + dd.toString();
-        alert(strDate);
 
-        $.get(
-            "/reports/userReports",
-            {
-                filter: strDate
-            },
-            function (data) {
-
-                refreshUserReports(data);
-            }
-        ).fail( function( response ) {
-            document.body.innerHTML = response.responseText;
-        });
+        getReportsWithFilter(strDate);
     }
 
     else if(selectedOption == "filter-option-other-day") {
         date = $("#filter-panel input[name=filter-date]").val();
-        $.get(
-            "/reports/userReports",
-            {
-                filter: date
-            },
-            function (data) {
-
-                refreshUserReports(data);
-            }
-        ).fail( function( response ) {
-            document.body.innerHTML = response.responseText;
-        });
+        getReportsWithFilter(date);
     }
 }
 
+function getReportsWithFilter(data){
+    $.get(
+        "/reports/userReports",
+        {
+            filter: data
+        },
+        function (data) {
+            refreshUserReports(data);
+        }
+    ).fail( function( response ) {
+        document.body.innerHTML = response.responseText;
+    });
+}
+
 function refreshUserReports(data) {
-    alert( "Refreshing data ");
     var element = $( "#user-reports" );
     element.html( data );
 }

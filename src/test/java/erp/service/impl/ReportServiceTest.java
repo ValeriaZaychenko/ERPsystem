@@ -196,7 +196,7 @@ public class ReportServiceTest {
         reportService.createReport(DateParser.parseDate("2016-11-11"),
                 5, "Done: issue1", userId, true);
 
-        assertEquals(reportService.viewUserReportsBetweenDates(userId, LocalDate.now(), LocalDate.now()).size(), 2);
+        assertEquals(reportService.viewUserReportsBetweenDates(userId, get2015_11_11().minusDays(2), LocalDate.of(2016, 12, 12)).size(), 2);
     }
 
     @Test
@@ -519,7 +519,7 @@ public class ReportServiceTest {
         String reportId = reportService.createReport(get2015_11_11(),
                 8, "description", userId, true);
 
-        List<ReportDto> dtos = reportService.viewUserReportsBetweenDates(userId, LocalDate.now(), LocalDate.now());
+        List<ReportDto> dtos = reportService.viewUserReportsBetweenDates(userId, get2015_11_11(), get2015_11_11());
 
         assertEquals(dtos.size(), 1);
         assertEquals(dtos.get(0).getId(), reportId);
@@ -732,7 +732,8 @@ public class ReportServiceTest {
         String id = createSimpleUser();
         reportService.createReport(DateParser.parseDate("2016-11-11"),
                 8, "description", id, true);
-        List<ReportDto> reports = reportService.viewUserReportsBetweenDates(id, LocalDate.now(), LocalDate.now());
+        List<ReportDto> reports = reportService.viewUserReportsBetweenDates(
+                id, DateParser.parseDate("2016-11-11"), DateParser.parseDate("2016-11-11"));
 
         assertEquals(reports.size(), 1);
 
