@@ -68,20 +68,12 @@
               </div>
             </div>
 
-            <!--- Search (autocomplete in future) -->
+            <!--- Group by -->
             <div class="form-group">
-              <label class="filter-col" for="search">
-                <spring:message code="search" />
+              <label class="filter-col" for="groupby">
+                <spring:message code="group.by" />
               </label>
-              <input class="form-control input-sm" id="search" type="text">
-            </div>
-
-            <!--- Order by -->
-            <div class="form-group">
-              <label class="filter-col" for="orderby">
-                <spring:message code="order.by" />
-              </label>
-              <select class="form-control" id="orderby">
+              <select class="form-control" id="groupby">
                 <option><spring:message code="date" /></option>
                 <option><spring:message code="duration" /></option>
                 <option><spring:message code="description" /></option>

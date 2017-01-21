@@ -16,4 +16,6 @@ public interface ErrorKeys {
     String InvalidDateOrderMessage = "error.invalid.date.order.message";
     String DateNotUniqueMessage = "error.date.not.unique.message";
     String WorkloadIncompatibilityMessage = "error.workload.incompability.message";
+    String ApplyGroupByMessage = "error.apply.group.by.message";
+    String UnknownGroupByMessage = "error.unknown.group.by.message";
 }

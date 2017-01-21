@@ -105,7 +105,7 @@ function filterOrSearch() {
 
     if(selectedOption == "filter-option-other-month") {
         month = $("#filter-panel input[name=filter-month]").val();
-        getReportsWithFilter(month);
+        getReportsFilterBy(month);
     }
 
     else if(selectedOption == "filter-option-current-month"){
@@ -118,7 +118,7 @@ function filterOrSearch() {
         }
         var strDate = yyyy.toString() + "-" + mm.toString();
 
-        getReportsWithFilter(strDate);
+        getReportsFilterBy(strDate);
     }
 
     else if(selectedOption == "filter-option-current-day"){
@@ -136,16 +136,16 @@ function filterOrSearch() {
         }
         var strDate = yyyy.toString() + "-" + mm.toString() + "-" + dd.toString();
 
-        getReportsWithFilter(strDate);
+        getReportsFilterBy(strDate);
     }
 
     else if(selectedOption == "filter-option-other-day") {
         date = $("#filter-panel input[name=filter-date]").val();
-        getReportsWithFilter(date);
+        getReportsFilterBy(date);
     }
 }
 
-function getReportsWithFilter(data){
+function getReportsFilterBy(data){
     $.get(
         "/reports/userReports",
         {
