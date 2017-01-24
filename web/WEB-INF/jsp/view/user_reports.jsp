@@ -9,6 +9,7 @@
 
     <script src="<c:url value="/resources/js/report_validate.js" />"></script>
     <script src="<c:url value="/resources/js/report.js" />"></script>
+    <script src="<c:url value="/resources/js/dateParser.js" />"></script>
     <script src="<c:url value="/resources/js/external/bootstrap-datepicker.js" />"></script>
     <script src="<c:url value="/resources/js/bootstrap-datepicker.ru.js" />" charset="UTF-8"></script>
     <script src="<c:url value="/resources/js/custom_datepicker.js" />"></script>
@@ -74,10 +75,14 @@
                 <spring:message code="group.by" />
               </label>
               <select class="form-control" id="groupby">
-                <option><spring:message code="date" /></option>
-                <option><spring:message code="duration" /></option>
-                <option><spring:message code="description" /></option>
-                <option><spring:message code="remote" /></option>
+                <option value="DATE_DIRECT_ORDER"><spring:message code="date.directly" /></option>
+                <option value="DATE_REVERSE_ORDER"><spring:message code="date.reversed" /></option>
+                <option value="DURATION_DIRECT_ORDER"><spring:message code="duration.directly" /></option>
+                <option value="DURATION_REVERSE_ORDER"><spring:message code="duration.reversed" /></option>
+                <option value="DESCRIPTION_DIRECT_ORDER"><spring:message code="description.directly" /></option>
+                <option value="DESCRIPTION_REVERSE_ORDER"><spring:message code="description.reversed" /></option>
+                <option value="REMOTE_FIRST"><spring:message code="remote.first" /></option>
+                <option value="REMOTE_LAST"><spring:message code="remote.last" /></option>
               </select>
             </div>
 

@@ -6,6 +6,7 @@ import erp.controller.constants.ViewNames;
 import erp.dto.ReportDto;
 import erp.dto.UserDto;
 import erp.exceptions.EntityNotFoundException;
+import erp.exceptions.UnknownGroupByException;
 import erp.service.IReportService;
 import erp.utils.DateParser;
 import org.junit.Before;
@@ -15,14 +16,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -38,7 +40,13 @@ public class ReportControllerTest {
 
     private MockMvc mockMvc;
     private String reportId;
+    private String reportIdToday1;
+    private String reportIdToday2;
+    private String anotherDay;
     private ReportDto reportDto;
+    private ReportDto reportDtoToday1;
+    private ReportDto reportDtoToday2;
+    private ReportDto reportDtoAnotherDay;
     private List<ReportDto> dtos;
     private UserDto userDto;
 
@@ -63,6 +71,39 @@ public class ReportControllerTest {
         reportDto.setRemote(true);
 
         dtos.add(reportDto);
+
+        //Today 1 report
+        reportIdToday1 = UUID.randomUUID().toString();
+
+        reportDtoToday1 = new ReportDto();
+        reportDtoToday1.setId(reportIdToday1);
+        reportDtoToday1.setDate(LocalDate.now());
+        reportDtoToday1.setDuration(8);
+        reportDtoToday1.setDescription("Issue 111");
+        reportDtoToday1.setUserId(userDto.getId());
+        reportDtoToday1.setRemote(true);
+
+        //Today 2 report
+        reportIdToday2 = UUID.randomUUID().toString();
+
+        reportDtoToday2 = new ReportDto();
+        reportDtoToday2.setId(reportIdToday2);
+        reportDtoToday2.setDate(LocalDate.now());
+        reportDtoToday2.setDuration(6);
+        reportDtoToday2.setDescription("Issue 0000");
+        reportDtoToday2.setUserId(userDto.getId());
+        reportDtoToday2.setRemote(false);
+
+        //Another Day
+        anotherDay = UUID.randomUUID().toString();
+
+        reportDtoAnotherDay = new ReportDto();
+        reportDtoAnotherDay.setId(anotherDay);
+        reportDtoAnotherDay.setDate(DateParser.parseDate("2016-09-20"));
+        reportDtoAnotherDay.setDuration(6);
+        reportDtoAnotherDay.setDescription("Issue 0000");
+        reportDtoAnotherDay.setUserId(userDto.getId());
+        reportDtoAnotherDay.setRemote(false);
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(theController)
                 .setControllerAdvice(new ExceptionHandlingAdvice())
@@ -144,6 +185,307 @@ public class ReportControllerTest {
 
         verify(mockReportService, times(1))
                 .viewUserReportsBetweenDates(userDto.getId(),LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 1))
+        ;
+    }
+
+    @Test
+    public void getUserReportsComponentWithFilterMonthAndWithGroupingParseEnum() throws Exception {
+        when(mockReportService.viewUserReportsBetweenDates(
+                userDto.getId(), LocalDate.now(), LocalDate.now())).thenReturn(dtos);
+
+        this.mockMvc.perform(
+                get("/reports/userReports")
+                        .param("groupBy", "BLA_BLA")
+                        .principal(userDto)
+        )
+                .andExpect(view().name("error"))
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.UnknownGroupByMessage)
+                );
+    }
+
+    @Test
+    public void getUserReportsComponentWithFilterMonthAndWithGroupingInvalidEnum() throws Exception {
+        when(mockReportService.viewUserReportsBetweenDates(
+                userDto.getId(), LocalDate.now(), LocalDate.now())).thenReturn(dtos);
+
+        this.mockMvc.perform(
+                get("/reports/userReports")
+                        .param("groupBy", "INVALID")
+                        .principal(userDto)
+        )
+                .andExpect(view().name("error"))
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.ApplyGroupByMessage)
+                );
+    }
+
+    @Test
+    public void getUserReportsComponentWithFilterMonthAndWithGroupingByDateAsc() throws Exception {
+        dtos.add(reportDtoAnotherDay);
+
+        when(mockReportService.viewUserReportsBetweenDates(
+                userDto.getId(), LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30))).thenReturn(dtos);
+
+        MvcResult result = this.mockMvc.perform(
+                get("/reports/userReports")
+                        .param("filter", "2016-09")
+                        .param("groupBy", "DATE_DIRECT_ORDER")
+                        .principal(userDto)
+
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name(ViewNames.REPORTS.reportsComponent))
+                .andReturn()
+                ;
+        Collection<Object> model = result.getModelAndView().getModel().values();
+
+        Object firstDtosArrayList = model.stream().findFirst().get();
+        ArrayList<ReportDto> arraydtos = (ArrayList<ReportDto>) firstDtosArrayList;
+
+        assertEquals(arraydtos.get(0), reportDto);
+        assertEquals(arraydtos.get(1), reportDtoAnotherDay);
+        verify(mockReportService, times(1))
+                .viewUserReportsBetweenDates(userDto.getId(),LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30))
+        ;
+    }
+
+    @Test
+    public void getUserReportsComponentWithFilterMonthAndWithGroupingByDateDesc() throws Exception {
+        dtos.add(reportDtoAnotherDay);
+
+        when(mockReportService.viewUserReportsBetweenDates(
+                userDto.getId(), LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30))).thenReturn(dtos);
+
+        MvcResult result = this.mockMvc.perform(
+                get("/reports/userReports")
+                        .param("filter", "2016-09")
+                        .param("groupBy", "DATE_REVERSE_ORDER")
+                        .principal(userDto)
+
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name(ViewNames.REPORTS.reportsComponent))
+                .andReturn()
+                ;
+        Collection<Object> model = result.getModelAndView().getModel().values();
+
+        Object firstDtosArrayList = model.stream().findFirst().get();
+        ArrayList<ReportDto> arraydtos = (ArrayList<ReportDto>) firstDtosArrayList;
+
+        assertEquals(arraydtos.get(0), reportDtoAnotherDay);
+        assertEquals(arraydtos.get(1), reportDto);
+        verify(mockReportService, times(1))
+                .viewUserReportsBetweenDates(userDto.getId(),LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30))
+        ;
+    }
+
+    @Test
+    public void getUserReportsComponentWithoutFilterAndWithGroupingByDurationAsc() throws Exception {
+        dtos.clear();
+
+        dtos.add(reportDtoToday1);
+        dtos.add(reportDtoToday2);
+
+        LocalDate today = LocalDate.now();
+
+        when(mockReportService.viewUserReportsBetweenDates(
+                userDto.getId(), today, today)).thenReturn(dtos);
+
+        MvcResult result = this.mockMvc.perform(
+                get("/reports/userReports")
+                        .param("groupBy", "DURATION_DIRECT_ORDER")
+                        .principal(userDto)
+
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name(ViewNames.REPORTS.reportsComponent))
+                .andReturn()
+        ;
+        Collection<Object> model = result.getModelAndView().getModel().values();
+
+        Object firstDtosArrayList = model.stream().findFirst().get();
+        ArrayList<ReportDto> arraydtos = (ArrayList<ReportDto>) firstDtosArrayList;
+
+        assertEquals(arraydtos.get(0), reportDtoToday2);
+        assertEquals(arraydtos.get(1), reportDtoToday1);
+        verify(mockReportService, times(1))
+                .viewUserReportsBetweenDates(userDto.getId(),today, today)
+        ;
+    }
+
+    @Test
+    public void getUserReportsComponentWithoutFilterAndWithGroupingByDurationDesc() throws Exception {
+        dtos.clear();
+
+        dtos.add(reportDtoToday1);
+        dtos.add(reportDtoToday2);
+
+        LocalDate today = LocalDate.now();
+
+        when(mockReportService.viewUserReportsBetweenDates(
+                userDto.getId(), today, today)).thenReturn(dtos);
+
+        MvcResult result = this.mockMvc.perform(
+                get("/reports/userReports")
+                        .param("groupBy", "DURATION_REVERSE_ORDER")
+                        .principal(userDto)
+
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name(ViewNames.REPORTS.reportsComponent))
+                .andReturn()
+        ;
+        Collection<Object> model = result.getModelAndView().getModel().values();
+
+        Object firstDtosArrayList = model.stream().findFirst().get();
+        ArrayList<ReportDto> arraydtos = (ArrayList<ReportDto>) firstDtosArrayList;
+
+        assertEquals( arraydtos.get(0), reportDtoToday1);
+        assertEquals( arraydtos.get(1), reportDtoToday2);
+
+        verify(mockReportService, times(1))
+                .viewUserReportsBetweenDates(userDto.getId(),today, today)
+        ;
+    }
+
+    @Test
+    public void getUserReportsComponentWithoutFilterAndWithGroupingByDescriptionAsc() throws Exception {
+        dtos.clear();
+
+        dtos.add(reportDtoToday1);
+        dtos.add(reportDtoToday2);
+
+        LocalDate today = LocalDate.now();
+
+        when(mockReportService.viewUserReportsBetweenDates(
+                userDto.getId(), today, today)).thenReturn(dtos);
+
+        MvcResult result = this.mockMvc.perform(
+                get("/reports/userReports")
+                        .param("groupBy", "DESCRIPTION_DIRECT_ORDER")
+                        .principal(userDto)
+
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name(ViewNames.REPORTS.reportsComponent))
+                .andReturn()
+                ;
+        Collection<Object> model = result.getModelAndView().getModel().values();
+
+        Object firstDtosArrayList = model.stream().findFirst().get();
+        ArrayList<ReportDto> arraydtos = (ArrayList<ReportDto>) firstDtosArrayList;
+
+        assertEquals( arraydtos.get(0), reportDtoToday2);
+        assertEquals( arraydtos.get(1), reportDtoToday1);
+
+        verify(mockReportService, times(1))
+                .viewUserReportsBetweenDates(userDto.getId(),today, today)
+        ;
+    }
+
+    @Test
+    public void getUserReportsComponentWithoutFilterAndWithGroupingByDescriptionDesc() throws Exception {
+        dtos.clear();
+
+        dtos.add(reportDtoToday1);
+        dtos.add(reportDtoToday2);
+
+        LocalDate today = LocalDate.now();
+
+        when(mockReportService.viewUserReportsBetweenDates(
+                userDto.getId(), today, today)).thenReturn(dtos);
+
+        MvcResult result = this.mockMvc.perform(
+                get("/reports/userReports")
+                        .param("groupBy", "DESCRIPTION_REVERSE_ORDER")
+                        .principal(userDto)
+
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name(ViewNames.REPORTS.reportsComponent))
+                .andReturn()
+                ;
+        Collection<Object> model = result.getModelAndView().getModel().values();
+
+        Object firstDtosArrayList = model.stream().findFirst().get();
+        ArrayList<ReportDto> arraydtos = (ArrayList<ReportDto>) firstDtosArrayList;
+
+        assertEquals( arraydtos.get(0), reportDtoToday1);
+        assertEquals( arraydtos.get(1), reportDtoToday2);
+
+        verify(mockReportService, times(1))
+                .viewUserReportsBetweenDates(userDto.getId(),today, today)
+        ;
+    }
+
+    @Test
+    public void getUserReportsComponentWithoutFilterAndWithGroupingByRemoteFirst() throws Exception {
+        dtos.clear();
+
+        dtos.add(reportDtoToday1);
+        dtos.add(reportDtoToday2);
+
+        LocalDate today = LocalDate.now();
+
+        when(mockReportService.viewUserReportsBetweenDates(
+                userDto.getId(), today, today)).thenReturn(dtos);
+
+        MvcResult result = this.mockMvc.perform(
+                get("/reports/userReports")
+                        .param("groupBy", "REMOTE_FIRST")
+                        .principal(userDto)
+
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name(ViewNames.REPORTS.reportsComponent))
+                .andReturn()
+                ;
+        Collection<Object> model = result.getModelAndView().getModel().values();
+
+        Object firstDtosArrayList = model.stream().findFirst().get();
+        ArrayList<ReportDto> arraydtos = (ArrayList<ReportDto>) firstDtosArrayList;
+
+        assertEquals( arraydtos.get(0), reportDtoToday1);
+        assertEquals( arraydtos.get(1), reportDtoToday2);
+
+        verify(mockReportService, times(1))
+                .viewUserReportsBetweenDates(userDto.getId(),today, today)
+        ;
+    }
+
+    @Test
+    public void getUserReportsComponentWithoutFilterAndWithGroupingByRemoteLast() throws Exception {
+        dtos.clear();
+
+        dtos.add(reportDtoToday1);
+        dtos.add(reportDtoToday2);
+
+        LocalDate today = LocalDate.now();
+
+        when(mockReportService.viewUserReportsBetweenDates(
+                userDto.getId(), today, today)).thenReturn(dtos);
+
+        MvcResult result = this.mockMvc.perform(
+                get("/reports/userReports")
+                        .param("groupBy", "REMOTE_LAST")
+                        .principal(userDto)
+
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name(ViewNames.REPORTS.reportsComponent))
+                .andReturn()
+                ;
+        Collection<Object> model = result.getModelAndView().getModel().values();
+
+        Object firstDtosArrayList = model.stream().findFirst().get();
+        ArrayList<ReportDto> arraydtos = (ArrayList<ReportDto>) firstDtosArrayList;
+
+        assertEquals( arraydtos.get(0), reportDtoToday2);
+        assertEquals( arraydtos.get(1), reportDtoToday1);
+
+        verify(mockReportService, times(1))
+                .viewUserReportsBetweenDates(userDto.getId(),today, today)
         ;
     }
 

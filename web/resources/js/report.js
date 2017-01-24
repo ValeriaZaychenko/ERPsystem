@@ -100,48 +100,43 @@ function editReport ( reportId, date, duration, description, remote ) {
     $('#report-form button[id=btn-save-report]').removeAttr('disabled');
 }
 
+
 function filterOrSearch() {
-    selectedOption=$("#filter-select :selected").val();
+    var dateParser = getStringFromDate();
 
-    if(selectedOption == "filter-option-other-month") {
-        month = $("#filter-panel input[name=filter-month]").val();
-        getReportsFilterBy(month);
-    }
+    selectedOptionFilter = $("#filter-select :selected").val();
+    selectedOptionGrouping = $("#groupby :selected").val();
 
-    else if(selectedOption == "filter-option-current-month"){
-        var today = new Date();
-        var mm = today.getMonth() + 1; //January is 0!
-        var yyyy = today.getFullYear();
+    switch (selectedOptionFilter) {
+        case "filter-option-other-month":
+            month = $("#filter-panel input[name=filter-month]").val();
+            if (selectedOptionGrouping === undefined)
+                getReportsFilterBy(month);
+            else
+                getReportsAndThenGroup(month, selectedOptionGrouping);
+            break;
 
-        if( mm < 10 ) {
-            mm='0'+mm
-        }
-        var strDate = yyyy.toString() + "-" + mm.toString();
+        case "filter-option-current-month":
+            if (selectedOptionGrouping === undefined)
+                getReportsFilterBy(dateParser.getMonthStrDate);
+            else
+                getReportsAndThenGroup(dateParser.getMonthStrDate, selectedOptionGrouping);
+            break;
 
-        getReportsFilterBy(strDate);
-    }
+        case "filter-option-current-day":
+            if (selectedOptionGrouping === undefined)
+                getReportsFilterBy(dateParser.getFullStrDate);
+            else
+                getReportsAndThenGroup(dateParser.getFullStrDate, selectedOptionGrouping);
+            break;
 
-    else if(selectedOption == "filter-option-current-day"){
-        var today = new Date();
-        var dd = today.getDate();
-        var mm = today.getMonth() + 1; //January is 0!
-        var yyyy = today.getFullYear();
-
-        if(dd < 10) {
-            dd='0'+dd
-        }
-
-        if( mm < 10 ) {
-            mm='0'+mm
-        }
-        var strDate = yyyy.toString() + "-" + mm.toString() + "-" + dd.toString();
-
-        getReportsFilterBy(strDate);
-    }
-
-    else if(selectedOption == "filter-option-other-day") {
-        date = $("#filter-panel input[name=filter-date]").val();
-        getReportsFilterBy(date);
+        case "filter-option-other-day":
+            date = $("#filter-panel input[name=filter-date]").val();
+            if (selectedOptionGrouping === undefined)
+                getReportsFilterBy(date);
+            else
+                getReportsAndThenGroup(date, selectedOptionGrouping);
+            break;
     }
 }
 
@@ -150,6 +145,21 @@ function getReportsFilterBy(data){
         "/reports/userReports",
         {
             filter: data
+        },
+        function (data) {
+            refreshUserReports(data);
+        }
+    ).fail( function( response ) {
+        document.body.innerHTML = response.responseText;
+    });
+}
+
+function getReportsAndThenGroup(filter, groupBy){
+    $.get(
+        "/reports/userReports",
+        {
+            filter: filter,
+            groupBy: groupBy
         },
         function (data) {
             refreshUserReports(data);

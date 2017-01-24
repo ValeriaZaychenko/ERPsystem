@@ -228,4 +228,20 @@ public class IndexControllerTest {
                );
     }
 
+    @Test
+    public void changePasswordMismatch() throws Exception {
+
+        this.mockMvc.perform(
+                post("/changePassword/")
+                        .param("userId", userId)
+                        .param("oldPassword", "111")
+                        .param("newPassword", "12345")
+                        .param("newPasswordConfirmed", "123321")
+        )
+                .andExpect(view().name("error"))
+                .andExpect( (result) ->
+                        result.getResponse().getContentAsString().contains(ErrorKeys.MismatchPasswordMessage)
+                );
+    }
+
 }

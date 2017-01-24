@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public final class DateOrderChecker {
 
     public static void checkEndDateAfterBegin(LocalDate beginDate, LocalDate endDate) {
-        if(beginDate.isAfter(endDate))
+        if(beginDate.isAfter(endDate) && !(beginDate.isEqual(endDate)))
             throw new DateOrderException(beginDate, endDate);
     }
 }
