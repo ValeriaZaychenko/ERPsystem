@@ -2,6 +2,7 @@ package erp.dto;
 
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 
 public class ProgressDto implements Serializable  {
 
@@ -35,7 +36,8 @@ public class ProgressDto implements Serializable  {
     }
 
     public double getProgress() {
-        return progress;
+        DecimalFormat df = new DecimalFormat("#.##");
+        return Double.valueOf(df.format(progress));
     }
 
     public void setProgress(double progress) {

@@ -23,6 +23,8 @@ public interface AttributeNames {
 
     interface UserViewReports {
         String userReports = "userReports";
+        String userProgress = "userProgress";
+        String sumOfDurations = "sumOfDurations";
     }
 
     interface ErrorView {

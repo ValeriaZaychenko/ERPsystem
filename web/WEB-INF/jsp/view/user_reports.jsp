@@ -6,6 +6,7 @@
   <jsp:attribute name="headContent">
     <link rel="stylesheet" href="<c:url value="/resources/css/reports.css" />" />
     <link rel="stylesheet" href="<c:url value="/resources/css/external/datepicker.css" />" />
+    <link rel="stylesheet" href="<c:url value="/resources/css/progress.css" />" />
 
     <script src="<c:url value="/resources/js/report_validate.js" />"></script>
     <script src="<c:url value="/resources/js/report.js" />"></script>

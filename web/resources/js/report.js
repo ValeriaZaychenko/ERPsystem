@@ -137,6 +137,9 @@ function filterOrSearch() {
             else
                 getReportsAndThenGroup(date, selectedOptionGrouping);
             break;
+
+        default:
+            console.log("Any option filter wasn't chosen, or only grouping option");
     }
 }
 

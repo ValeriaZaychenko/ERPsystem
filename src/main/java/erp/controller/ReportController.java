@@ -6,6 +6,7 @@ import erp.dto.ReportDto;
 import erp.dto.UserDto;
 import erp.exceptions.ApplyGroupByException;
 import erp.exceptions.UnknownGroupByException;
+import erp.service.IDayCounterService;
 import erp.service.IReportService;
 import erp.utils.DateParser;
 import erp.utils.GroupBy;
@@ -34,6 +35,8 @@ public class ReportController {
 
     @Inject
     private IReportService reportService;
+    @Inject
+    private IDayCounterService dayCounterService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String getUserReportsPage(@AuthenticationPrincipal UserDto currentUser,
@@ -52,7 +55,6 @@ public class ReportController {
                                      @RequestParam Optional<String> groupBy) {
 
         checkFilterAndGrouping(currentUser, model, filter, groupBy);
-
         return ViewNames.REPORTS.reportsComponent;
     }
 
@@ -111,6 +113,26 @@ public class ReportController {
         applyGroupByAndPutToModel(
                 model, groupBy,
                 this.reportService.viewUserReportsBetweenDates(currentUser.getId(), begin, end));
+        model.put(
+                AttributeNames.UserViewReports.userProgress,
+                reportService.getUserWorkingTimeBetweenDates(currentUser.getId(), begin, end)
+                        .getProgress());
+        model.put(
+                AttributeNames.UserViewReports.sumOfDurations,
+                reportService.getUserWorkingTimeBetweenDates(currentUser.getId(), begin, end)
+                        .getUserCurrentMonthWorkingTime());
+        model.put(
+                AttributeNames.ProgressView.weekends,
+                dayCounterService.countWeekendsBetweenDates(begin, end));
+        model.put(
+                AttributeNames.ProgressView.holiday,
+                dayCounterService.countHolidaysBetweenDates(begin, end));
+        model.put(
+                AttributeNames.ProgressView.workingDays,
+                dayCounterService.getWorkingDaysQuantityBetweenDates(begin, end));
+        model.put(
+                AttributeNames.ProgressView.allDays,
+                dayCounterService.getAllDaysQuantityBetweenDates(begin, end));
     }
 
     /*
