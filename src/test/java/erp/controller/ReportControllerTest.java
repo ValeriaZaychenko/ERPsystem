@@ -7,7 +7,6 @@ import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
 import erp.dto.UserDto;
 import erp.exceptions.EntityNotFoundException;
-import erp.exceptions.UnknownGroupByException;
 import erp.service.IDayCounterService;
 import erp.service.IReportService;
 import erp.utils.DateParser;
@@ -23,10 +22,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

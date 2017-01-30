@@ -1,12 +1,10 @@
 package erp.utils;
 
 import erp.domain.Holiday;
+import erp.domain.MissedDay;
 import erp.domain.Report;
 import erp.domain.User;
-import erp.dto.HolidayDto;
-import erp.dto.ProgressDto;
-import erp.dto.ReportDto;
-import erp.dto.UserDto;
+import erp.dto.*;
 
 import java.nio.charset.StandardCharsets;
 
@@ -52,6 +50,14 @@ public final class DtoBuilder {
         dto.setId(holiday.getId());
         dto.setDate(holiday.getDate());
         dto.setDescription(holiday.getDescription());
+        return dto;
+    }
+
+    public static MissedDayDto missedDayToDto(MissedDay missedDay) {
+        MissedDayDto dto = new MissedDayDto();
+        dto.setId(missedDay.getId());
+        dto.setDate(missedDay.getDate());
+        dto.setType(missedDay.getMissedDayType().toString());
         return dto;
     }
 }

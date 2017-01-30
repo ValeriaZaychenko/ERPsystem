@@ -18,4 +18,7 @@ public interface ErrorKeys {
     String WorkloadIncompatibilityMessage = "error.workload.incompability.message";
     String ApplyGroupByMessage = "error.apply.group.by.message";
     String UnknownGroupByMessage = "error.unknown.group.by.message";
+    String UnknownMissedDayTypeMessage = "error.unknown.missed.day.type.message";
+    String TwoMissedDaysInOneDateMessage = "error.two.missed.days.in.one.date.message";
+    String HolidayOccupiedDateMessage = "error.holiday.occupied.date.message";
 }
