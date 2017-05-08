@@ -7,9 +7,8 @@ import java.text.DecimalFormat;
 public class ProgressDto implements Serializable  {
 
     private String userId;
-    private String userName;
-    private double userCurrentMonthWorkingTime;
-    private double progress;
+    private double userActualHoursWorked;
+    private double userExpectedHoursWorked;
 
     public String getUserId() {
         return userId;
@@ -19,28 +18,25 @@ public class ProgressDto implements Serializable  {
         this.userId = userId;
     }
 
-    public String getUserName() {
-        return userName;
+    public double getUserActualHoursWorked() {
+        return userActualHoursWorked;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUserActualHoursWorked(double userActualHoursWorked) {
+        this.userActualHoursWorked = userActualHoursWorked;
     }
 
-    public double getUserCurrentMonthWorkingTime() {
-        return userCurrentMonthWorkingTime;
+    public double getUserExpectedHoursWorked() {
+        return userExpectedHoursWorked;
     }
 
-    public void setUserCurrentMonthWorkingTime(double userCurrentMonthWorkingTime) {
-        this.userCurrentMonthWorkingTime = userCurrentMonthWorkingTime;
+    public void setUserExpectedHoursWorked(double userExpectedHoursWorked) {
+        this.userExpectedHoursWorked = userExpectedHoursWorked;
     }
 
     public double getProgress() {
+        double progress = userActualHoursWorked * 100.0 / userExpectedHoursWorked;
         DecimalFormat df = new DecimalFormat("#.##");
         return Double.valueOf(df.format(progress));
-    }
-
-    public void setProgress(double progress) {
-        this.progress = progress;
     }
 }

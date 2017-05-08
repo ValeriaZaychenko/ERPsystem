@@ -26,7 +26,7 @@
         <tbody>
           <c:forEach items="${progress}" var="p">
             <tr id="users-row-${p.userId}">
-              <td>${p.userName}</td>
+              <td>USERNAME!!!!</td><!--TODO-->
               <td>
                 <div class="progress">
                   <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width: ${p.progress}%">

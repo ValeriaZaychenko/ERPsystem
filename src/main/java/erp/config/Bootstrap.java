@@ -35,5 +35,15 @@ public class Bootstrap implements WebApplicationInitializer {
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
         dispatcher.setInitParameter("throwExceptionIfNoHandlerFound", "true");
+/*
+        AnnotationConfigWebApplicationContext restContext =
+                new AnnotationConfigWebApplicationContext();
+        restContext.register(ServletContextConfiguration.class);
+        DispatcherServlet servlet = new DispatcherServlet(restContext);
+        servlet.setDispatchOptionsRequest(true);
+        dispatcher = container.addServlet("springRestDispatcher", servlet);
+
+        dispatcher.setLoadOnStartup(2);
+        dispatcher.addMapping("/rest/*");*/
     }
 }

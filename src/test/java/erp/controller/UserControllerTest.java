@@ -65,9 +65,8 @@ public class UserControllerTest {
 
         progressDto = new ProgressDto();
         progressDto.setUserId(userId);
-        progressDto.setUserName(userDto.getName());
-        progressDto.setUserCurrentMonthWorkingTime(16.0);
-        progressDto.setProgress(30.0);
+        progressDto.setUserActualHoursWorked(16.0);
+        progressDto.setUserExpectedHoursWorked(30.0);
 
         progressDtos.add(progressDto);
 

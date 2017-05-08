@@ -2,7 +2,8 @@ package erp.service.impl;
 
 import erp.domain.User;
 import erp.domain.UserRole;
-import erp.service.IReportService;
+import erp.service.IProgressService;
+import erp.utils.DateParser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.security.access.AccessDeniedException;
@@ -20,22 +21,19 @@ import java.time.LocalDate;
 @ContextConfiguration(classes = erp.config.JUnitConfiguration.class)
 @Transactional
 @WithMockUser(username = "new", authorities={"AUTH_USER"})
-public class ReportServiceAccessTest {
+public class ProgressServiceAccessTest {
 
     @Inject
-    private IReportService reportService;
-    @Inject
     private PasswordService passwordService;
+    @Inject
+    private IProgressService progressService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Test(expected = AccessDeniedException.class)
-    public void viewAllUsersReports() {
-        String id = create();
-        reportService.createReport(LocalDate.now(), 2, "description", id, false);
-
-        reportService.viewAllReports();
+    public void viewAllUsersWorkingTime() {
+        progressService.getAllUsersProgressBetweenDates(LocalDate.now(), DateParser.parseDate("2020-04-12"));
     }
 
     private String create() {

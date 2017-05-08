@@ -3,7 +3,7 @@ package erp.controller;
 import erp.controller.constants.AttributeNames;
 import erp.controller.constants.ViewNames;
 import erp.service.IDayCounterService;
-import erp.service.IReportService;
+import erp.service.IProgressService;
 import erp.utils.DateParser;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ import java.util.Optional;
 public class ProgressController {
 
     @Inject
-    private IReportService reportService;
+    private IProgressService progressService;
     @Inject
     private IDayCounterService dayCounterService;
 
@@ -94,7 +94,7 @@ public class ProgressController {
     private void putProgressAttrToModel(Map<String, Object> model, LocalDate begin, LocalDate end) {
         model.put(
                 AttributeNames.ProgressView.progress,
-                reportService.getAllUsersWorkingTimeBetweenDates(begin, end));
+                progressService.getAllUsersProgressBetweenDates(begin, end));
         model.put(
                 AttributeNames.ProgressView.weekends,
                 dayCounterService.countWeekendsBetweenDates(begin, end));

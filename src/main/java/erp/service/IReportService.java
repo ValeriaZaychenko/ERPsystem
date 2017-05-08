@@ -1,7 +1,6 @@
 package erp.service;
 
 
-import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
 import erp.validation.DateBorder;
 import erp.validation.Past;
@@ -43,18 +42,4 @@ public interface IReportService {
             @NotNull String userId,
             @Past(value = DateBorder.INCLUDE_TODAY) LocalDate begin,
             LocalDate end);
-
-    double getFullTimeBetweenDates(
-            LocalDate beginDate,
-            LocalDate endDate);
-
-    ProgressDto getUserWorkingTimeBetweenDates(
-            @NotNull String userId,
-            @Past(value = DateBorder.INCLUDE_TODAY) LocalDate beginDate,
-            LocalDate endDate);
-
-    @PreAuthorize("hasAuthority('AUTH_ADMIN')")
-    List<ProgressDto> getAllUsersWorkingTimeBetweenDates(
-            @Past(value = DateBorder.INCLUDE_TODAY) LocalDate beginDate,
-            LocalDate endDate);
 }

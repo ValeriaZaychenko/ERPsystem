@@ -32,16 +32,14 @@ public final class DtoBuilder {
         dto.setDay(report.getDate().getDayOfMonth());
         dto.setMonth(report.getDate().getMonth().name().substring(0,3));
         dto.setYear(report.getDate().getYear());
-
         return dto;
     }
 
-    public static ProgressDto progressToDto(User user, double userWorkingTimeForMonth, double fullTimeBetweenDates) {
+    public static ProgressDto progressToDto(User user, double userActualHoursWorked, double userExpectedHoursWorked) {
         ProgressDto progressDto = new ProgressDto();
         progressDto.setUserId(user.getId());
-        progressDto.setUserName(user.getName());
-        progressDto.setUserCurrentMonthWorkingTime(userWorkingTimeForMonth);
-        progressDto.setProgress(userWorkingTimeForMonth * 100.0 / fullTimeBetweenDates);
+        progressDto.setUserActualHoursWorked(userActualHoursWorked);
+        progressDto.setUserExpectedHoursWorked(userExpectedHoursWorked);
         return progressDto;
     }
 

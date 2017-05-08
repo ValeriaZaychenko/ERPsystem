@@ -3,6 +3,7 @@ package erp.config;
 import erp.service.IAuthenticationService;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,6 +47,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/home/**").authenticated()
                         .antMatchers("/changePassword/**").authenticated()
                         .antMatchers("/setlocale/**").permitAll()
+                        .antMatchers(HttpMethod.GET, "/rest/**").permitAll()
+                        .antMatchers(HttpMethod.POST, "/rest/**").permitAll()
+                        .antMatchers(HttpMethod.PUT, "/rest/**").permitAll()
+                        .antMatchers(HttpMethod.DELETE, "/api/**").permitAll()
 
                 .and()
                     .formLogin()

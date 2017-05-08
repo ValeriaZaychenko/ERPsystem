@@ -9,6 +9,7 @@ import erp.dto.UserDto;
 import erp.exceptions.DateNotUniqueException;
 import erp.exceptions.EntityNotFoundException;
 import erp.service.IDayCounterService;
+import erp.service.IProgressService;
 import erp.service.IReportService;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +39,8 @@ public class ProgressControllerTest {
     private IReportService mockReportService;
     @Mock
     private IDayCounterService mockDayCounterService;
-
+    @Mock
+    private IProgressService mockProgressService;
     @InjectMocks
     private ProgressController theController;
 
@@ -67,9 +69,8 @@ public class ProgressControllerTest {
 
         progressDto = new ProgressDto();
         progressDto.setUserId(userId);
-        progressDto.setUserName(userDto.getName());
-        progressDto.setUserCurrentMonthWorkingTime(16.0);
-        progressDto.setProgress(30.0);
+        progressDto.setUserActualHoursWorked(16.0);
+        progressDto.setUserExpectedHoursWorked(30.0);
 
         progressDtos.add(progressDto);
 
@@ -93,20 +94,30 @@ public class ProgressControllerTest {
 
     @Test
     public void viewProgressDefault() throws Exception {
-        when(mockReportService.
-                getAllUsersWorkingTimeBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31)))
+        when(mockProgressService.
+                getAllUsersProgressBetweenDates(
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 1),
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 31)))
                 .thenReturn(progressDtos);
         when(mockDayCounterService.
-                countWeekendsBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31)))
+                countWeekendsBetweenDates(
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 1),
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 31)))
                 .thenReturn(9);
         when(mockDayCounterService.
-                countHolidaysBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31)))
+                countHolidaysBetweenDates(
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 1),
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 31)))
                 .thenReturn(0);
         when(mockDayCounterService.
-                getWorkingDaysQuantityBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31)))
+                getWorkingDaysQuantityBetweenDates(
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 1),
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 31)))
                 .thenReturn(22);
         when(mockDayCounterService.
-                getAllDaysQuantityBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31)))
+                getAllDaysQuantityBetweenDates(
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 1),
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 31)))
                 .thenReturn(31);
 
         this.mockMvc.perform(
@@ -118,25 +129,36 @@ public class ProgressControllerTest {
                 .andExpect(model().attribute(AttributeNames.ProgressView.weekends, 9))
                 .andExpect(model().attribute(AttributeNames.ProgressView.holiday, 0))
                 .andExpect(model().attribute(AttributeNames.ProgressView.allDays, 31))
-                .andExpect(model().attribute(AttributeNames.ProgressView.monthDate, "1/2017"))
+                .andExpect(model().attribute(AttributeNames.ProgressView.monthDate,
+                        String.valueOf(LocalDate.now().getMonth().getValue()) + "/2017"))
                 ;
 
-        verify(mockReportService, times(1))
-                .getAllUsersWorkingTimeBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31));
+        verify(mockProgressService, times(1))
+                .getAllUsersProgressBetweenDates(
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 1),
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 31));
         verify(mockDayCounterService, times(1))
-                .countWeekendsBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31));
+                .countWeekendsBetweenDates(
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 1),
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 31));
         verify(mockDayCounterService, times(1))
-                .countHolidaysBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31));
+                .countHolidaysBetweenDates(
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 1),
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 31));
         verify(mockDayCounterService, times(1))
-                .getWorkingDaysQuantityBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31));
+                .getWorkingDaysQuantityBetweenDates(
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 1),
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 31));
         verify(mockDayCounterService, times(1))
-                .getAllDaysQuantityBetweenDates(LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 31));
+                .getAllDaysQuantityBetweenDates(
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 1),
+                        LocalDate.of(2017, LocalDate.now().getMonth(), 31));
     }
 
     @Test
     public void viewProgressBetweenDates() throws Exception {
-        when(mockReportService.
-                getAllUsersWorkingTimeBetweenDates(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 1, 31)))
+        when(mockProgressService.
+                getAllUsersProgressBetweenDates(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 1, 31)))
                 .thenReturn(progressDtos);
         when(mockDayCounterService.
                 countWeekendsBetweenDates(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 1, 31)))
@@ -163,8 +185,8 @@ public class ProgressControllerTest {
                 .andExpect(model().attribute(AttributeNames.ProgressView.monthDate, "1/2016"))
                 ;
 
-        verify(mockReportService, times(1))
-                .getAllUsersWorkingTimeBetweenDates(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 1, 31));
+        verify(mockProgressService, times(1))
+                .getAllUsersProgressBetweenDates(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 1, 31));
         verify(mockDayCounterService, times(1))
                 .countWeekendsBetweenDates(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 1, 31));
         verify(mockDayCounterService, times(1))

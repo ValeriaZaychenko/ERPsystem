@@ -7,6 +7,7 @@ import erp.dto.UserDto;
 import erp.exceptions.ApplyGroupByException;
 import erp.exceptions.UnknownGroupByException;
 import erp.service.IDayCounterService;
+import erp.service.IProgressService;
 import erp.service.IReportService;
 import erp.utils.DateParser;
 import erp.utils.GroupBy;
@@ -37,6 +38,8 @@ public class ReportController {
     private IReportService reportService;
     @Inject
     private IDayCounterService dayCounterService;
+    @Inject
+    private IProgressService progressService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String getUserReportsPage(@AuthenticationPrincipal UserDto currentUser,
@@ -115,12 +118,12 @@ public class ReportController {
                 this.reportService.viewUserReportsBetweenDates(currentUser.getId(), begin, end));
         model.put(
                 AttributeNames.UserViewReports.userProgress,
-                reportService.getUserWorkingTimeBetweenDates(currentUser.getId(), begin, end)
+                progressService.getUserProgressBetweenDates(currentUser.getId(), begin, end)
                         .getProgress());
         model.put(
                 AttributeNames.UserViewReports.sumOfDurations,
-                reportService.getUserWorkingTimeBetweenDates(currentUser.getId(), begin, end)
-                        .getUserCurrentMonthWorkingTime());
+                progressService.getUserProgressBetweenDates(currentUser.getId(), begin, end)
+                        .getUserActualHoursWorked());
         model.put(
                 AttributeNames.ProgressView.weekends,
                 dayCounterService.countWeekendsBetweenDates(begin, end));
