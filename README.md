@@ -15,4 +15,4 @@ Technologies, frameworks, tools & versions:
 - Bootstrap Datepicker 2.0
 
 
-Coverage 90%, Build
+Coverage 88%, Build
