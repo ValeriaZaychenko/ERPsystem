@@ -6,7 +6,7 @@ import erp.dto.ProgressDto;
 import erp.exceptions.EntityNotFoundException;
 import erp.repository.ReportRepository;
 import erp.repository.UserRepository;
-import erp.service.IDayCounterService;
+import erp.service.ICalendarService;
 import erp.service.IProgressService;
 import erp.utils.DateOrderChecker;
 import erp.utils.DtoBuilder;
@@ -27,12 +27,7 @@ public class ProgressService implements IProgressService {
     @Inject
     private UserRepository userRepository;
     @Inject
-    private IDayCounterService dayCounterService;
-
-    @Override
-    public double getFullTimeBetweenDates(LocalDate begin, LocalDate end) {
-        return dayCounterService.getWorkingDaysQuantityBetweenDates(begin, end) * 8.00;
-    }
+    private ICalendarService calendarService;
 
     /*
     Count sum of user working time in range of dates include borders and return ProgressDto
@@ -85,5 +80,9 @@ public class ProgressService implements IProgressService {
             throw new EntityNotFoundException(User.class.getName());
 
         return user;
+    }
+
+    private double getFullTimeBetweenDates(LocalDate begin, LocalDate end) {
+        return calendarService.getCalendarInformationBetweenDates(begin, end).getWorkdays() * 8.00;
     }
 }

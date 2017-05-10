@@ -5,7 +5,7 @@ import erp.event.RemoveUserEvent;
 import erp.exceptions.EntityNotFoundException;
 import erp.exceptions.InvalidDateException;
 import erp.exceptions.WorkloadIncompatibilityException;
-import erp.service.IDayCounterService;
+import erp.service.IHolidayService;
 import erp.service.IReportService;
 import erp.service.IUserService;
 import erp.utils.DateParser;
@@ -36,7 +36,7 @@ public class ReportServiceTest {
     @Inject
     private IUserService userService;
     @Inject
-    private IDayCounterService dayCounterService;
+    private IHolidayService dayCounterService;
 
     @Inject
     private ApplicationEventPublisher publisher;

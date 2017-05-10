@@ -14,10 +14,6 @@ import java.util.List;
 @Validated
 public interface IProgressService {
 
-    double getFullTimeBetweenDates(
-            LocalDate beginDate,
-            LocalDate endDate);
-
     ProgressDto getUserProgressBetweenDates(
             @NotNull String userId,
             @Past(value = DateBorder.INCLUDE_TODAY) LocalDate beginDate,

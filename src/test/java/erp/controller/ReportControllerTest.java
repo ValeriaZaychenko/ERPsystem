@@ -3,11 +3,12 @@ package erp.controller;
 import erp.controller.constants.AttributeNames;
 import erp.controller.constants.ErrorKeys;
 import erp.controller.constants.ViewNames;
+import erp.dto.CalendarDto;
 import erp.dto.ProgressDto;
 import erp.dto.ReportDto;
 import erp.dto.UserDto;
 import erp.exceptions.EntityNotFoundException;
-import erp.service.IDayCounterService;
+import erp.service.ICalendarService;
 import erp.service.IProgressService;
 import erp.service.IReportService;
 import erp.utils.DateParser;
@@ -40,7 +41,7 @@ public class ReportControllerTest {
     @Mock
     private IReportService mockReportService;
     @Mock
-    private IDayCounterService mockDayCounterService;
+    private ICalendarService mockCalendarService;
     @Mock
     private IProgressService mockProgressService;
     @InjectMocks
@@ -58,10 +59,7 @@ public class ReportControllerTest {
     private List<ReportDto> dtos;
     private UserDto userDto;
     private ProgressDto progressDto;
-    private int weekends;
-    private int holidays;
-    private int workingDays;
-    private int allDays;
+    private CalendarDto calendarDto;
 
     @Before
     public void setup() {
@@ -122,11 +120,12 @@ public class ReportControllerTest {
         progressDto.setUserActualHoursWorked(10.0);
         progressDto.setUserExpectedHoursWorked(50.0);
 
-        //Working days for 1 day
-        weekends = 0;
-        holidays = 0;
-        workingDays = 1;
-        allDays = 1;
+        //Calendar Dto for 1 day
+        calendarDto = new CalendarDto();
+        calendarDto.setWeekends(0);
+        calendarDto.setHolidays(0);
+        calendarDto.setWorkdays(1);
+        calendarDto.setAllDays(1);
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(theController)
                 .setControllerAdvice(new ExceptionHandlingAdvice())
@@ -141,14 +140,8 @@ public class ReportControllerTest {
         when(mockProgressService.getUserProgressBetweenDates(
                 userDto.getId(), LocalDate.now(), LocalDate.now()))
                 .thenReturn(progressDto);
-        when(mockDayCounterService.countWeekendsBetweenDates(LocalDate.now(), LocalDate.now()))
-                .thenReturn(weekends);
-        when(mockDayCounterService.countHolidaysBetweenDates(LocalDate.now(), LocalDate.now()))
-                .thenReturn(holidays);
-        when(mockDayCounterService.getWorkingDaysQuantityBetweenDates(LocalDate.now(), LocalDate.now()))
-                .thenReturn(workingDays);
-        when(mockDayCounterService.getAllDaysQuantityBetweenDates(LocalDate.now(), LocalDate.now()))
-                .thenReturn(allDays);
+        when(mockCalendarService.getCalendarInformationBetweenDates(LocalDate.now(), LocalDate.now()))
+                .thenReturn(calendarDto);
 
         this.mockMvc.perform(
                 get("/reports")
@@ -160,24 +153,15 @@ public class ReportControllerTest {
                                              progressDto.getProgress()))
                 .andExpect(model().attribute(AttributeNames.UserViewReports.sumOfDurations,
                                             progressDto.getUserActualHoursWorked()))
-                .andExpect(model().attribute(AttributeNames.ProgressView.weekends, weekends))
-                .andExpect(model().attribute(AttributeNames.ProgressView.holiday, holidays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.workingDays, workingDays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.allDays, allDays))
+                .andExpect(model().attribute(AttributeNames.ProgressView.calendar, calendarDto))
         ;
 
         verify(mockReportService, times(1))
                 .viewUserReportsBetweenDates(userDto.getId(), LocalDate.now(), LocalDate.now());
         verify(mockProgressService, times(2))
                 .getUserProgressBetweenDates(userDto.getId(), LocalDate.now(), LocalDate.now());
-        verify(mockDayCounterService, times(1))
-                .countWeekendsBetweenDates(LocalDate.now(), LocalDate.now());
-        verify(mockDayCounterService, times(1))
-                .countHolidaysBetweenDates(LocalDate.now(), LocalDate.now());
-        verify(mockDayCounterService, times(1))
-                .getWorkingDaysQuantityBetweenDates(LocalDate.now(), LocalDate.now());
-        verify(mockDayCounterService, times(1))
-                .getAllDaysQuantityBetweenDates(LocalDate.now(), LocalDate.now());
+        verify(mockCalendarService, times(1))
+                .getCalendarInformationBetweenDates(LocalDate.now(), LocalDate.now());
     }
 
     @Test
@@ -187,14 +171,8 @@ public class ReportControllerTest {
         when(mockProgressService.getUserProgressBetweenDates(
                 userDto.getId(), LocalDate.now(), LocalDate.now()))
                 .thenReturn(progressDto);
-        when(mockDayCounterService.countWeekendsBetweenDates(LocalDate.now(), LocalDate.now()))
-                .thenReturn(weekends);
-        when(mockDayCounterService.countHolidaysBetweenDates(LocalDate.now(), LocalDate.now()))
-                .thenReturn(holidays);
-        when(mockDayCounterService.getWorkingDaysQuantityBetweenDates(LocalDate.now(), LocalDate.now()))
-                .thenReturn(workingDays);
-        when(mockDayCounterService.getAllDaysQuantityBetweenDates(LocalDate.now(), LocalDate.now()))
-                .thenReturn(allDays);
+        when(mockCalendarService.getCalendarInformationBetweenDates(LocalDate.now(), LocalDate.now()))
+                .thenReturn(calendarDto);
 
         this.mockMvc.perform(
                 get("/reports/userReports")
@@ -207,24 +185,15 @@ public class ReportControllerTest {
                         progressDto.getProgress()))
                 .andExpect(model().attribute(AttributeNames.UserViewReports.sumOfDurations,
                         progressDto.getUserActualHoursWorked()))
-                .andExpect(model().attribute(AttributeNames.ProgressView.weekends, weekends))
-                .andExpect(model().attribute(AttributeNames.ProgressView.holiday, holidays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.workingDays, workingDays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.allDays, allDays))
+                .andExpect(model().attribute(AttributeNames.ProgressView.calendar, calendarDto))
         ;
 
         verify(mockReportService, times(1))
                 .viewUserReportsBetweenDates(userDto.getId(), LocalDate.now(), LocalDate.now());
         verify(mockProgressService, times(2))
                 .getUserProgressBetweenDates(userDto.getId(), LocalDate.now(), LocalDate.now());
-        verify(mockDayCounterService, times(1))
-                .countWeekendsBetweenDates(LocalDate.now(), LocalDate.now());
-        verify(mockDayCounterService, times(1))
-                .countHolidaysBetweenDates(LocalDate.now(), LocalDate.now());
-        verify(mockDayCounterService, times(1))
-                .getWorkingDaysQuantityBetweenDates(LocalDate.now(), LocalDate.now());
-        verify(mockDayCounterService, times(1))
-                .getAllDaysQuantityBetweenDates(LocalDate.now(), LocalDate.now());
+        verify(mockCalendarService, times(1))
+                .getCalendarInformationBetweenDates(LocalDate.now(), LocalDate.now());
     }
 
     @Test
@@ -234,14 +203,8 @@ public class ReportControllerTest {
         when(mockProgressService.getUserProgressBetweenDates(
                 userDto.getId(), LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 30)))
                 .thenReturn(progressDto);
-        when(mockDayCounterService.countWeekendsBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 30)))
-                .thenReturn(weekends);
-        when(mockDayCounterService.countHolidaysBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 30)))
-                .thenReturn(holidays);
-        when(mockDayCounterService.getWorkingDaysQuantityBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 30)))
-                .thenReturn(workingDays);
-        when(mockDayCounterService.getAllDaysQuantityBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 30)))
-                .thenReturn(allDays);
+        when(mockCalendarService.getCalendarInformationBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 30)))
+                .thenReturn(calendarDto);
 
         this.mockMvc.perform(
                 get("/reports/userReports")
@@ -255,24 +218,15 @@ public class ReportControllerTest {
                         progressDto.getProgress()))
                 .andExpect(model().attribute(AttributeNames.UserViewReports.sumOfDurations,
                         progressDto.getUserActualHoursWorked()))
-                .andExpect(model().attribute(AttributeNames.ProgressView.weekends, weekends))
-                .andExpect(model().attribute(AttributeNames.ProgressView.holiday, holidays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.workingDays, workingDays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.allDays, allDays))
+                .andExpect(model().attribute(AttributeNames.ProgressView.calendar, calendarDto))
         ;
 
         verify(mockReportService, times(1))
                 .viewUserReportsBetweenDates(userDto.getId(), LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 30));
         verify(mockProgressService, times(2))
                 .getUserProgressBetweenDates(userDto.getId(), LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 30));
-        verify(mockDayCounterService, times(1))
-                .countWeekendsBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 30));
-        verify(mockDayCounterService, times(1))
-                .countHolidaysBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 30));
-        verify(mockDayCounterService, times(1))
-                .getWorkingDaysQuantityBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 30));
-        verify(mockDayCounterService, times(1))
-                .getAllDaysQuantityBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 30));
+        verify(mockCalendarService, times(1))
+                .getCalendarInformationBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 30));
     }
 
     @Test
@@ -282,14 +236,8 @@ public class ReportControllerTest {
         when(mockProgressService.getUserProgressBetweenDates(
                 userDto.getId(), LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 1)))
                 .thenReturn(progressDto);
-        when(mockDayCounterService.countWeekendsBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 1)))
-                .thenReturn(weekends);
-        when(mockDayCounterService.countHolidaysBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 1)))
-                .thenReturn(holidays);
-        when(mockDayCounterService.getWorkingDaysQuantityBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 1)))
-                .thenReturn(workingDays);
-        when(mockDayCounterService.getAllDaysQuantityBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 1)))
-                .thenReturn(allDays);
+        when(mockCalendarService.getCalendarInformationBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 1)))
+                .thenReturn(calendarDto);
 
         this.mockMvc.perform(
                 get("/reports/userReports")
@@ -304,24 +252,15 @@ public class ReportControllerTest {
                         progressDto.getProgress()))
                 .andExpect(model().attribute(AttributeNames.UserViewReports.sumOfDurations,
                         progressDto.getUserActualHoursWorked()))
-                .andExpect(model().attribute(AttributeNames.ProgressView.weekends, weekends))
-                .andExpect(model().attribute(AttributeNames.ProgressView.holiday, holidays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.workingDays, workingDays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.allDays, allDays))
+                .andExpect(model().attribute(AttributeNames.ProgressView.calendar, calendarDto))
         ;
 
         verify(mockReportService, times(1))
                 .viewUserReportsBetweenDates(userDto.getId(),LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 1));
         verify(mockProgressService, times(2))
                 .getUserProgressBetweenDates(userDto.getId(), LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 1));
-        verify(mockDayCounterService, times(1))
-                .countWeekendsBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 1));
-        verify(mockDayCounterService, times(1))
-                .countHolidaysBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 1));
-        verify(mockDayCounterService, times(1))
-                .getWorkingDaysQuantityBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 1));
-        verify(mockDayCounterService, times(1))
-                .getAllDaysQuantityBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 1));
+        verify(mockCalendarService, times(1))
+                .getCalendarInformationBetweenDates(LocalDate.of(2016, 11, 1), LocalDate.of(2016, 11, 1));
     }
 
     @Test
@@ -365,14 +304,8 @@ public class ReportControllerTest {
         when(mockProgressService.getUserProgressBetweenDates(
                 userDto.getId(), LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30)))
                 .thenReturn(progressDto);
-        when(mockDayCounterService.countWeekendsBetweenDates(LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30)))
-                .thenReturn(weekends);
-        when(mockDayCounterService.countHolidaysBetweenDates(LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30)))
-                .thenReturn(holidays);
-        when(mockDayCounterService.getWorkingDaysQuantityBetweenDates(LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30)))
-                .thenReturn(workingDays);
-        when(mockDayCounterService.getAllDaysQuantityBetweenDates(LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30)))
-                .thenReturn(allDays);
+        when(mockCalendarService.getCalendarInformationBetweenDates(LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30)))
+                .thenReturn(calendarDto);
 
         MvcResult result = this.mockMvc.perform(
                 get("/reports/userReports")
@@ -387,10 +320,7 @@ public class ReportControllerTest {
                         progressDto.getProgress()))
                 .andExpect(model().attribute(AttributeNames.UserViewReports.sumOfDurations,
                         progressDto.getUserActualHoursWorked()))
-                .andExpect(model().attribute(AttributeNames.ProgressView.weekends, weekends))
-                .andExpect(model().attribute(AttributeNames.ProgressView.holiday, holidays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.workingDays, workingDays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.allDays, allDays))
+                .andExpect(model().attribute(AttributeNames.ProgressView.calendar, calendarDto))
                 .andReturn();
 
         Collection<Object> model = result.getModelAndView().getModel().values();
@@ -404,14 +334,8 @@ public class ReportControllerTest {
                 .viewUserReportsBetweenDates(userDto.getId(), LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30));
         verify(mockProgressService, times(2))
                 .getUserProgressBetweenDates(userDto.getId(),  LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30));
-        verify(mockDayCounterService, times(1))
-                .countWeekendsBetweenDates( LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30));
-        verify(mockDayCounterService, times(1))
-                .countHolidaysBetweenDates( LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30));
-        verify(mockDayCounterService, times(1))
-                .getWorkingDaysQuantityBetweenDates( LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30));
-        verify(mockDayCounterService, times(1))
-                .getAllDaysQuantityBetweenDates( LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30));
+        verify(mockCalendarService, times(1))
+                .getCalendarInformationBetweenDates( LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30));
     }
 
     @Test
@@ -423,14 +347,8 @@ public class ReportControllerTest {
         when(mockProgressService.getUserProgressBetweenDates(
                 userDto.getId(), LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30)))
                 .thenReturn(progressDto);
-        when(mockDayCounterService.countWeekendsBetweenDates(LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30)))
-                .thenReturn(weekends);
-        when(mockDayCounterService.countHolidaysBetweenDates(LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30)))
-                .thenReturn(holidays);
-        when(mockDayCounterService.getWorkingDaysQuantityBetweenDates(LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30)))
-                .thenReturn(workingDays);
-        when(mockDayCounterService.getAllDaysQuantityBetweenDates(LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30)))
-                .thenReturn(allDays);
+        when(mockCalendarService.getCalendarInformationBetweenDates(LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30)))
+                .thenReturn(calendarDto);
 
         MvcResult result = this.mockMvc.perform(
                 get("/reports/userReports")
@@ -445,10 +363,7 @@ public class ReportControllerTest {
                         progressDto.getProgress()))
                 .andExpect(model().attribute(AttributeNames.UserViewReports.sumOfDurations,
                         progressDto.getUserActualHoursWorked()))
-                .andExpect(model().attribute(AttributeNames.ProgressView.weekends, weekends))
-                .andExpect(model().attribute(AttributeNames.ProgressView.holiday, holidays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.workingDays, workingDays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.allDays, allDays))
+                .andExpect(model().attribute(AttributeNames.ProgressView.calendar, calendarDto))
                 .andReturn();
 
         Collection<Object> model = result.getModelAndView().getModel().values();
@@ -462,14 +377,8 @@ public class ReportControllerTest {
                 .viewUserReportsBetweenDates(userDto.getId(),LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30));
         verify(mockProgressService, times(2))
                 .getUserProgressBetweenDates(userDto.getId(),  LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30));
-        verify(mockDayCounterService, times(1))
-                .countWeekendsBetweenDates( LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30));
-        verify(mockDayCounterService, times(1))
-                .countHolidaysBetweenDates( LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30));
-        verify(mockDayCounterService, times(1))
-                .getWorkingDaysQuantityBetweenDates( LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30));
-        verify(mockDayCounterService, times(1))
-                .getAllDaysQuantityBetweenDates( LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30));
+        verify(mockCalendarService, times(1))
+                .getCalendarInformationBetweenDates( LocalDate.of(2016, 9, 1), LocalDate.of(2016, 9, 30));
     }
 
     @Test
@@ -486,14 +395,8 @@ public class ReportControllerTest {
         when(mockProgressService.getUserProgressBetweenDates(
                 userDto.getId(), today, today))
                 .thenReturn(progressDto);
-        when(mockDayCounterService.countWeekendsBetweenDates(today, today))
-                .thenReturn(weekends);
-        when(mockDayCounterService.countHolidaysBetweenDates(today, today))
-                .thenReturn(holidays);
-        when(mockDayCounterService.getWorkingDaysQuantityBetweenDates(today, today))
-                .thenReturn(workingDays);
-        when(mockDayCounterService.getAllDaysQuantityBetweenDates(today, today))
-                .thenReturn(allDays);
+        when(mockCalendarService.getCalendarInformationBetweenDates(today, today))
+                .thenReturn(calendarDto);
 
         MvcResult result = this.mockMvc.perform(
                 get("/reports/userReports")
@@ -507,10 +410,7 @@ public class ReportControllerTest {
                         progressDto.getProgress()))
                 .andExpect(model().attribute(AttributeNames.UserViewReports.sumOfDurations,
                         progressDto.getUserActualHoursWorked()))
-                .andExpect(model().attribute(AttributeNames.ProgressView.weekends, weekends))
-                .andExpect(model().attribute(AttributeNames.ProgressView.holiday, holidays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.workingDays, workingDays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.allDays, allDays))
+                .andExpect(model().attribute(AttributeNames.ProgressView.calendar, calendarDto))
                 .andReturn();
 
         Collection<Object> model = result.getModelAndView().getModel().values();
@@ -524,14 +424,8 @@ public class ReportControllerTest {
                 .viewUserReportsBetweenDates(userDto.getId(), today, today);
         verify(mockProgressService, times(2))
                 .getUserProgressBetweenDates(userDto.getId(), today, today);
-        verify(mockDayCounterService, times(1))
-                .countWeekendsBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .countHolidaysBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .getWorkingDaysQuantityBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .getAllDaysQuantityBetweenDates(today, today);
+        verify(mockCalendarService, times(1))
+                .getCalendarInformationBetweenDates(today, today);
     }
 
     @Test
@@ -548,14 +442,8 @@ public class ReportControllerTest {
         when(mockProgressService.getUserProgressBetweenDates(
                 userDto.getId(), today, today))
                 .thenReturn(progressDto);
-        when(mockDayCounterService.countWeekendsBetweenDates(today, today))
-                .thenReturn(weekends);
-        when(mockDayCounterService.countHolidaysBetweenDates(today, today))
-                .thenReturn(holidays);
-        when(mockDayCounterService.getWorkingDaysQuantityBetweenDates(today, today))
-                .thenReturn(workingDays);
-        when(mockDayCounterService.getAllDaysQuantityBetweenDates(today, today))
-                .thenReturn(allDays);
+        when(mockCalendarService.getCalendarInformationBetweenDates(today, today))
+                .thenReturn(calendarDto);
 
         MvcResult result = this.mockMvc.perform(
                 get("/reports/userReports")
@@ -569,10 +457,7 @@ public class ReportControllerTest {
                         progressDto.getProgress()))
                 .andExpect(model().attribute(AttributeNames.UserViewReports.sumOfDurations,
                         progressDto.getUserActualHoursWorked()))
-                .andExpect(model().attribute(AttributeNames.ProgressView.weekends, weekends))
-                .andExpect(model().attribute(AttributeNames.ProgressView.holiday, holidays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.workingDays, workingDays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.allDays, allDays))
+                .andExpect(model().attribute(AttributeNames.ProgressView.calendar, calendarDto))
                 .andReturn();
 
         Collection<Object> model = result.getModelAndView().getModel().values();
@@ -587,14 +472,8 @@ public class ReportControllerTest {
                 .viewUserReportsBetweenDates(userDto.getId(),today, today);
         verify(mockProgressService, times(2))
                 .getUserProgressBetweenDates(userDto.getId(), today, today);
-        verify(mockDayCounterService, times(1))
-                .countWeekendsBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .countHolidaysBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .getWorkingDaysQuantityBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .getAllDaysQuantityBetweenDates(today, today);
+        verify(mockCalendarService, times(1))
+                .getCalendarInformationBetweenDates(today, today);
     }
 
     @Test
@@ -611,14 +490,8 @@ public class ReportControllerTest {
         when(mockProgressService.getUserProgressBetweenDates(
                 userDto.getId(), today, today))
                 .thenReturn(progressDto);
-        when(mockDayCounterService.countWeekendsBetweenDates(today, today))
-                .thenReturn(weekends);
-        when(mockDayCounterService.countHolidaysBetweenDates(today, today))
-                .thenReturn(holidays);
-        when(mockDayCounterService.getWorkingDaysQuantityBetweenDates(today, today))
-                .thenReturn(workingDays);
-        when(mockDayCounterService.getAllDaysQuantityBetweenDates(today, today))
-                .thenReturn(allDays);
+        when(mockCalendarService.getCalendarInformationBetweenDates(today, today))
+                .thenReturn(calendarDto);
 
         MvcResult result = this.mockMvc.perform(
                 get("/reports/userReports")
@@ -632,10 +505,7 @@ public class ReportControllerTest {
                         progressDto.getProgress()))
                 .andExpect(model().attribute(AttributeNames.UserViewReports.sumOfDurations,
                         progressDto.getUserActualHoursWorked()))
-                .andExpect(model().attribute(AttributeNames.ProgressView.weekends, weekends))
-                .andExpect(model().attribute(AttributeNames.ProgressView.holiday, holidays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.workingDays, workingDays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.allDays, allDays))
+                .andExpect(model().attribute(AttributeNames.ProgressView.calendar, calendarDto))
                 .andReturn();
 
         Collection<Object> model = result.getModelAndView().getModel().values();
@@ -650,14 +520,8 @@ public class ReportControllerTest {
                 .viewUserReportsBetweenDates(userDto.getId(),today, today);
         verify(mockProgressService, times(2))
                 .getUserProgressBetweenDates(userDto.getId(), today, today);
-        verify(mockDayCounterService, times(1))
-                .countWeekendsBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .countHolidaysBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .getWorkingDaysQuantityBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .getAllDaysQuantityBetweenDates(today, today);
+        verify(mockCalendarService, times(1))
+                .getCalendarInformationBetweenDates(today, today);
     }
 
     @Test
@@ -674,14 +538,8 @@ public class ReportControllerTest {
         when(mockProgressService.getUserProgressBetweenDates(
                 userDto.getId(), today, today))
                 .thenReturn(progressDto);
-        when(mockDayCounterService.countWeekendsBetweenDates(today, today))
-                .thenReturn(weekends);
-        when(mockDayCounterService.countHolidaysBetweenDates(today, today))
-                .thenReturn(holidays);
-        when(mockDayCounterService.getWorkingDaysQuantityBetweenDates(today, today))
-                .thenReturn(workingDays);
-        when(mockDayCounterService.getAllDaysQuantityBetweenDates(today, today))
-                .thenReturn(allDays);
+        when(mockCalendarService.getCalendarInformationBetweenDates(today, today))
+                .thenReturn(calendarDto);
 
         MvcResult result = this.mockMvc.perform(
                 get("/reports/userReports")
@@ -695,10 +553,7 @@ public class ReportControllerTest {
                         progressDto.getProgress()))
                 .andExpect(model().attribute(AttributeNames.UserViewReports.sumOfDurations,
                         progressDto.getUserActualHoursWorked()))
-                .andExpect(model().attribute(AttributeNames.ProgressView.weekends, weekends))
-                .andExpect(model().attribute(AttributeNames.ProgressView.holiday, holidays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.workingDays, workingDays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.allDays, allDays))
+                .andExpect(model().attribute(AttributeNames.ProgressView.calendar, calendarDto))
                 .andReturn();
 
         Collection<Object> model = result.getModelAndView().getModel().values();
@@ -713,14 +568,8 @@ public class ReportControllerTest {
                 .viewUserReportsBetweenDates(userDto.getId(),today, today);
         verify(mockProgressService, times(2))
                 .getUserProgressBetweenDates(userDto.getId(), today, today);
-        verify(mockDayCounterService, times(1))
-                .countWeekendsBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .countHolidaysBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .getWorkingDaysQuantityBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .getAllDaysQuantityBetweenDates(today, today);
+        verify(mockCalendarService, times(1))
+                .getCalendarInformationBetweenDates(today, today);
     }
 
     @Test
@@ -737,14 +586,8 @@ public class ReportControllerTest {
         when(mockProgressService.getUserProgressBetweenDates(
                 userDto.getId(), today, today))
                 .thenReturn(progressDto);
-        when(mockDayCounterService.countWeekendsBetweenDates(today, today))
-                .thenReturn(weekends);
-        when(mockDayCounterService.countHolidaysBetweenDates(today, today))
-                .thenReturn(holidays);
-        when(mockDayCounterService.getWorkingDaysQuantityBetweenDates(today, today))
-                .thenReturn(workingDays);
-        when(mockDayCounterService.getAllDaysQuantityBetweenDates(today, today))
-                .thenReturn(allDays);
+        when(mockCalendarService.getCalendarInformationBetweenDates(today, today))
+                .thenReturn(calendarDto);
 
         MvcResult result = this.mockMvc.perform(
                 get("/reports/userReports")
@@ -758,10 +601,7 @@ public class ReportControllerTest {
                         progressDto.getProgress()))
                 .andExpect(model().attribute(AttributeNames.UserViewReports.sumOfDurations,
                         progressDto.getUserActualHoursWorked()))
-                .andExpect(model().attribute(AttributeNames.ProgressView.weekends, weekends))
-                .andExpect(model().attribute(AttributeNames.ProgressView.holiday, holidays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.workingDays, workingDays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.allDays, allDays))
+                .andExpect(model().attribute(AttributeNames.ProgressView.calendar, calendarDto))
                 .andReturn();
 
         Collection<Object> model = result.getModelAndView().getModel().values();
@@ -776,14 +616,8 @@ public class ReportControllerTest {
                 .viewUserReportsBetweenDates(userDto.getId(),today, today);
         verify(mockProgressService, times(2))
                 .getUserProgressBetweenDates(userDto.getId(), today, today);
-        verify(mockDayCounterService, times(1))
-                .countWeekendsBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .countHolidaysBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .getWorkingDaysQuantityBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .getAllDaysQuantityBetweenDates(today, today);
+        verify(mockCalendarService, times(1))
+                .getCalendarInformationBetweenDates(today, today);
     }
 
     @Test
@@ -800,14 +634,8 @@ public class ReportControllerTest {
         when(mockProgressService.getUserProgressBetweenDates(
                 userDto.getId(), today, today))
                 .thenReturn(progressDto);
-        when(mockDayCounterService.countWeekendsBetweenDates(today, today))
-                .thenReturn(weekends);
-        when(mockDayCounterService.countHolidaysBetweenDates(today, today))
-                .thenReturn(holidays);
-        when(mockDayCounterService.getWorkingDaysQuantityBetweenDates(today, today))
-                .thenReturn(workingDays);
-        when(mockDayCounterService.getAllDaysQuantityBetweenDates(today, today))
-                .thenReturn(allDays);
+        when(mockCalendarService.getCalendarInformationBetweenDates(today, today))
+                .thenReturn(calendarDto);
 
         MvcResult result = this.mockMvc.perform(
                 get("/reports/userReports")
@@ -821,10 +649,7 @@ public class ReportControllerTest {
                         progressDto.getProgress()))
                 .andExpect(model().attribute(AttributeNames.UserViewReports.sumOfDurations,
                         progressDto.getUserActualHoursWorked()))
-                .andExpect(model().attribute(AttributeNames.ProgressView.weekends, weekends))
-                .andExpect(model().attribute(AttributeNames.ProgressView.holiday, holidays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.workingDays, workingDays))
-                .andExpect(model().attribute(AttributeNames.ProgressView.allDays, allDays))
+                .andExpect(model().attribute(AttributeNames.ProgressView.calendar, calendarDto))
                 .andReturn();
 
         Collection<Object> model = result.getModelAndView().getModel().values();
@@ -839,14 +664,8 @@ public class ReportControllerTest {
                 .viewUserReportsBetweenDates(userDto.getId(),today, today);
         verify(mockProgressService, times(2))
                 .getUserProgressBetweenDates(userDto.getId(), today, today);
-        verify(mockDayCounterService, times(1))
-                .countWeekendsBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .countHolidaysBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .getWorkingDaysQuantityBetweenDates(today, today);
-        verify(mockDayCounterService, times(1))
-                .getAllDaysQuantityBetweenDates(today, today);
+        verify(mockCalendarService, times(1))
+                .getCalendarInformationBetweenDates(today, today);
     }
 
     @Test

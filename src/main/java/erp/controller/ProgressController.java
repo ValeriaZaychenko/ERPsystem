@@ -2,7 +2,8 @@ package erp.controller;
 
 import erp.controller.constants.AttributeNames;
 import erp.controller.constants.ViewNames;
-import erp.service.IDayCounterService;
+import erp.service.ICalendarService;
+import erp.service.IHolidayService;
 import erp.service.IProgressService;
 import erp.utils.DateParser;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,7 +25,9 @@ public class ProgressController {
     @Inject
     private IProgressService progressService;
     @Inject
-    private IDayCounterService dayCounterService;
+    private ICalendarService calendarService;
+    @Inject
+    private IHolidayService holidayService;
 
     @RequestMapping(value = "/progress", method = RequestMethod.GET)
     public String getUsersProgressList(Map<String, Object> model,
@@ -61,7 +64,7 @@ public class ProgressController {
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             String description) {
 
-        dayCounterService.createHoliday(date, description);
+        holidayService.createHoliday(date, description);
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -69,25 +72,25 @@ public class ProgressController {
     public ResponseEntity edit(@RequestParam String holidayId,
                                @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                                @RequestParam String description) {
-        dayCounterService.editHoliday(holidayId, date, description);
+        holidayService.editHoliday(holidayId, date, description);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "holidays/delete", method = RequestMethod.POST)
     public ResponseEntity delete(@RequestParam String holidayId) {
-        dayCounterService.deleteHoliday(holidayId);
+        holidayService.deleteHoliday(holidayId);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "holidays/holiday/clone", method = RequestMethod.POST)
     public ResponseEntity cloneOne(@RequestParam String holidayId) {
-        dayCounterService.copyHolidayToNextYear(holidayId);
+        holidayService.copyHolidayToNextYear(holidayId);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "holidays/clone", method = RequestMethod.POST)
     public ResponseEntity cloneAll(@RequestParam int year) {
-        dayCounterService.copyYearHolidaysToNext(year);
+        holidayService.copyYearHolidaysToNext(year);
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -96,17 +99,8 @@ public class ProgressController {
                 AttributeNames.ProgressView.progress,
                 progressService.getAllUsersProgressBetweenDates(begin, end));
         model.put(
-                AttributeNames.ProgressView.weekends,
-                dayCounterService.countWeekendsBetweenDates(begin, end));
-        model.put(
-                AttributeNames.ProgressView.holiday,
-                dayCounterService.countHolidaysBetweenDates(begin, end));
-        model.put(
-                AttributeNames.ProgressView.workingDays,
-                dayCounterService.getWorkingDaysQuantityBetweenDates(begin, end));
-        model.put(
-                AttributeNames.ProgressView.allDays,
-                dayCounterService.getAllDaysQuantityBetweenDates(begin, end));
+                AttributeNames.ProgressView.calendar,
+                calendarService.getCalendarInformationBetweenDates(begin, end));
         model.put(
                 AttributeNames.ProgressView.monthDate,
                 begin.getMonth().getValue() + "/" + begin.getYear());
@@ -115,7 +109,7 @@ public class ProgressController {
     private void putHolidaysAttrToModel(Map<String, Object> model, int year) {
         model.put(
                 AttributeNames.ProgressView.holiday,
-                dayCounterService.findHolidaysOfYear(year));
+                holidayService.findHolidaysOfYear(year));
         model.put(
                 AttributeNames.ProgressView.holidaysYear,
                 year);

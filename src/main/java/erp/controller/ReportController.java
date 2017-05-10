@@ -6,7 +6,7 @@ import erp.dto.ReportDto;
 import erp.dto.UserDto;
 import erp.exceptions.ApplyGroupByException;
 import erp.exceptions.UnknownGroupByException;
-import erp.service.IDayCounterService;
+import erp.service.ICalendarService;
 import erp.service.IProgressService;
 import erp.service.IReportService;
 import erp.utils.DateParser;
@@ -37,7 +37,7 @@ public class ReportController {
     @Inject
     private IReportService reportService;
     @Inject
-    private IDayCounterService dayCounterService;
+    private ICalendarService calendarService;
     @Inject
     private IProgressService progressService;
 
@@ -124,18 +124,8 @@ public class ReportController {
                 AttributeNames.UserViewReports.sumOfDurations,
                 progressService.getUserProgressBetweenDates(currentUser.getId(), begin, end)
                         .getUserActualHoursWorked());
-        model.put(
-                AttributeNames.ProgressView.weekends,
-                dayCounterService.countWeekendsBetweenDates(begin, end));
-        model.put(
-                AttributeNames.ProgressView.holiday,
-                dayCounterService.countHolidaysBetweenDates(begin, end));
-        model.put(
-                AttributeNames.ProgressView.workingDays,
-                dayCounterService.getWorkingDaysQuantityBetweenDates(begin, end));
-        model.put(
-                AttributeNames.ProgressView.allDays,
-                dayCounterService.getAllDaysQuantityBetweenDates(begin, end));
+        model.put(AttributeNames.ProgressView.calendar,
+                calendarService.getCalendarInformationBetweenDates(begin, end));
     }
 
     /*

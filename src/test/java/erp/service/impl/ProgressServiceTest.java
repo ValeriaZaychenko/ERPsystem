@@ -3,10 +3,7 @@ package erp.service.impl;
 import erp.dto.ProgressDto;
 import erp.exceptions.DateOrderException;
 import erp.exceptions.EntityNotFoundException;
-import erp.service.IDayCounterService;
-import erp.service.IProgressService;
-import erp.service.IReportService;
-import erp.service.IUserService;
+import erp.service.*;
 import erp.utils.DateParser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = erp.config.JUnitConfiguration.class)
@@ -32,32 +29,13 @@ public class ProgressServiceTest {
     @Inject
     private IProgressService progressService;
     @Inject
-    private IDayCounterService dayCounterService;
+    private ICalendarService calendarService;
+    @Inject
+    private IHolidayService holidayService;
     @Inject
     private IUserService userService;
     @Inject
     private IReportService reportService;
-
-    //---GET CURRENT MONTH FULL TIME------------------------------------------------------------------------------------
-
-    @Test
-    public void getCurrentMonthFullDurationCorrectly() {
-        LocalDate now = LocalDate.now();
-        dayCounterService.createHoliday(now.minusDays(2), "holiday");
-
-        LocalDate begin = LocalDate.of(now.getYear(), now.getMonth(), 1);
-        LocalDate end = LocalDate.of(now.getYear(), now.getMonth(), now.lengthOfMonth());
-
-        int weekends = dayCounterService.countWeekendsBetweenDates(begin, end);
-        int holidays = dayCounterService.countHolidaysBetweenDates(begin, end);
-        int allDays = now.lengthOfMonth();
-
-        assertNotEquals(weekends, 0);
-        assertEquals(holidays, 1);
-        assertTrue(allDays > 28);
-        assertEquals(progressService.getFullTimeBetweenDates(begin, end),
-                (allDays - weekends - holidays) * 8.0, 0.1);
-    }
 
     //---GET USER WORKING TIME BETWEEN DATES VALIDATION TESTS-----------------------------------------------------------
 
@@ -111,15 +89,16 @@ public class ProgressServiceTest {
         reportService.createReport(DateParser.parseDate("2016-12-24"),
                 7, "description", userId, true);
 
-        dayCounterService.createHoliday(LocalDate.of(2016, 11,11), "Holiday");
+        holidayService.createHoliday(LocalDate.of(2016, 11,11), "Holiday");
 
         LocalDate begin = DateParser.parseDate("2016-10-10");
         LocalDate end = DateParser.parseDate("2016-12-12");
 
         ProgressDto progress = progressService.getUserProgressBetweenDates(userId, begin, end);
+        double expectedHours = calendarService.getCalendarInformationBetweenDates(begin, end).getWorkdays() * 8.00;
 
         assertEquals(progress.getUserActualHoursWorked(), 15.0,  0.1);
-        assertEquals(progress.getProgress(), 15.0 * 100 / progressService.getFullTimeBetweenDates(begin, end), 0.1);
+        assertEquals(progress.getProgress(), (15.0 / expectedHours) * 100, 0.1);
     }
 
     @Test
@@ -130,14 +109,15 @@ public class ProgressServiceTest {
         reportService.createReport(LocalDate.now(),
                 7, "description", userId, true);
 
-        dayCounterService.createHoliday(LocalDate.of(2016, 11,11), "Holiday");
+        holidayService.createHoliday(LocalDate.of(2016, 11,11), "Holiday");
 
         LocalDate begin = DateParser.parseDate("2016-10-10");
 
         ProgressDto progress = progressService.getUserProgressBetweenDates(userId, begin, LocalDate.now());
+        double expectedHours = calendarService.getCalendarInformationBetweenDates(begin, LocalDate.now()).getWorkdays() * 8.00;
 
         assertEquals(progress.getUserActualHoursWorked(), 15.0,  0.1);
-        assertEquals(progress.getProgress(), 15.0 * 100 / progressService.getFullTimeBetweenDates(begin, LocalDate.now()), 0.1);
+        assertEquals(progress.getProgress(), (15.0 / expectedHours) * 100, 0.1);
     }
 
     @Test
@@ -149,15 +129,17 @@ public class ProgressServiceTest {
         reportService.createReport(DateParser.parseDate("2016-11-11"),
                 7, "description", userId, true);
 
-        dayCounterService.createHoliday(LocalDate.of(2016, 11,11), "Holiday");
+        holidayService.createHoliday(LocalDate.of(2016, 11,11), "Holiday");
 
         LocalDate begin = DateParser.parseDate("2016-11-01");
         LocalDate end = DateParser.parseDate("2016-12-12");
 
         ProgressDto progress = progressService.getUserProgressBetweenDates(userId, begin, end);
+        double expectedHours = calendarService.getCalendarInformationBetweenDates(begin, end).getWorkdays() * 8.0;
 
         assertEquals(progress.getUserActualHoursWorked(), 15.0,  0.1);
-        assertEquals(progress.getProgress(), 15.0 * 100 / progressService.getFullTimeBetweenDates(begin, end), 0.1);
+        assertEquals(progress.getProgress(),
+                (15.0 / expectedHours) * 100, 0.1);
     }
 
     @Test
@@ -169,15 +151,17 @@ public class ProgressServiceTest {
         reportService.createReport(DateParser.parseDate("2016-11-12"),
                 7, "description", userId, true);
 
-        dayCounterService.createHoliday(LocalDate.of(2016, 11,11), "Holiday");
+        holidayService.createHoliday(LocalDate.of(2016, 11,11), "Holiday");
 
         LocalDate begin = DateParser.parseDate("2016-11-01");
         LocalDate end = DateParser.parseDate("2016-11-12");
 
         ProgressDto progress = progressService.getUserProgressBetweenDates(userId, begin, end);
+        double expectedHours = calendarService.getCalendarInformationBetweenDates(begin, end).getWorkdays() * 8.0;
 
         assertEquals(progress.getUserActualHoursWorked(), 15.0,  0.1);
-        assertEquals(progress.getProgress(), 15.0 * 100 / progressService.getFullTimeBetweenDates(begin, end), 0.1);
+        assertEquals(progress.getProgress(),
+                (15.0 / expectedHours) * 100, 0.1);
     }
 
     @Test(expected = DateOrderException.class)
@@ -219,10 +203,11 @@ public class ProgressServiceTest {
         LocalDate end = DateParser.parseDate("2016-11-12");
 
         List<ProgressDto> dtos = progressService.getAllUsersProgressBetweenDates(begin, end);
+        double expectedHours = calendarService.getCalendarInformationBetweenDates(begin, end).getWorkdays() * 8.0;
 
         assertEquals(dtos.size(), 2);
-        assertEquals(dtos.get(0).getProgress(), 16.0 * 100/ progressService.getFullTimeBetweenDates(begin, end), 0.1);
-        assertEquals(dtos.get(1).getProgress(), 7.0 * 100/ progressService.getFullTimeBetweenDates(begin, end), 0.1);
+        assertEquals(dtos.get(0).getProgress(), (16.0 / expectedHours) * 100, 0.1);
+        assertEquals(dtos.get(1).getProgress(), (7.0 / expectedHours) * 100, 0.1);
     }
 
     @Test(expected = DateOrderException.class)

@@ -82,10 +82,10 @@
         <!--- View quantity of weekends, holidays, working days, all days -->
         <div class='col-md-6'>
           <ul>
-            <li><spring:message code="weekends"/> - ${weekends}</li>
-            <li><spring:message code="holidays"/> - ${holiday}</li>
-            <li><spring:message code="working.days"/> - ${workingDays}</li>
-            <li><spring:message code="all.days"/> - ${allDays}</li>
+            <li><spring:message code="weekends"/> - ${calendar.weekends}</li>
+            <li><spring:message code="holidays"/> - ${calendar.holidays}</li>
+            <li><spring:message code="working.days"/> - ${calendar.workdays}</li>
+            <li><spring:message code="all.days"/> - ${calendar.allDays}</li>
           </ul>
         </div>
 

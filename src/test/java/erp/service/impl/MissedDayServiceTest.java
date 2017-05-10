@@ -5,7 +5,7 @@ import erp.domain.MissedDayType;
 import erp.domain.UserRole;
 import erp.dto.MissedDayDto;
 import erp.exceptions.*;
-import erp.service.IDayCounterService;
+import erp.service.IHolidayService;
 import erp.service.IMissedDayService;
 import erp.service.IUserService;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class MissedDayServiceTest {
     @Inject
     private IUserService userService;
     @Inject
-    private IDayCounterService dayCounterService;
+    private IHolidayService dayCounterService;
 
     @PersistenceContext
     private EntityManager entityManager;

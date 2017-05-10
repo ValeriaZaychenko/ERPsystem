@@ -58,4 +58,13 @@ public final class DtoBuilder {
         dto.setType(missedDay.getMissedDayType().toString());
         return dto;
     }
+
+    public static CalendarDto calendarToDto(int weekends, int holidays, int workdays, int allDays) {
+        CalendarDto dto = new CalendarDto();
+        dto.setWeekends(weekends);
+        dto.setHolidays(holidays);
+        dto.setWorkdays(workdays);
+        dto.setAllDays(allDays);
+        return dto;
+    }
 }
