@@ -1,12 +1,13 @@
 package erp.utils;
 
-import erp.domain.Holiday;
-import erp.domain.MissedDay;
-import erp.domain.Report;
-import erp.domain.User;
+import erp.domain.*;
 import erp.dto.*;
+import erp.repository.UserRepository;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public final class DtoBuilder {
 
@@ -65,6 +66,36 @@ public final class DtoBuilder {
         dto.setHolidays(holidays);
         dto.setWorkdays(workdays);
         dto.setAllDays(allDays);
+        return dto;
+    }
+
+    public static TeamDto teamToDto(Team team, UserRepository userRepository) {
+        List<BriefUserDto> userDtos = new ArrayList<>();
+        TeamDto teamDto = new TeamDto();
+        Iterator idsIterator = team.getUserIds();
+
+        while (idsIterator.hasNext()) {
+            Object userId = idsIterator.next();
+            userDtos.add(createBriefUserDto(userRepository, (String) userId));
+        }
+
+        teamDto.setId(team.getId());
+        teamDto.setName(team.getName());
+        teamDto.setTeamLeadBriefUserDto(createBriefUserDto(userRepository, team.getTeamLeadId()));
+        teamDto.setBriefUserDtos(userDtos);
+
+        return teamDto;
+    }
+
+    private static BriefUserDto createBriefUserDto(UserRepository userRepository, String id) {
+        String name = userRepository.findUserNameById(id);
+        if (name.isEmpty())
+            throw new RuntimeException("User hasn't found");
+
+        BriefUserDto dto = new BriefUserDto();
+        dto.setId(id);
+        dto.setName(name);
+
         return dto;
     }
 }

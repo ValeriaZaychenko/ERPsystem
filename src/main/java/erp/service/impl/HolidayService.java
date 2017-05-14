@@ -145,6 +145,6 @@ public class HolidayService implements IHolidayService {
 
     private boolean isDateUnique(LocalDate date) {
         List<Holiday> holidays = holidayRepository.findByDate(date);
-        return holidays.size() == 0;
+        return holidays.isEmpty();
     }
 }

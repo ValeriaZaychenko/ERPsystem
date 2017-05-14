@@ -11,6 +11,8 @@ import javax.inject.Inject;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class CalendarService implements ICalendarService {
@@ -18,19 +20,28 @@ public class CalendarService implements ICalendarService {
     @Inject
     private HolidayRepository holidayRepository;
 
+    private Map<String, Integer> calendar = new HashMap<>();
+
     @Override
     public CalendarDto getCalendarInformationBetweenDates(LocalDate begin, LocalDate end) {
         DateOrderChecker.checkEndDateAfterBegin(begin, end);
 
+        //DON'T TOUCH THE ORDER
+        countWeekendsBetweenDates(begin, end);
+        countHolidaysBetweenDates(begin, end);
+        countAllDaysQuantityBetweenDates(begin, end);
+        countWorkdaysQuantityBetweenDates();
+
+
         return DtoBuilder.calendarToDto(
-                countWeekendsBetweenDates(begin, end),
-                countHolidaysBetweenDates(begin, end),
-                countWorkdaysQuantityBetweenDates(begin, end),
-                countAllDaysQuantityBetweenDates(begin, end)
+                calendar.get("weekends"),
+                calendar.get("holidays"),
+                calendar.get("workdays"),
+                calendar.get("all")
         );
     }
 
-    private int countWeekendsBetweenDates(LocalDate begin, LocalDate end) {
+    private void countWeekendsBetweenDates(LocalDate begin, LocalDate end) {
         int result = 0;
         while (begin.isBefore(end) || begin.isEqual(end)) {
             if (begin.getDayOfWeek() == DayOfWeek.SATURDAY || begin.getDayOfWeek() == DayOfWeek.SUNDAY)
@@ -38,20 +49,18 @@ public class CalendarService implements ICalendarService {
             begin = begin.plusDays(1);
         }
 
-        return result;
+        calendar.put("weekends", result);
     }
 
-    private int countHolidaysBetweenDates(LocalDate begin, LocalDate end) {
-        return holidayRepository.findByDateBetweenQueryOrderByDateDesc(begin, end).size();
+    private void countHolidaysBetweenDates(LocalDate begin, LocalDate end) {
+        calendar.put("holidays", holidayRepository.findByDateBetweenQueryOrderByDateDesc(begin, end).size());
     }
 
-    private int countAllDaysQuantityBetweenDates(LocalDate begin, LocalDate end) {
-        return (int) ChronoUnit.DAYS.between(begin, end) + 1;
+    private void countAllDaysQuantityBetweenDates(LocalDate begin, LocalDate end) {
+        calendar.put("all", (int) ChronoUnit.DAYS.between(begin, end) + 1);
     }
 
-    private int countWorkdaysQuantityBetweenDates(LocalDate begin, LocalDate end) {
-        return countAllDaysQuantityBetweenDates(begin, end)
-                - countWeekendsBetweenDates(begin, end)
-                - countHolidaysBetweenDates(begin, end);
+    private void countWorkdaysQuantityBetweenDates() {
+        calendar.put("workdays", calendar.get("all") - calendar.get("weekends") - calendar.get("holidays"));
     }
 }

@@ -21,4 +21,5 @@ public interface ErrorKeys {
     String UnknownMissedDayTypeMessage = "error.unknown.missed.day.type.message";
     String TwoMissedDaysInOneDateMessage = "error.two.missed.days.in.one.date.message";
     String HolidayOccupiedDateMessage = "error.holiday.occupied.date.message";
+    String DuplicateNameException="error.duplicate.name.message";
 }
